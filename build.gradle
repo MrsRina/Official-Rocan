@@ -66,6 +66,8 @@ dependencies {
 		exclude module: "guava"
 		exclude module: "gson"
 	}
+
+    compile("com.github.Katatje:EventManager:1.0")
 }
 
 shadowJar {
@@ -74,6 +76,7 @@ shadowJar {
 		include(dependency("org.javassist:javassist"))
 		include(dependency("org.spongepowered:mixin"))
 		include(dependency("net.jodah:typetools"))
+        include(dependency("com.github.Katatje:EventManager"))
 	}
 }
 
