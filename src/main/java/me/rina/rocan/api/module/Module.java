@@ -7,6 +7,9 @@ import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.setting.Setting;
 import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.turok.util.TurokClass;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.culling.Frustum;
+import net.minecraft.client.renderer.culling.ICamera;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -18,6 +21,8 @@ import java.util.ArrayList;
  * @since 15/11/20 at 4:51pm
  */
 public class Module implements ISLClass {
+    public Minecraft mc = Rocan.MC;
+
     private String name;
     private String tag;
 
@@ -33,6 +38,11 @@ public class Module implements ISLClass {
 
     public static Setting showModuleEnableList = new Setting("Show Module Enabled List", "ShowModuleEnabledList", "Show in component Module Enabled List", true);
     public static Setting toggleMessage = new Setting("Toggle Message", "ToggleMessage", "Send a message when enable or disable.", true);
+
+    /*
+     * Basic render;
+     */
+    public ICamera camera = new Frustum();
 
     public Module(String name, String tag, String description, ModuleCategory category) {
         this.name = name;
@@ -160,7 +170,7 @@ public class Module implements ISLClass {
             ChatUtil.print(this.tag + " enabled.");
         }
 
-        Rocan.EVENT_BUS.remove(this);
+        Rocan.EVENT_BUS.register(this);
 
         this.onEnable();
     }
@@ -172,7 +182,7 @@ public class Module implements ISLClass {
             ChatUtil.print(this.tag + " disabled.");
         }
 
-        Rocan.EVENT_BUS.register(this);
+        Rocan.EVENT_BUS.remove(this);
 
         this.onDisable();
     }

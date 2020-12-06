@@ -20,7 +20,7 @@ public class Setting {
      * when false won't render the setting,
      * this make the client very pretty and organized.
      */
-    private boolean rendering = true;
+    private boolean enabled = true;
 
     public Setting(String name, String tag, String description, Object value) {
         this.name = name;
@@ -91,11 +91,11 @@ public class Setting {
         return maximum;
     }
 
-    public void setRendering(boolean rendering) {
-        this.rendering = rendering;
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
-    public boolean isRendering() {
-        return rendering;
+    public boolean isEnabled() {
+        return enabled;
     }
 }

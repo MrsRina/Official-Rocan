@@ -18,6 +18,8 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
 
+import java.awt.*;
+
 /**
  * @author SrRina
  * @since 15/11/20 at 7:45pm
@@ -25,6 +27,8 @@ import org.lwjgl.input.Keyboard;
 public class EventManager {
     private float currentRender2DPartialTicks;
     private float currentRender3DPartialTicks;
+
+    private Color currentRGBColor;
 
     protected void setCurrentRender2DPartialTicks(float currentRender2DPartialTicks) {
         this.currentRender2DPartialTicks = currentRender2DPartialTicks;
@@ -40,6 +44,14 @@ public class EventManager {
 
     public float getCurrentRender3DPartialTicks() {
         return currentRender3DPartialTicks;
+    }
+
+    private void setCurrentRGBColor(Color currentRGBColor) {
+        this.currentRGBColor = currentRGBColor;
+    }
+
+    public Color getCurrentRGBColor() {
+        return currentRGBColor;
     }
 
     @SubscribeEvent
@@ -72,6 +84,14 @@ public class EventManager {
         if (Rocan.MC.player == null) {
             return;
         }
+
+        float[] currentSystemCycle = new float[] {
+                (System.currentTimeMillis() % (360f / 32f) * (360f / 32f))
+        };
+
+        int currentColorCycle = Color.HSBtoRGB(currentSystemCycle[0], 1, 1);
+
+        this.currentRGBColor = new Color(((currentColorCycle >> 16) & 0xFF), ((currentColorCycle >> 8) & 0xFF), (currentColorCycle & 0xFF));
 
         this.setCurrentRender3DPartialTicks(event.getPartialTicks());
 

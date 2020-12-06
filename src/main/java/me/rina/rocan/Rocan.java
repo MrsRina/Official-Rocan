@@ -8,6 +8,7 @@ import me.rina.rocan.api.module.management.ModuleManager;
 import me.rina.rocan.client.command.CommandPrefix;
 import me.rina.rocan.client.command.CommandToggle;
 import me.rina.rocan.client.module.ModuleExample;
+import me.rina.rocan.client.module.render.ModuleBlockHighlight;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -22,7 +23,7 @@ public enum Rocan {
 
     public static final String NAME        = "Rocan";
     public static final String VERSION     = "0.0.1";
-    public static final String PATH_CONFIG = "rocan/";
+    public static final String PATH_CONFIG = "/Rocan/";
     public static final String CHAT        = ChatFormatting.GOLD + "/* Rocan */ ";
 
     /*
@@ -43,6 +44,7 @@ public enum Rocan {
     public void onRegistry() {
         // Modules.
         this.moduleManager.registry(new ModuleExample());
+        this.moduleManager.registry(new ModuleBlockHighlight());
 
         // Commands.
         this.commandManager.registry(new CommandPrefix());

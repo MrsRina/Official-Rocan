@@ -4,6 +4,7 @@ import cat.yoink.eventmanager.Listener;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.setting.Setting;
+import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 
 /**
@@ -19,6 +20,6 @@ public class ModuleExample extends Module {
 
     @Listener
     public void onClientTick(ClientTickEvent event) {
-        // Work as update method.
+        ChatUtil.print("" + (boolean) button.getValue());
     }
 }
