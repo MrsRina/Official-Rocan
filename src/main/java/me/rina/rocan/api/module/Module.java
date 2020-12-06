@@ -1,17 +1,23 @@
 package me.rina.rocan.api.module;
 
+import com.google.gson.*;
 import me.rina.rocan.Rocan;
+import me.rina.rocan.api.ISLClass;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.setting.Setting;
 import me.rina.rocan.api.util.chat.ChatUtil;
+import me.rina.turok.util.TurokClass;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 /**
  * @author SrRina
  * @since 15/11/20 at 4:51pm
  */
-public class Module {
+public class Module implements ISLClass {
     private String name;
     private String tag;
 
@@ -85,8 +91,8 @@ public class Module {
     }
 
     public void setEnabled(boolean enabled) {
-        if (isEnabled != enabled) {
-            this.isEnabled = isEnabled;
+        if (this.isEnabled != enabled) {
+            this.isEnabled = enabled;
 
             this.onReload();
         }
@@ -154,7 +160,7 @@ public class Module {
             ChatUtil.print(this.tag + " enabled.");
         }
 
-        Rocan.EVENT_BUS.addEventListener(this);
+        Rocan.EVENT_BUS.remove(this);
 
         this.onEnable();
     }
@@ -166,7 +172,7 @@ public class Module {
             ChatUtil.print(this.tag + " disabled.");
         }
 
-        Rocan.EVENT_BUS.removeEventListener(this);
+        Rocan.EVENT_BUS.register(this);
 
         this.onDisable();
     }
@@ -174,8 +180,105 @@ public class Module {
     /*
      * Overrides.
      */
-    public void onUpdate() {}
-
     protected void onEnable() {}
     protected void onDisable() {}
+
+    /*
+     * Class content;
+     */
+    @Override
+    public void onSave() {
+        try {
+            String pathFolder = Rocan.PATH_CONFIG + "/module/" + this.category.name().toLowerCase() + "/";
+            String pathFile = pathFolder + this.tag + ".json";
+
+            Gson gsonBuilder = new GsonBuilder().setPrettyPrinting().create();
+
+            if (!Files.exists(Paths.get(pathFolder))) {
+                Files.createDirectories(Paths.get(pathFolder));
+            }
+
+            if (!Files.exists(Paths.get(pathFile))) {
+                Files.createFile(Paths.get(pathFile));
+            } else {
+                java.io.File file = new java.io.File(pathFile);
+                file.delete();
+            }
+
+            JsonObject mainJson = new JsonObject();
+
+            mainJson.add("enabled", new JsonPrimitive(this.isEnabled));
+
+            JsonObject jsonSettingList = new JsonObject();
+
+            for (Setting settings : this.settingList) {
+                if (settings.getValue() instanceof Boolean) {
+                    jsonSettingList.add(settings.getTag(), new JsonPrimitive((Boolean) settings.getValue()));
+                }
+
+                if (settings.getValue() instanceof Number) {
+                    jsonSettingList.add(settings.getTag(), new JsonPrimitive((Number) settings.getValue()));
+                }
+
+                if (settings.getValue() instanceof Enum<?>) {
+                    jsonSettingList.add(settings.getTag(), new JsonPrimitive(((Enum<?>) settings.getValue()).name()));
+                }
+            }
+
+            mainJson.add("settings", jsonSettingList);
+
+            String stringJson = gsonBuilder.toJson(new JsonParser().parse(mainJson.toString()));
+
+            OutputStreamWriter fileOutputStream = new OutputStreamWriter(new FileOutputStream(pathFile), "UTF-8");
+
+            fileOutputStream.write(stringJson);
+            fileOutputStream.close();
+        } catch (IOException exc) {
+            exc.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onLoad() {
+        try {
+            String pathFolder = Rocan.PATH_CONFIG + "/module/" + this.category.name().toLowerCase() + "/";
+            String pathFile = pathFolder + this.tag + ".json";
+
+            if (!Files.exists(Paths.get(pathFile))) {
+                return;
+            }
+
+            InputStream file = Files.newInputStream(Paths.get(pathFile));
+
+            JsonObject mainJson = new JsonParser().parse(new InputStreamReader(file)).getAsJsonObject();
+
+            if(mainJson.get("enabled") != null) this.setEnabled(mainJson.get("enabled").getAsBoolean());
+
+            if (mainJson.get("settings") != null) {
+                JsonObject jsonSettingList = mainJson.get("settings").getAsJsonObject();
+
+                for (Setting settings : this.settingList) {
+                    if (jsonSettingList.get(settings.getTag()) == null) {
+                        continue;
+                    }
+
+                    if (settings.getValue() instanceof Boolean) {
+                        settings.setValue(jsonSettingList.get(settings.getTag()).getAsBoolean());
+                    }
+
+                    if (settings.getValue() instanceof Number) {
+                        settings.setValue(jsonSettingList.get(settings.getTag()).getAsNumber());
+                    }
+
+                    if (settings.getValue() instanceof Enum<?>) {
+                        settings.setValue(TurokClass.getEnumByName((Enum<?>) settings.getValue(), jsonSettingList.get(settings.getTag()).getAsString()));
+                    }
+                }
+            }
+
+            file.close();
+        } catch (IOException exc) {
+            exc.printStackTrace();
+        }
+    }
 }

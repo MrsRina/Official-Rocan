@@ -5,7 +5,12 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.command.Command;
 import me.rina.rocan.api.command.management.CommandManager;
 import me.rina.rocan.api.util.chat.ChatUtil;
+import me.rina.rocan.client.event.client.ClientTickEvent;
+import me.rina.rocan.client.event.render.Render2DEvent;
+import me.rina.rocan.client.event.render.Render3DEvent;
 import net.minecraftforge.client.event.ClientChatEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -18,6 +23,25 @@ import org.lwjgl.input.Keyboard;
  * @since 15/11/20 at 7:45pm
  */
 public class EventManager {
+    private float currentRender2DPartialTicks;
+    private float currentRender3DPartialTicks;
+
+    protected void setCurrentRender2DPartialTicks(float currentRender2DPartialTicks) {
+        this.currentRender2DPartialTicks = currentRender2DPartialTicks;
+    }
+
+    public float getCurrentRender2DPartialTicks() {
+        return currentRender2DPartialTicks;
+    }
+
+    protected void setCurrentRender3DPartialTicks(float currentRender3DPartialTicks) {
+        this.currentRender3DPartialTicks = currentRender3DPartialTicks;
+    }
+
+    public float getCurrentRender3DPartialTicks() {
+        return currentRender3DPartialTicks;
+    }
+
     @SubscribeEvent
     public void onUpdate(LivingEvent.LivingUpdateEvent event) {
         if (event.isCanceled()) return;
@@ -25,17 +49,39 @@ public class EventManager {
 
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent event) {
-        if (Rocan.getMinecraft().player == null) {
+        if (Rocan.MC.player == null) {
             return;
         }
 
-        Rocan.getModuleManager().onUpdateModuleList();
+        Rocan.EVENT_BUS.dispatch(new ClientTickEvent());
+    }
+
+    @SubscribeEvent
+    public void onRender(RenderGameOverlayEvent event) {
+        if (Rocan.MC.player == null) {
+            return;
+        }
+
+        this.setCurrentRender2DPartialTicks(event.getPartialTicks());
+
+        Rocan.EVENT_BUS.dispatch(new Render2DEvent(event.getPartialTicks()));
+    }
+
+    @SubscribeEvent
+    public void onWorldRender(RenderWorldLastEvent event) {
+        if (Rocan.MC.player == null) {
+            return;
+        }
+
+        this.setCurrentRender3DPartialTicks(event.getPartialTicks());
+
+        Rocan.EVENT_BUS.dispatch(new Render3DEvent(event.getPartialTicks()));
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH, receiveCanceled = true)
     public void onKeyInput(InputEvent.KeyInputEvent event) {
         if (Keyboard.getEventKeyState()) {
-            Rocan.getModuleManager().onKeyBinding(Keyboard.getEventKey());
+            Rocan.getModuleManager().onKeyPressed(Keyboard.getEventKey());
         }
     }
 

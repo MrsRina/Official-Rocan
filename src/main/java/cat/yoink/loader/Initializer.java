@@ -10,7 +10,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
  * @author yoink
  * @since 17/11/2020
  */
-@Mod(modid = "rocan", name = "Rocan", version = "1")
+@Mod(modid = "rocan", name = "Rocan", version = "0.0.1")
 public final class Initializer
 {
     @Mod.EventHandler

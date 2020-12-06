@@ -1,5 +1,6 @@
 package me.rina.rocan.mixin;
 
+import me.rina.rocan.Rocan;
 import net.minecraft.client.Minecraft;
 import net.minecraft.crash.CrashReport;
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,9 +17,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinMinecraft {
     @Inject(method = "shutdown", at = @At("HEAD"))
     public void onShutdown(CallbackInfo callbackInfo) {
+        Rocan.onEnd();
     }
 
     @Redirect(method = "run", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;displayCrashReport(Lnet/minecraft/crash/CrashReport;)V"))
     public void onRun(Minecraft minecraft, CrashReport crashReport) {
+        Rocan.onEnd();
     }
 }

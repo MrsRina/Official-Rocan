@@ -57,7 +57,6 @@ repositories {
 
 dependencies {
 	compile "club.minnced:java-discord-rpc:v2.0.1" // Discord rpc.
-	compile "com.github.Katatje:EventManager:1.0" // Katatje event manager;
 
 	compile group : "net.jodah", name : "typetools",   version: "0.5.0" // TypeTools.
 
@@ -71,7 +70,6 @@ dependencies {
 
 shadowJar {
 	dependencies {
-		include(dependency("com.github.Katatje:EventManager:"))
 		include(dependency("club.minnced:java-discord-rpc"))
 		include(dependency("org.javassist:javassist"))
 		include(dependency("org.spongepowered:mixin"))

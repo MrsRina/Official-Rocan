@@ -17,8 +17,6 @@ public class TurokDisplay {
 
     public TurokDisplay(Minecraft mc) {
         this.mc = mc;
-
-        this.scaleFactor = 1;
     }
 
     public int getWidth() {
@@ -45,21 +43,16 @@ public class TurokDisplay {
         return scaleFactor;
     }
 
-    public void setPartialTicks(float partialTicks) {
-        this.partialTicks = partialTicks;
-    }
-
     public float getPartialTicks() {
+        this.onUpdate();
+
         return partialTicks;
     }
 
-    public float getRenderPartialTicks() {
-        float _partialTicks = mc.isGamePaused() ? (Minecraft.getDebugFPS() / this.mc.getTickLength()) : mc.getRenderPartialTicks();
-
-        return _partialTicks;
-    }
-
     protected void onUpdate() {
+        this.partialTicks = this.mc.isGamePaused() ? mc.renderPartialTicksPaused : mc.getRenderPartialTicks();
+        this.scaleFactor = 1;
+
         boolean isUnicode = this.mc.isUnicode();
 
         int minecraftScale = this.mc.gameSettings.guiScale;

@@ -4,6 +4,10 @@ import me.rina.rocan.api.event.Event;
 import me.rina.rocan.api.event.impl.EventStage;
 import net.minecraft.network.Packet;
 
+/**
+ * @author SrRina
+ * @since 05/12/20 at 11:59pm
+ */
 public class EventPacket extends Event {
     public static class Send extends EventPacket {
         public Send(Packet packet) {

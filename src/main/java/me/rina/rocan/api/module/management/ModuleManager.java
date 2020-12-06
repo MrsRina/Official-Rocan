@@ -50,15 +50,7 @@ public class ModuleManager {
         return moduleList;
     }
 
-    public void onUpdateModuleList() {
-        for (Module modules : this.getModuleList()) {
-            if (modules.isEnabled()) {
-                modules.onUpdate();
-            }
-        }
-    }
-
-    public void onKeyBinding(int keyCode) {
+    public void onKeyPressed(int keyCode) {
         for (Module modules : this.getModuleList()) {
             if (modules.getKeyCode() == keyCode) {
                 modules.toggle();

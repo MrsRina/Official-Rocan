@@ -15,6 +15,13 @@ public class Setting {
     private Object minimum;
     private Object maximum;
 
+    /*
+     * So it is basically the render for GUI,
+     * when false won't render the setting,
+     * this make the client very pretty and organized.
+     */
+    private boolean rendering = true;
+
     public Setting(String name, String tag, String description, Object value) {
         this.name = name;
         this.tag = tag;
@@ -68,10 +75,6 @@ public class Setting {
         return value;
     }
 
-    public Class[] getValueClasses() {
-        return value.getClass().getClasses();
-    }
-
     public void setMinimum(Object minimum) {
         this.minimum = minimum;
     }
@@ -86,5 +89,13 @@ public class Setting {
 
     public Object getMaximum() {
         return maximum;
+    }
+
+    public void setRendering(boolean rendering) {
+        this.rendering = rendering;
+    }
+
+    public boolean isRendering() {
+        return rendering;
     }
 }
