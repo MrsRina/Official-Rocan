@@ -1,0 +1,144 @@
+buildscript {
+	repositories {
+		jcenter()
+
+		maven {
+			name = "SpongePowered"
+			url = "http://repo.spongepowered.org/maven"
+		}
+
+		maven {
+			url = "http://files.minecraftforge.net/maven"
+		}
+	}
+
+	dependencies {
+		classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
+		classpath "com.github.jengelman.gradle.plugins:shadow:1.2.3"
+		classpath "org.spongepowered:mixingradle:0.4-SNAPSHOT"
+	}
+}
+
+apply plugin: "net.minecraftforge.gradle.forge";
+apply plugin: "com.github.johnrengelman.shadow";
+apply plugin: "org.spongepowered.mixin"
+
+version project.clientVersion
+group project.clientGroup
+
+archivesBaseName = "Rocan"
+
+minecraft {
+	version = "1.12.2-14.23.0.2531"
+	runDir = "run"
+	coreMod = "cat.yoink.loader.Core"
+	mappings = "snapshot_20180814"
+	makeObfSourceJar = true
+}
+
+repositories {
+	maven {
+		name = "spongepowered-repo"
+		url  = "http://repo.spongepowered.org/maven/"
+	}
+
+	maven {
+		name = "swt-repo"
+		url  = "http://maven-eclipse.github.io/maven"
+	}
+
+	maven {
+		name = "jitpack.io"
+		url  = "https://jitpack.io"
+	}
+
+	mavenCentral()
+}
+
+dependencies {
+	compile "club.minnced:java-discord-rpc:v2.0.1" // Discord rpc.
+	compile "com.github.Katatje:EventManager:1.0" // Katatje event manager;
+
+	compile group : "net.jodah", name : "typetools",   version: "0.5.0" // TypeTools.
+
+	compile("org.spongepowered:mixin:0.7.4-SNAPSHOT") { // Somes others.
+		exclude module: "launchwrapper"
+		exclude module: "commons-io"
+		exclude module: "guava"
+		exclude module: "gson"
+	}
+}
+
+shadowJar {
+	dependencies {
+		include(dependency("com.github.Katatje:EventManager:"))
+		include(dependency("club.minnced:java-discord-rpc"))
+		include(dependency("org.javassist:javassist"))
+		include(dependency("org.spongepowered:mixin"))
+		include(dependency("net.jodah:typetools"))
+	}
+}
+
+mixin {
+	defaultObfuscationEnv searge
+	add sourceSets.main, "mixins.rocan.refmap.json"
+}
+
+reobf {
+	shadowJar {
+		mappingType = 'SEARGE'
+		classpath = sourceSets.main.compileClasspath
+	}
+}
+
+processResources {
+	inputs.property "version", project.version
+	inputs.property "mcversion", project.minecraft.version
+
+	from (sourceSets.main.resources.srcDirs) {
+		include "mcmod.info"
+
+		expand "version" : project.version, "mcversion" : project.minecraft.version
+	}
+
+	from (sourceSets.main.resources.srcDirs) {
+		exclude "mcmod.info"
+	}
+
+	rename "(.+_at.cfg)", 'META-INF/$1';
+}
+
+jar {
+	manifest {
+		attributes (
+			"FMLCorePluginContainsFMLMod" : "true",
+			"ForceLoadAsMod"              : "true",
+			"FMLCorePlugin"               : "cat.yoink.loader.Core",
+			"MixinConfigs"                : "mixins.rocan.json",
+			"tweakClass"                  : "org.spongepowered.asm.launch.MixinTweaker",
+			"TweakOrder"                  : 0,
+			"FMLAT"                       : "rocan_at.cfg"
+		)
+	}
+}
+
+task clientJar(type: Jar, dependsOn: jar) {
+	from(zipTree(shadowJar.archivePath)) {
+		include "me/rina/**"
+	}
+	baseName = ""
+	version = ""
+	classifier = "client"
+}
+
+task loaderJar(type: Jar, dependsOn: shadowJar) {
+	from(zipTree(shadowJar.archivePath)) {
+		exclude "me/rina/**"
+	}
+	baseName = ""
+	version = ""
+	classifier = "loader"
+	manifest = jar.manifest
+}
+
+build.dependsOn(clientJar, loaderJar)

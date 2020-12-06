@@ -1,0 +1,10 @@
+{
+	"required"           : true,
+	"compatibilityLevel" : "JAVA_8",
+	"package"            : "me.rina.mixin",
+	"refmap"             : "mixins.rocan.refmap.json",
+	"mixins"             : [
+		"MixinNetworkManager",
+		"MixinMinecraft"
+	]
+}

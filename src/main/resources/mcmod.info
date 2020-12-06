@@ -1,0 +1,16 @@
+[
+{
+  "modid": "rocan",
+  "name": "Rocan",
+  "description": "Rocan utility mod. a paid client with some of the best bypasses.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["imax, rina, yoink, and jake"],
+  "credits": "IMAX, RINA, YOINK, AND JAKE, for being the devs. also rina again for being chad",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
