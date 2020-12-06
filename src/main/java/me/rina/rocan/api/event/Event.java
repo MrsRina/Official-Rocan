@@ -11,16 +11,16 @@ public class Event {
 
     private boolean isCanceled;
 
-    public Event() {}
+    public Event() {
+        this.stage = EventStage.Pre;
+    }
 
     public Event(EventStage stage) {
         this.stage = stage;
-        this.isCanceled = false;
     }
 
     public void setStage(EventStage stage) {
         this.stage = stage;
-        this.isCanceled = false;
     }
 
     public EventStage getStage() {
