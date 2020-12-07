@@ -5,5 +5,5 @@ package me.rina.rocan.api.module.impl;
  * @since 15/11/20 at 4:51pm
  */
 public enum ModuleCategory {
-    Combat, Render, Client;
+    Combat, Movement, Render, Exploit, Misc, Client;
 }

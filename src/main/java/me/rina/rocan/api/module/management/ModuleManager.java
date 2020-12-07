@@ -2,7 +2,6 @@ package me.rina.rocan.api.module.management;
 
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.setting.Setting;
-import me.rina.rocan.client.module.ModuleExample;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

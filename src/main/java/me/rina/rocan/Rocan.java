@@ -7,7 +7,8 @@ import me.rina.rocan.api.event.management.EventManager;
 import me.rina.rocan.api.module.management.ModuleManager;
 import me.rina.rocan.client.command.CommandPrefix;
 import me.rina.rocan.client.command.CommandToggle;
-import me.rina.rocan.client.module.ModuleExample;
+import me.rina.rocan.client.gui.GUI;
+import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.module.render.ModuleBlockHighlight;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
@@ -41,9 +42,12 @@ public enum Rocan {
     private EventManager clientEventManager;
     private CommandManager commandManager;
 
+    private ModuleClickGUI moduleClickGUI;
+    private GUI _GUI;
+
     public void onRegistry() {
         // Modules.
-        this.moduleManager.registry(new ModuleExample());
+        this.moduleManager.registry(new me.rina.rocan.client.module.client.ModuleClickGUI());
         this.moduleManager.registry(new ModuleBlockHighlight());
 
         // Commands.
@@ -65,6 +69,10 @@ public enum Rocan {
         this.clientEventManager = new EventManager();
         this.commandManager = new CommandManager();
 
+        this._GUI = new GUI();
+
+        this.moduleClickGUI = new ModuleClickGUI();
+
         MinecraftForge.EVENT_BUS.register(this.clientEventManager);
         MinecraftForge.EVENT_BUS.register(this.commandManager);
 
@@ -82,6 +90,14 @@ public enum Rocan {
 
     public static CommandManager getCommandManager() {
         return INSTANCE.commandManager;
+    }
+
+    public static ModuleClickGUI getModuleClickGUI() {
+        return INSTANCE.moduleClickGUI;
+    }
+
+    public static GUI getGUI() {
+        return INSTANCE._GUI;
     }
 
     public static Minecraft getMinecraft() {

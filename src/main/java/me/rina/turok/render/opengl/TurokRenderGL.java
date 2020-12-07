@@ -655,6 +655,18 @@ public class TurokRenderGL {
 		GL11.glTranslated(x, y, 0);
 	}
 
+	public static void rotate(float angle, float x, float y, float z) {
+		GL11.glRotatef(angle, x, y, z);
+	}
+
+	public static void rotate(double angle, double x, double y, double z) {
+		GL11.glRotated(angle, x, y, z);
+	}
+
+	public static void rotate(int angle, int x, int y, int z) {
+		GL11.glRotated(angle, x, y, z);
+	}
+
 	public static void scale(float scaledPosX, float scaledPosY, float scaledPosZ) {
 		GL11.glScaled(scaledPosX, scaledPosY, scaledPosZ);
 	}
