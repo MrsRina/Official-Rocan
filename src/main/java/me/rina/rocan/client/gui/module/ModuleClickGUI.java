@@ -4,6 +4,7 @@ import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.turok.hardware.mouse.TurokMouse;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.util.TurokDisplay;
+import me.rina.turok.util.TurokMath;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.opengl.GL11;
 
@@ -16,11 +17,6 @@ public class ModuleClickGUI extends GuiScreen {
     protected TurokMouse mouse;
 
     private MotherFrame motherFrame;
-
-    /*
-     * THIS WILL BE REMOVED;
-     */
-    public boolean effectTestMouse = true;
 
     public ModuleClickGUI() {
         TurokRenderGL.init();
@@ -60,10 +56,13 @@ public class ModuleClickGUI extends GuiScreen {
          * We need fix the scale;
          */
         TurokRenderGL.autoScale();
-
         TurokRenderGL.disable(GL11.GL_TEXTURE_2D);
 
+        TurokRenderGL.pushMatrix();
+
         this.motherFrame.onRender();
+
+        TurokRenderGL.popMatrix();
 
         TurokRenderGL.enable(GL11.GL_TEXTURE_2D);
 

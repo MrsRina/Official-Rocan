@@ -99,6 +99,8 @@ public class TurokRenderGL {
 	}
 
 	public static void drawOutlineRectFadingMouse(float x, float y, float w, float h, int radius, Color color) {
+		pushMatrix();
+
 		float offset = 0.5f;
 
 		float vx = x - INSTANCE.mouse.getX();
@@ -109,8 +111,7 @@ public class TurokRenderGL {
 
 		int valueAlpha = color.getAlpha();
 
-		enable(GL11.GL_BLEND);
-		blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		enableAlphaBlend();
 
 		shaderMode(GL11.GL_SMOOTH);
 
@@ -134,6 +135,10 @@ public class TurokRenderGL {
 		}
 
 		release();
+
+		disableAlphaBlend();
+
+		popMatrix();
 	}
 
 	public static void drawSolidRectFadingMouse(TurokRect rect, int radius, Color color) {
@@ -141,6 +146,8 @@ public class TurokRenderGL {
 	}
 
 	public static void drawSolidRectFadingMouse(float x, float y, float w, float h, int radius, Color color) {
+		pushMatrix();
+
 		float vx = x - INSTANCE.mouse.getX();
 		float vy = y - INSTANCE.mouse.getY();
 
@@ -149,8 +156,7 @@ public class TurokRenderGL {
 
 		int valueAlpha = color.getAlpha();
 
-		enable(GL11.GL_BLEND);
-		blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		enableAlphaBlend();
 
 		prepare(GL11.GL_QUADS);
 		{
@@ -168,6 +174,10 @@ public class TurokRenderGL {
 		}
 
 		release();
+
+		disableAlphaBlend();
+
+		popMatrix();
 	}
 
 	public static void drawScissor(int x, int y, int w, int h) {
@@ -213,8 +223,9 @@ public class TurokRenderGL {
 	}
 
 	public static void drawUpTriangle(float x, float y, float width, float height, int offsetX) {
-		enable(GL11.GL_BLEND);
-		blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		pushMatrix();
+
+		enableAlphaBlend();
 
 		prepare(GL11.GL_TRIANGLE_FAN);
 		{
@@ -224,11 +235,16 @@ public class TurokRenderGL {
 		}
 
 		release();
+
+		disableAlphaBlend();
+
+		popMatrix();
 	}
 
 	public static void drawDownTriangle(float x, float y, float width, float height, int offsetX) {
-		enable(GL11.GL_BLEND);
-		blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		pushMatrix();
+
+		enableAlphaBlend();
 
 		prepare(GL11.GL_TRIANGLE_FAN);
 		{
@@ -238,9 +254,15 @@ public class TurokRenderGL {
 		}
 
 		release();
+
+		popMatrix();
 	}
 
 	public static void drawArc(float cx, float cy, float r, float start_angle, float end_angle, float num_segments) {
+		pushMatrix();
+
+		enableAlphaBlend();
+
 		prepare(GL11.GL_TRIANGLES);
 
 		for (int i = (int) (num_segments / (360 / start_angle)) + 1; i <= num_segments / (360 / end_angle); i++) {
@@ -253,6 +275,10 @@ public class TurokRenderGL {
 		}
 
 		release();
+
+		disableAlphaBlend();
+
+		popMatrix();
 	}
 
 	public static void drawArc(float x, float y, float radius) {
@@ -260,6 +286,10 @@ public class TurokRenderGL {
 	}
 
 	public static void drawArcOutline(float cx, float cy, float r, float start_angle, float end_angle, float num_segments) {
+		pushMatrix();
+
+		enableAlphaBlend();
+
 		prepare(GL11.GL_LINE_LOOP);
 
 		for (int i = (int) (num_segments / (360 / start_angle)) + 1; i <= num_segments / (360 / end_angle); i++) {
@@ -269,6 +299,10 @@ public class TurokRenderGL {
 		}
 
 		release();
+
+		disableAlphaBlend();
+
+		popMatrix();
 	}
 
 	public static void drawArcOutline(float x, float y, float radius) {
@@ -276,20 +310,23 @@ public class TurokRenderGL {
 	}
 
 	public static void drawOutlineRect(float x, float y, float width, float height) {
-		float offset = 0.5f;
+		pushMatrix();
 
-		enable(GL11.GL_BLEND);
-		blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		enableAlphaBlend();
 
 		prepare(GL11.GL_LINE_LOOP);
 		{
-			addVertex(x + offset, y);
-			addVertex(x + offset,y + height + offset);
+			addVertex(x, y);
+			addVertex(x,y + height);
 			addVertex(x + width, y + height);
 			addVertex(x + width, y);
 		}
 
 		release();
+
+		disableAlphaBlend();
+
+		popMatrix();
 	}
 
 	public static void drawOutlineRect(int x, int y, int width, int height) {
@@ -309,9 +346,9 @@ public class TurokRenderGL {
 	}
 
 	public static void drawRoundedRect(float x, float y, float width, float height, float radius) {
-		enable(GL11.GL_BLEND);
+		pushMatrix();
 
-		blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		enableAlphaBlend();
 
 		drawArc((x + width - radius), (y + height - radius), radius, 0, 90, 16);
 		drawArc((x + radius), (y + height - radius), radius, 90, 180, 16);
@@ -349,6 +386,10 @@ public class TurokRenderGL {
 		}
 
 		release();
+
+		disableAlphaBlend();
+
+		popMatrix();
 	}
 
 	public static void drawRoundedRect(TurokRect rect, float size) {
@@ -356,8 +397,9 @@ public class TurokRenderGL {
 	}
 
 	public static void drawSolidRect(float x, float y, float width, float height) {
-		enable(GL11.GL_BLEND);
-		blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		pushMatrix();
+
+		enableAlphaBlend();
 
 		prepare(GL11.GL_QUADS);
 		{
@@ -368,6 +410,10 @@ public class TurokRenderGL {
 		}
 
 		release();
+
+		disableAlphaBlend();
+
+		popMatrix();
 	}
 
 	public static void drawSolidRect(int x, int y, int width, int height) {
@@ -379,6 +425,8 @@ public class TurokRenderGL {
 	}
 
 	public static void drawLine(int x, int y, int x1, int xy, float line) {
+		pushMatrix();
+
 		enableAlphaBlend();
 
 		lineSize(line);
@@ -390,6 +438,10 @@ public class TurokRenderGL {
 		}
 
 		release();
+
+		disableAlphaBlend();
+
+		popMatrix();
 	}
 
 	public static void drawLine3D(double x, double y, double z, double x1, double y1, double z1, int r, int g, int b, int a, float line) {
@@ -424,8 +476,8 @@ public class TurokRenderGL {
 		GlStateManager.enableDepth();
 
 		disable(GL32.GL_DEPTH_CLAMP);
+		disableAlphaBlend();
 
-		GlStateManager.disableBlend();
 		GlStateManager.enableAlpha();
 		GlStateManager.enableTexture2D();
 		GlStateManager.popMatrix();
@@ -738,7 +790,7 @@ public class TurokRenderGL {
 		enable(GL11.GL_TEXTURE_2D);
 		enable(GL11.GL_BLEND);
 
-		GlStateManager.enableBlend();
+		enableAlphaBlend();
 
 		popMatrix();
 	}

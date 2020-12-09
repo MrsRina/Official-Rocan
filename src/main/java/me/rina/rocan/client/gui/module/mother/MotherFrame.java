@@ -4,7 +4,9 @@ import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.frame.Frame;
 import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.module.impl.ModuleCategory;
+import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
+import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.util.TurokMath;
 
@@ -31,6 +33,10 @@ public class MotherFrame extends Frame {
 
     private ArrayList<Widget> loadedWidgetList;
 
+    private int widgetHeight;
+
+    private Widget widgetSelected;
+
     public Flag flagMouse = Flag.MouseNotOver;
 
     public MotherFrame(ModuleClickGUI master) {
@@ -45,15 +51,22 @@ public class MotherFrame extends Frame {
         this.loadedWidgetList = new ArrayList<>();
 
         for (ModuleCategory category : ModuleCategory.values()) {
+            ModuleCategoryWidget moduleCategoryWidget = new ModuleCategoryWidget(this.master, this, category);
+
+            moduleCategoryWidget.setOffsetX(this.scaleWidth);
+
+            this.loadedWidgetList.add(moduleCategoryWidget);
+
+            this.widgetHeight = moduleCategoryWidget.getRect().getHeight();
+            this.widgetSelected = moduleCategoryWidget;
+
+            this.scaleWidth += moduleCategoryWidget.getRect().getWidth();
         }
     }
 
     public void updateScale() {
-        this.scaleX = this.master.getDisplay().getScaledWidth() / (((this.scale * 2) + (this.scale * 2)));
+        this.scaleX = (this.master.getDisplay().getScaledWidth() - this.scaleWidth) /  (this.scale);
         this.scaleY = this.master.getDisplay().getScaledHeight() / (((this.scale * 2) + (this.scale * 2)));
-
-        this.scaleWidth = this.master.getDisplay().getScaledWidth() - (this.scaleX * this.scale);
-        this.scaleHeight = this.master.getDisplay().getScaledHeight() - (this.scaleY * this.scale);
     }
 
     public void setScale(int scale) {
@@ -103,10 +116,26 @@ public class MotherFrame extends Frame {
         this.rect.setX(this.scaleX);
         this.rect.setY(this.scaleY);
 
-        this.rect.setWidth(TurokMath.min(this.scaleWidth, 200));
+        this.rect.setWidth(this.scaleWidth);
         this.rect.setHeight(TurokMath.min(this.scaleHeight, 200));
 
-        TurokRenderGL.color(0, 0, 0, 255);
+        TurokRenderGL.color(0, 0, 0, 100);
         TurokRenderGL.drawSolidRect(this.rect);
+
+        TurokRenderGL.color(0, 0, 0, 200);
+        TurokRenderGL.drawSolidRect(this.rect.getX(), this.rect.getY(), this.rect.getWidth(), this.widgetHeight);
+
+        for (Widget widgets : this.loadedWidgetList) {
+            widgets.onRender();
+
+            this.widgetSelected = widgets;
+        }
+
+        if (this.widgetSelected != null) {
+            this.widgetSelected.onCustomRender();
+        }
+
+        TurokRenderGL.color(255, 255, 255, 100);
+        TurokRenderGL.drawOutlineRect(this.rect.getX(), this.rect.getY(), this.rect.getWidth(), this.widgetHeight);
     }
 }

@@ -5,10 +5,7 @@ package me.rina.rocan.api.setting;
  * @since 15/11/20 at 4:51pm
  */
 public class Setting {
-    private String name;
-    private String tag;
-
-    private String description;
+    private String name, tag, description;
 
     private Object value;
 

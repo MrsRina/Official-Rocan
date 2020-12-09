@@ -23,10 +23,8 @@ import java.util.ArrayList;
 public class Module implements ISLClass {
     public Minecraft mc = Rocan.MC;
 
-    private String name;
-    private String tag;
+    private String name, tag, description;
 
-    private String description;
     private String infoHUDEnabledList;
 
     private ModuleCategory category;
