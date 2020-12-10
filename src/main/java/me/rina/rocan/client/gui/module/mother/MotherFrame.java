@@ -69,6 +69,14 @@ public class MotherFrame extends Frame {
         this.scaleY = this.master.getDisplay().getScaledHeight() / (((this.scale * 2) + (this.scale * 2)));
     }
 
+    public void setWidgetSelected(Widget widgetSelected) {
+        this.widgetSelected = widgetSelected;
+    }
+
+    public Widget getWidgetSelected() {
+        return widgetSelected;
+    }
+
     public void setScale(int scale) {
         this.scale = scale;
     }
@@ -110,6 +118,28 @@ public class MotherFrame extends Frame {
     }
 
     @Override
+    public void onMouseReleased(int button) {
+        for (Widget widgets : this.loadedWidgetList) {
+            widgets.onMouseReleased(button);
+        }
+
+        if (this.widgetSelected != null) {
+            this.widgetSelected.onCustomMouseReleased(button);
+        }
+    }
+
+    @Override
+    public void onMouseClicked(int button) {
+        for (Widget widgets : this.loadedWidgetList) {
+            widgets.onCustomMouseClicked(button);
+        }
+
+        if (this.widgetSelected != null) {
+            this.widgetSelected.onCustomMouseClicked(button);
+        }
+    }
+
+    @Override
     public void onRender() {
         this.updateScale();
 
@@ -127,9 +157,9 @@ public class MotherFrame extends Frame {
 
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onRender();
-
-            this.widgetSelected = widgets;
         }
+
+        this.widgetSelected = this.loadedWidgetList.get(this.loadedWidgetList.size() - 1);
 
         if (this.widgetSelected != null) {
             this.widgetSelected.onCustomRender();

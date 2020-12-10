@@ -4,6 +4,7 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.module.impl.ModuleCategory;
+import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
@@ -29,6 +30,8 @@ public class ModuleCategoryWidget extends Widget {
 
     private ModuleContainer container;
 
+    private boolean isMouseClickedLeft;
+
     public Flag flagMouse = Flag.MouseNotOver;
 
     public ModuleCategoryWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategory category) {
@@ -42,7 +45,7 @@ public class ModuleCategoryWidget extends Widget {
         this.rect.setWidth(100);
         this.rect.setHeight(6 + TurokFontManager.getStringHeight(Rocan.getGUI().fontModuleCategoryWidget, this.rect.getTag()) + 6);
 
-        this.container = new ModuleContainer(this.master, this.frame, this);
+        this.container = new ModuleContainer(this.master, this.frame, this, this.category);
     }
 
     public void setOffsetX(int offsetX) {
@@ -78,6 +81,32 @@ public class ModuleCategoryWidget extends Widget {
     }
 
     @Override
+    public void onMouseReleased(int button) {
+        if (this.isMouseClickedLeft) {
+            this.frame.setWidgetSelected(this);
+
+            this.isMouseClickedLeft = false;
+        }
+    }
+
+    @Override
+    public void onCustomMouseReleased(int button) {
+    }
+
+    @Override
+    public void onMouseClicked(int button) {
+        if (this.flagMouse == Flag.MouseOver) {
+            if (button == 0) {
+                this.isMouseClickedLeft = true;
+            }
+        }
+    }
+
+    @Override
+    public void onCustomMouseClicked(int button) {
+    }
+
+    @Override
     public void onRender() {
         this.rect.setX(this.frame.getRect().getX() + this.offsetX);
         this.rect.setY(this.frame.getRect().getY() + this.offsetY);
@@ -85,11 +114,7 @@ public class ModuleCategoryWidget extends Widget {
         this.rect.setWidth(100);
         this.rect.setHeight(6 + TurokFontManager.getStringHeight(Rocan.getGUI().fontModuleCategoryWidget, this.rect.getTag()) + 6);
 
-        TurokRenderGL.enable(GL11.GL_SCISSOR_TEST);
-
-        TurokRenderGL.drawScissor(this.rect.getX(), this.rect.getY(), this.rect.getWidth(), this.rect.getHeight());
-
-        TurokRenderGL.disable(GL11.GL_SCISSOR_TEST);
+        this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
 
         TurokFontManager.render(Rocan.getGUI().fontModuleCategoryWidget, this.rect.getTag(), this.rect.getX() + (this.rect.getWidth() / 2 - (TurokFontManager.getStringWidth(Rocan.getGUI().fontModuleCategoryWidget, this.rect.getTag()) / 2)), this.rect.getY() + 6, true, new Color(255, 255, 255));
     }
@@ -97,5 +122,7 @@ public class ModuleCategoryWidget extends Widget {
     @Override
     public void onCustomRender() {
         this.container.onRender();
+
+        ChatUtil.print(this.rect.getTag());
     }
 }

@@ -45,6 +45,17 @@ public class ModuleClickGUI extends GuiScreen {
     }
 
     @Override
+    public void mouseReleased(int mousePositionX, int mousePositionY, int button) {
+        this.motherFrame.onMouseReleased(button);
+    }
+
+
+    @Override
+    public void mouseClicked(int mousePositionX, int mousePositionY, int button) {
+        this.motherFrame.onMouseClicked(button);
+    }
+
+    @Override
     public void drawScreen(int mousePositionX, int mousePositionY, float partialTicks) {
         this.display = new TurokDisplay(mc);
         this.mouse = new TurokMouse(mousePositionX, mousePositionY);
