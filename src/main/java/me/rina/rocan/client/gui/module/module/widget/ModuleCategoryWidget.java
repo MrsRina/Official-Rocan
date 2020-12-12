@@ -8,7 +8,9 @@ import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.turok.render.font.management.TurokFontManager;
+import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.util.TurokMath;
+import me.rina.turok.util.TurokRect;
 
 import java.awt.*;
 
@@ -136,15 +138,22 @@ public class ModuleCategoryWidget extends Widget {
 
         this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
 
-        this.alphaEffect = this.flagMouse == Flag.MouseOver ? (int) TurokMath.linearInterpolation(this.alphaEffect, 100, this.master.getDisplay().getPartialTicks()) : (int) TurokMath.linearInterpolation(this.alphaEffect, 0, this.master.getDisplay().getPartialTicks());
+        this.alphaEffect = this.flagMouse == Flag.MouseOver ? (int) TurokMath.linearInterpolation(this.alphaEffect, 50, this.master.getDisplay().getPartialTicks()) : (int) TurokMath.linearInterpolation(this.alphaEffect, 0, this.master.getDisplay().getPartialTicks());
 
         TurokFontManager.render(Rocan.getGUI().fontModuleCategoryWidget, this.rect.getTag(), this.rect.getX() + (this.rect.getWidth() / 2 - (TurokFontManager.getStringWidth(Rocan.getGUI().fontModuleCategoryWidget, this.rect.getTag()) / 2)), this.rect.getY() + 6, true, new Color(255, 255, 255));
+
+        TurokRenderGL.color(255, 255, 255, alphaEffect);
+        TurokRenderGL.drawOutlineRect(this.rect);
 
         if (this.isSelected) {
             this.container.getRect().setWidth((int) TurokMath.linearInterpolation(this.container.getRect().getWidth(), this.container.getWidthScale(), this.master.getPartialTicks()));
             this.container.getRect().setHeight((int) TurokMath.linearInterpolation(this.container.getRect().getHeight(), this.container.getHeightScale(), this.master.getPartialTicks()));
 
-            this.frame.getRectWidgetSelected().setX((int) TurokMath.linearInterpolation(this.frame.getRectWidgetSelected().getX(), this.rect.getX(), this.master.getDisplay().getPartialTicks()));
+            if (this.frame.getRectWidgetSelected().getDistance(this.rect) >= 10) {
+                this.frame.getRectWidgetSelected().setX((int) TurokMath.linearInterpolation(this.frame.getRectWidgetSelected().getX(), this.rect.getX(), this.master.getPartialTicks()));
+            } else {
+                this.frame.getRectWidgetSelected().setX(this.rect.getX());
+            }
         } else {
             this.container.getRect().setWidth((int) TurokMath.linearInterpolation(this.container.getRect().getWidth(), 0, this.master.getPartialTicks()));
             this.container.getRect().setHeight((int) TurokMath.linearInterpolation(this.container.getRect().getHeight(), 0, this.master.getPartialTicks()));

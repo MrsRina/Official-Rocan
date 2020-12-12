@@ -133,12 +133,14 @@ public class ModuleClickGUI extends GuiScreen {
         } else {
             this.motherFrame.setScaleX((int) TurokMath.linearInterpolation(this.motherFrame.getScaleX(), TurokMath.negative(this.motherFrame.getRect().getWidth()) - 10, partialTicks));
 
-            this.mouse.setPos(this.display.getScaledWidth() / 2, this.display.getScaledHeight() / 2);
-
             if (this.motherFrame.getRect().getX() <= TurokMath.negative(this.motherFrame.getRect().getWidth())) {
                 this.onGuiClosed();
 
+                this.mouse.setPos(this.display.getScaledWidth() / 2, this.display.getScaledHeight() / 2);
+
                 mc.displayGuiScreen(null);
+
+                this.mouse.setPos(this.display.getScaledWidth() / 2, this.display.getScaledHeight() / 2);
             }
         }
 
