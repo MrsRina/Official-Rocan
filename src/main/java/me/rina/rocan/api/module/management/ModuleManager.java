@@ -1,6 +1,7 @@
 package me.rina.rocan.api.module.management;
 
 import me.rina.rocan.api.module.Module;
+import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.setting.Setting;
 
 import java.lang.reflect.Field;
@@ -78,5 +79,17 @@ public class ModuleManager {
         }
 
         return null;
+    }
+
+    public static ArrayList<Module> get(ModuleCategory category) {
+        ArrayList<Module> moduleListRequested = new ArrayList<>();
+
+        for (Module modules : INSTANCE.getModuleList()) {
+            if (modules.getCategory() == category) {
+                moduleListRequested.add(modules);
+            }
+        }
+
+        return moduleListRequested;
     }
 }

@@ -5,6 +5,7 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.setting.Setting;
+import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.api.util.render.Render3DUtil;
 import me.rina.rocan.client.event.render.Render3DEvent;
 import net.minecraft.init.Blocks;
@@ -50,19 +51,11 @@ public class ModuleBlockHighlight extends Module {
             return;
         }
 
-        if (renderOutline.getValue() == RenderOutline.Enabled) {
-            renderOutlineLineSize.setEnabled(true);
-            renderOutlineRed.setEnabled(true);
-            renderOutlineGreen.setEnabled(true);
-            renderOutlineBlue.setEnabled(true);
-            renderOutlineAlpha.setEnabled(true);
-        } else {
-            renderOutlineLineSize.setEnabled(false);
-            renderOutlineRed.setEnabled(false);
-            renderOutlineGreen.setEnabled(false);
-            renderOutlineBlue.setEnabled(false);
-            renderOutlineAlpha.setEnabled(false);
-        }
+        renderOutlineLineSize.setEnabled(renderOutline.getValue() == RenderOutline.Enabled);
+        renderOutlineRed.setEnabled(renderOutline.getValue() == RenderOutline.Enabled);
+        renderOutlineGreen.setEnabled(renderOutline.getValue() == RenderOutline.Enabled);
+        renderOutlineBlue.setEnabled(renderOutline.getValue() == RenderOutline.Enabled);
+        renderOutlineAlpha.setEnabled(renderOutline.getValue() == RenderOutline.Enabled);
 
         if ((boolean) renderRGB.getValue()) {
             renderRed.setValue(Rocan.getClientEventManager().getCurrentRGBColor().getRed());
@@ -81,7 +74,9 @@ public class ModuleBlockHighlight extends Module {
 
         RayTraceResult splitResult = mc.objectMouseOver;
 
-        if (splitResult.typeOfHit == RayTraceResult.Type.BLOCK) {
+        if (splitResult != null && splitResult.typeOfHit == RayTraceResult.Type.BLOCK) {
+            ChatUtil.print(splitResult.toString());
+
             BlockPos blockPosition = splitResult.getBlockPos();
 
             if (mc.world.getBlockState(blockPosition) != Blocks.AIR) {

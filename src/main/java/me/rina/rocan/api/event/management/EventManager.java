@@ -95,7 +95,9 @@ public class EventManager {
 
         this.setCurrentRender3DPartialTicks(event.getPartialTicks());
 
-        Rocan.EVENT_BUS.dispatch(new Render3DEvent(event.getPartialTicks()));
+        Render3DEvent _event = new Render3DEvent(event.getPartialTicks());
+
+        Rocan.EVENT_BUS.dispatch(_event);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH, receiveCanceled = true)

@@ -6,6 +6,7 @@ import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.util.TurokDisplay;
 import me.rina.turok.util.TurokMath;
 import net.minecraft.client.gui.GuiScreen;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 /**
@@ -17,6 +18,11 @@ public class ModuleClickGUI extends GuiScreen {
     protected TurokMouse mouse;
 
     private MotherFrame motherFrame;
+
+    protected float partialTicks;
+
+    private boolean isOpened;
+    private boolean isCanceledCloseGUI;
 
     public ModuleClickGUI() {
         TurokRenderGL.init();
@@ -36,12 +42,57 @@ public class ModuleClickGUI extends GuiScreen {
         return display;
     }
 
+    public void setPartialTicks(float partialTicks) {
+        this.partialTicks = partialTicks;
+    }
+
+    public float getPartialTicks() {
+        return partialTicks;
+    }
+
     protected void setMouse(TurokMouse mouse) {
         this.mouse = mouse;
     }
 
     public TurokMouse getMouse() {
         return mouse;
+    }
+
+    public void setCanceledCloseGUI(boolean canceledCloseGUI) {
+        isCanceledCloseGUI = canceledCloseGUI;
+    }
+
+    public boolean isCanceledCloseGUI() {
+        return isCanceledCloseGUI;
+    }
+
+    public void setOpened(boolean opened) {
+        isOpened = opened;
+    }
+
+    public boolean isOpened() {
+        return isOpened;
+    }
+
+    @Override
+    public void initGui() {
+        this.isOpened = true;
+    }
+
+    @Override
+    public void onGuiClosed() {
+        this.isOpened = false;
+    }
+
+    @Override
+    public void keyTyped(char character, int key) {
+        if (this.isCanceledCloseGUI) {
+            this.motherFrame.onKeyboard(character, key);
+        } else {
+            if (key == Keyboard.KEY_ESCAPE) {
+                this.isOpened = false;
+            }
+        }
     }
 
     @Override
@@ -57,6 +108,8 @@ public class ModuleClickGUI extends GuiScreen {
 
     @Override
     public void drawScreen(int mousePositionX, int mousePositionY, float partialTicks) {
+        this.partialTicks = partialTicks;
+
         this.display = new TurokDisplay(mc);
         this.mouse = new TurokMouse(mousePositionX, mousePositionY);
 
@@ -72,6 +125,22 @@ public class ModuleClickGUI extends GuiScreen {
         TurokRenderGL.pushMatrix();
 
         this.motherFrame.onRender();
+
+        int calculatedScaledX = (this.display.getScaledWidth() - this.motherFrame.getScaleWidth()) /  (this.motherFrame.getScale());
+
+        if (this.isOpened) {
+            this.motherFrame.setScaleX((int) TurokMath.linearInterpolation(this.motherFrame.getScaleX(), calculatedScaledX, partialTicks));
+        } else {
+            this.motherFrame.setScaleX((int) TurokMath.linearInterpolation(this.motherFrame.getScaleX(), TurokMath.negative(this.motherFrame.getRect().getWidth()) - 10, partialTicks));
+
+            this.mouse.setPos(this.display.getScaledWidth() / 2, this.display.getScaledHeight() / 2);
+
+            if (this.motherFrame.getRect().getX() <= TurokMath.negative(this.motherFrame.getRect().getWidth())) {
+                this.onGuiClosed();
+
+                mc.displayGuiScreen(null);
+            }
+        }
 
         TurokRenderGL.popMatrix();
 

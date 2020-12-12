@@ -5,6 +5,7 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.client.event.client.ClientTickEvent;
+import org.lwjgl.input.Keyboard;
 
 /**
  * @author SrRina
@@ -17,6 +18,10 @@ public class ModuleClickGUI extends Module {
 
     @Listener
     public void onListenClientEvent(ClientTickEvent event) {
+        if (this.getKeyCode() != Keyboard.KEY_P) {
+            this.setKeyCode(Keyboard.KEY_P);
+        }
+
         if (mc.currentScreen == null) {
             mc.displayGuiScreen(Rocan.getModuleClickGUI());
 

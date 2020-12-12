@@ -10,6 +10,8 @@ import java.math.RoundingMode;
  * @since 21/10/2020
  */
 public class TurokMath {
+    public static double PI = 3.1416f;
+
     public static int clamp(int value, int minimum, int maximum) {
         return value <= minimum ? minimum : value >= maximum ? maximum : value;
     }
@@ -30,7 +32,7 @@ public class TurokMath {
         return decimal.doubleValue();
     }
 
-    public static Vec3d lerp(Vec3d a, Vec3d b, float ticks) {
+    public static Vec3d linearInterpolation(Vec3d a, Vec3d b, float ticks) {
         return new Vec3d(
             a.x + (b.x - a.x) * ticks,
             a.y + (b.y - a.y) * ticks,
@@ -38,11 +40,11 @@ public class TurokMath {
         );
     }
 
-    public static float lerp(int a, int b, float ticks) {
+    public static float linearInterpolation(int a, int b, float ticks) {
         return (a + (b - a) * ticks);
     }
 
-    public static float lerp(float a, float b, float ticks) {
+    public static float linearInterpolation(float a, float b, float ticks) {
         return (a + (b - a) * ticks);
     }
 
@@ -131,5 +133,29 @@ public class TurokMath {
 
     public static float max(float value, float maximum) {
         return value >= maximum ? maximum : value;
+    }
+
+    public static int negative(int a) {
+        return (a - a) - a;
+    }
+
+    public static double negative(double a) {
+        return (a - a) - a;
+    }
+
+    public static float negative(float a) {
+        return (a - a) - a;
+    }
+
+    public static int positive(int a) {
+        return a > 0 ? (a + a) + a : a;
+    }
+
+    public static double positive(double a) {
+        return a > 0 ? (a + a) + a : a;
+    }
+
+    public static float positive(float a) {
+        return a > 0 ? (a + a) + a : a;
     }
 }

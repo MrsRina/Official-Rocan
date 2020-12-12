@@ -17,8 +17,33 @@ public class TurokMouse {
         this.y = my;
     }
 
+    public void setPos(int x, int y) {
+        this.x = x;
+        this.y = y;
+
+        Mouse.setCursorPosition(this.x, this.y);
+    }
+
+    public int[] getPos() {
+        return new int[] {
+                this.x, this.y
+        };
+    }
+
+    public void setX(int x) {
+        this.x = x;
+
+        Mouse.setCursorPosition(this.x, this.y);
+    }
+
     public int getX() {
         return x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+
+        Mouse.setCursorPosition(this.x, this.y);
     }
 
     public int getY() {
