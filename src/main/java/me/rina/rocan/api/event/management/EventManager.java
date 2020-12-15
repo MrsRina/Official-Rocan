@@ -98,6 +98,13 @@ public class EventManager {
         Render3DEvent _event = new Render3DEvent(event.getPartialTicks());
 
         Rocan.EVENT_BUS.dispatch(_event);
+
+        /*
+         * Basically the ticks are more smooth in event RenderWorldLastEvent;
+         * This make any color update as the color fully smooth.
+         * And we update the colors of the GUI too.
+         */
+        Rocan.getGUI().onUpdateColor();
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH, receiveCanceled = true)

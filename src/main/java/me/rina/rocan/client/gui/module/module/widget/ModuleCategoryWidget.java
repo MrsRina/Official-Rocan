@@ -10,7 +10,6 @@ import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.turok.render.font.management.TurokFontManager;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.util.TurokMath;
-import me.rina.turok.util.TurokRect;
 
 import java.awt.*;
 
@@ -138,20 +137,34 @@ public class ModuleCategoryWidget extends Widget {
 
         this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
 
-        this.alphaEffect = this.flagMouse == Flag.MouseOver ? (int) TurokMath.linearInterpolation(this.alphaEffect, 50, this.master.getDisplay().getPartialTicks()) : (int) TurokMath.linearInterpolation(this.alphaEffect, 0, this.master.getDisplay().getPartialTicks());
+        this.alphaEffect = (int) (this.flagMouse == Flag.MouseOver ? TurokMath.linearInterpolation(this.alphaEffect, Rocan.getGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : TurokMath.linearInterpolation(this.alphaEffect, 0, this.master.getPartialTicks()));
 
         TurokFontManager.render(Rocan.getGUI().fontModuleCategoryWidget, this.rect.getTag(), this.rect.getX() + (this.rect.getWidth() / 2 - (TurokFontManager.getStringWidth(Rocan.getGUI().fontModuleCategoryWidget, this.rect.getTag()) / 2)), this.rect.getY() + 6, true, new Color(255, 255, 255));
 
-        TurokRenderGL.color(255, 255, 255, alphaEffect);
+        TurokRenderGL.color(Rocan.getGUI().colorWidgetHighlight[0], Rocan.getGUI().colorWidgetHighlight[1], Rocan.getGUI().colorWidgetHighlight[2], this.alphaEffect);
         TurokRenderGL.drawOutlineRect(this.rect);
 
+        /*
+         * The selected refresh effects,
+         * I implemented ifs to compare distance and skip & set,
+         * to fix slow linear slow interpolation.
+         */
         if (this.isSelected) {
             this.container.getRect().setWidth((int) TurokMath.linearInterpolation(this.container.getRect().getWidth(), this.container.getWidthScale(), this.master.getPartialTicks()));
+
+            if (this.container.getRect().getWidth() >= this.container.getWidthScale() - 10) {
+                this.container.getRect().setWidth(this.container.getWidthScale());
+            }
+
             this.container.getRect().setHeight((int) TurokMath.linearInterpolation(this.container.getRect().getHeight(), this.container.getHeightScale(), this.master.getPartialTicks()));
 
-            if (this.frame.getRectWidgetSelected().getDistance(this.rect) >= 10) {
-                this.frame.getRectWidgetSelected().setX((int) TurokMath.linearInterpolation(this.frame.getRectWidgetSelected().getX(), this.rect.getX(), this.master.getPartialTicks()));
-            } else {
+            if (this.container.getRect().getHeight() >= this.container.getHeightScale() - 10) {
+                this.container.getRect().setHeight(this.container.getHeightScale());
+            }
+
+            this.frame.getRectWidgetSelected().setX((int) TurokMath.linearInterpolation(this.frame.getRectWidgetSelected().getX(), this.rect.getX(), this.master.getPartialTicks()));
+
+            if (this.frame.getRectWidgetSelected().getDistance(this.rect) <= 10) {
                 this.frame.getRectWidgetSelected().setX(this.rect.getX());
             }
         } else {

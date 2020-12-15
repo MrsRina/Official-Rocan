@@ -7,6 +7,7 @@ import me.rina.rocan.api.module.Module;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
+import me.rina.rocan.client.gui.module.setting.container.SettingContainer;
 import me.rina.turok.render.font.management.TurokFontManager;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.util.TurokMath;
@@ -32,7 +33,17 @@ public class ModuleWidget extends Widget {
     private int offsetWidth;
     private int offsetHeight;
 
-    private int effectAlfha;
+    private int alphaEffect;
+
+    /*
+     * We load here the setting container, but the author said about
+     * this specify comment.
+     *
+     * Author:
+     * "I don't use one class to all events of the GUI and renders,
+     * this make the code not professional.".
+     */
+    private SettingContainer settingContainer;
 
     public Flag flagMouse = Flag.MouseNotOver;
 
@@ -49,6 +60,26 @@ public class ModuleWidget extends Widget {
 
         this.rect.setWidth(this.container.getRect().getWidth() - (this.offsetX * 2));
         this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getGUI().fontModuleWidget, this.rect.getTag()) + 5);
+
+        if (this.settingContainer == null) {
+            this.settingContainer = new SettingContainer(this.master, this.frame, this.widget, this.container, this);
+        }
+    }
+
+    protected void setSettingContainer(SettingContainer settingContainer) {
+        this.settingContainer = settingContainer;
+    }
+
+    public SettingContainer getSettingContainer() {
+        return settingContainer;
+    }
+
+    protected void setModule(Module module) {
+        this.module = module;
+    }
+
+    public Module getModule() {
+        return module;
     }
 
     public void setOffsetX(int offsetX) {
@@ -97,20 +128,37 @@ public class ModuleWidget extends Widget {
         this.rect.setWidth(this.container.getRect().getWidth() - (this.offsetX * 2));
         this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getGUI().fontModuleWidget, this.rect.getTag()) + 5);
 
-        if (this.flagMouse == Flag.MouseOver) {
-            this.effectAlfha = (int) TurokMath.linearInterpolation(this.effectAlfha, 100, this.master.getPartialTicks());
-        } else {
-            this.effectAlfha = (int) TurokMath.linearInterpolation(this.effectAlfha, 0, this.master.getPartialTicks());
-        }
+        this.alphaEffect = (int) (this.flagMouse == Flag.MouseOver ? TurokMath.linearInterpolation(this.alphaEffect, Rocan.getGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : TurokMath.linearInterpolation(this.alphaEffect, 0, this.master.getPartialTicks()));
 
-        TurokRenderGL.color(255, 255, 255, this.effectAlfha);
+        TurokRenderGL.color(Rocan.getGUI().colorWidgetHighlight[0], Rocan.getGUI().colorWidgetHighlight[1], Rocan.getGUI().colorWidgetHighlight[2], this.alphaEffect);
         TurokRenderGL.drawOutlineRect(this.rect);
 
         TurokFontManager.render(Rocan.getGUI().fontModuleWidget, this.rect.getTag(), this.rect.getX() + 2, this.rect.getY() + 5, true, new Color(255, 255, 255));
+
+        this.settingContainer.onRender();
     }
 
     @Override
     public void onCustomRender() {
         this.flagMouse = Flag.MouseNotOver;
+
+        if (this.widget.isSelected()) {
+            this.settingContainer.getRect().setWidth((int) TurokMath.linearInterpolation(this.settingContainer.getRect().getWidth(), this.settingContainer.getWidthScale(), this.master.getPartialTicks()));
+
+            if (this.settingContainer.getRect().getWidth() >= this.settingContainer.getWidthScale() - 10) {
+                this.settingContainer.getRect().setWidth(this.settingContainer.getWidthScale());
+            }
+
+            this.settingContainer.getRect().setHeight((int) TurokMath.linearInterpolation(this.settingContainer.getRect().getHeight(), this.container.getRect().getHeight(), this.master.getPartialTicks()));
+
+            if (this.settingContainer.getRect().getHeight() >= this.container.getHeightScale() - 10) {
+                this.settingContainer.getRect().setHeight(this.container.getHeightScale());
+            }
+        } else {
+            this.settingContainer.getRect().setWidth((int) TurokMath.linearInterpolation(this.settingContainer.getRect().getWidth(), 0, this.master.getPartialTicks()));
+            this.settingContainer.getRect().setHeight((int) TurokMath.linearInterpolation(this.settingContainer.getRect().getHeight(), 0, this.master.getPartialTicks()));
+        }
+
+        this.settingContainer.onCustomRender();
     }
 }

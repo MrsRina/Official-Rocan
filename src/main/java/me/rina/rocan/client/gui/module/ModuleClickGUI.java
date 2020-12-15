@@ -113,6 +113,10 @@ public class ModuleClickGUI extends GuiScreen {
         this.display = new TurokDisplay(mc);
         this.mouse = new TurokMouse(mousePositionX, mousePositionY);
 
+        if (true) {
+            this.drawDefaultBackground();
+        }
+
         TurokRenderGL.init(this.display);
         TurokRenderGL.init(this.mouse);
 

@@ -1,5 +1,6 @@
 package me.rina.rocan.client.gui.module.mother;
 
+import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.frame.Frame;
 import me.rina.rocan.api.gui.widget.Widget;
@@ -176,7 +177,7 @@ public class MotherFrame extends Frame {
         this.rectWidgetSelected.setY(this.rect.getY());
         this.rectWidgetSelected.setHeight(this.widgetHeight);
 
-        TurokRenderGL.color(0, 0, 0, 100);
+        TurokRenderGL.color(Rocan.getGUI().colorFrameBackground[0], Rocan.getGUI().colorFrameBackground[1], Rocan.getGUI().colorFrameBackground[2], Rocan.getGUI().colorFrameBackground[3]);
         TurokRenderGL.drawSolidRect(this.rect);
 
         for (Widget widgets : this.loadedWidgetList) {
@@ -185,9 +186,9 @@ public class MotherFrame extends Frame {
 
         if (this.widgetSelected != null) {
             this.widgetSelected.onCustomRender();
-        }
 
-        TurokRenderGL.color(255, 255, 255, 100);
-        TurokRenderGL.drawOutlineRect(this.rectWidgetSelected);
+            TurokRenderGL.color(Rocan.getGUI().colorWidgetSelected[0], Rocan.getGUI().colorWidgetSelected[1], Rocan.getGUI().colorWidgetSelected[2], Rocan.getGUI().colorWidgetSelected[3]);
+            TurokRenderGL.drawOutlineRect(this.rectWidgetSelected);
+        }
     }
 }

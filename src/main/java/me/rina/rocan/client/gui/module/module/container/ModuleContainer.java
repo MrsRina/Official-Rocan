@@ -1,5 +1,6 @@
 package me.rina.rocan.client.gui.module.module.container;
 
+import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.container.Container;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
@@ -10,6 +11,7 @@ import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
+import me.rina.rocan.client.gui.module.setting.container.SettingContainer;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
@@ -50,7 +52,7 @@ public class ModuleContainer extends Container {
         this.widget = widget;
         this.category = category;
 
-        this.updateScale();
+        this.updateSpecifyScale();
         this.init();
     }
 
@@ -61,7 +63,13 @@ public class ModuleContainer extends Container {
             this.loadedWidgetList.clear();
         }
 
+        /*
+         * We need set for 0 variables size and offset,
+         * if not the memory of the old values will be used,
+         * and glitching the GUI.
+         */
         this.scrollRect.setHeight(0);
+        this.offsetY = 0;
 
         for (Module modules : ModuleManager.get(this.category)) {
             ModuleWidget moduleWidget = new ModuleWidget(this.master, this.frame, this.widget, this, modules);
@@ -74,7 +82,7 @@ public class ModuleContainer extends Container {
         }
     }
 
-    public void updateScale() {
+    public void updateSpecifyScale() {
         int scale = (2 * this.frame.getScale());
 
         this.rect.setX(this.frame.getRect().getX() + scale);
@@ -133,7 +141,7 @@ public class ModuleContainer extends Container {
 
     @Override
     public void onRender() {
-        this.updateScale();
+        this.updateSpecifyScale();
 
         int minimumScroll = (this.rect.getHeight() - this.scrollRect.getHeight()) - 2;
         int maximumScroll = 3;
@@ -159,11 +167,13 @@ public class ModuleContainer extends Container {
 
         this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
 
-        TurokRenderGL.color(0, 0, 0, 200);
+        TurokRenderGL.color(Rocan.getGUI().colorContainerBackground[0], Rocan.getGUI().colorContainerBackground[1], Rocan.getGUI().colorContainerBackground[2], Rocan.getGUI().colorContainerBackground[3]);
         TurokRenderGL.drawSolidRect(this.rect);
 
+        int offsetFixOutline = 1;
+
         TurokRenderGL.enable(GL11.GL_SCISSOR_TEST);
-        TurokRenderGL.drawScissor(this.rect.getX() - 1, this.rect.getY(), this.rect.getWidth() + 2, this.rect.getHeight());
+        TurokRenderGL.drawScissor(this.rect.getX() - offsetFixOutline, this.rect.getY(), this.rect.getWidth() + (offsetFixOutline * 2), this.rect.getHeight());
 
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onRender();

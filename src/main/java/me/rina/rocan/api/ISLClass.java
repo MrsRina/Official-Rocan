@@ -25,7 +25,7 @@ public interface ISLClass {
             return;
         }
 
-        ArrayList<Object> objectList = (ArrayList<Object>) object;
+        ArrayList<?> objectList = (ArrayList<?>) object;
 
         for (Object objects : objectList) {
             if (objects instanceof ISLClass) {
@@ -44,7 +44,7 @@ public interface ISLClass {
             return;
         }
 
-        ArrayList<Object> objectList = (ArrayList<Object>) object;
+        ArrayList<?> objectList = (ArrayList<?>) object;
 
         for (Object objects : objectList) {
             if (objects instanceof ISLClass) {
