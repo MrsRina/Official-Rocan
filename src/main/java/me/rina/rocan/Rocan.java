@@ -48,12 +48,6 @@ public enum Rocan {
     public void onRegistry() {
         // Modules.
         this.moduleManager.registry(new me.rina.rocan.client.module.client.ModuleClickGUI());
-        this.moduleManager.registry(new me.rina.rocan.client.module.client.ModuleClickGUI());
-        this.moduleManager.registry(new me.rina.rocan.client.module.client.ModuleClickGUI());
-        this.moduleManager.registry(new me.rina.rocan.client.module.client.ModuleClickGUI());
-        this.moduleManager.registry(new me.rina.rocan.client.module.client.ModuleClickGUI());
-        this.moduleManager.registry(new me.rina.rocan.client.module.client.ModuleClickGUI());
-        this.moduleManager.registry(new me.rina.rocan.client.module.client.ModuleClickGUI());
         this.moduleManager.registry(new ModuleBlockHighlight());
 
         // Commands.

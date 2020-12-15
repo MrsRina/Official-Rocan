@@ -112,6 +112,7 @@ public class ModuleCategoryWidget extends Widget {
 
     @Override
     public void onCustomMouseReleased(int button) {
+        this.container.onCustomMouseReleased(button);
     }
 
     @Override
@@ -125,6 +126,7 @@ public class ModuleCategoryWidget extends Widget {
 
     @Override
     public void onCustomMouseClicked(int button) {
+        this.container.onCustomMouseClicked(button);
     }
 
     @Override
@@ -174,11 +176,11 @@ public class ModuleCategoryWidget extends Widget {
 
         this.frame.getRectWidgetSelected().setWidth(this.rect.getWidth());
 
-        this.container.onCustomRender();
+        this.container.onRender();
     }
 
     @Override
     public void onCustomRender() {
-        this.container.onRender();
+        this.container.onCustomRender();
     }
 }

@@ -52,7 +52,7 @@ public class SettingContainer extends Container {
         int currentScaleX = (5 * this.frame.getScale());
         int scale = (2 * this.frame.getScale());
 
-        return (this.frame.getRect().getWidth() - this.container.getRect().getWidth() - this.container.getOffsetX() - scale) + currentScaleX;
+        return (this.frame.getRect().getWidth() - this.container.getRect().getWidth() - currentScaleX - scale + 1);
     }
 
     public void setScrollRect(TurokRect scrollRect) {
@@ -108,12 +108,22 @@ public class SettingContainer extends Container {
 
         int offsetFixOutline = 1;
 
-        TurokRenderGL.color(Rocan.getGUI().colorContainerBackground[0], Rocan.getGUI().colorContainerBackground[1], Rocan.getGUI().colorContainerBackground[2], Rocan.getGUI().colorContainerBackground[3]);
-        TurokRenderGL.drawSolidRect(this.rect);
+        if (this.widgetModule.isSelected()) {
+            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
 
-        TurokRenderGL.enable(GL11.GL_SCISSOR_TEST);
-        TurokRenderGL.drawScissor(this.rect.getX(), this.rect.getY() - offsetFixOutline, this.rect.getWidth() + (offsetFixOutline * 2), this.rect.getHeight());
+            TurokRenderGL.color(Rocan.getGUI().colorContainerBackground[0], Rocan.getGUI().colorContainerBackground[1], Rocan.getGUI().colorContainerBackground[2], Rocan.getGUI().colorContainerBackground[3]);
+            TurokRenderGL.drawSolidRect(this.rect);
 
-        TurokRenderGL.disable(GL11.GL_SCISSOR_TEST);
+            TurokRenderGL.enable(GL11.GL_SCISSOR_TEST);
+            TurokRenderGL.drawScissor(this.rect.getX(), this.rect.getY() - offsetFixOutline, this.rect.getWidth() + (offsetFixOutline * 2), this.rect.getHeight());
+
+            TurokRenderGL.disable(GL11.GL_SCISSOR_TEST);
+        } else {
+            this.flagMouse = Flag.MouseNotOver;
+        }
+    }
+
+    public void onCustomRender() {
+
     }
 }

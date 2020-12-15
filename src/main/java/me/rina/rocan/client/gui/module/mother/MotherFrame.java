@@ -40,6 +40,8 @@ public class MotherFrame extends Frame {
     private Widget widgetSelected;
     private TurokRect rectWidgetSelected;
 
+    private boolean isStarted = true;
+
     public Flag flagMouse = Flag.MouseNotOver;
 
     public MotherFrame(ModuleClickGUI master) {
@@ -182,6 +184,16 @@ public class MotherFrame extends Frame {
 
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onRender();
+        }
+
+        /*
+         * For some reason the loaded list do not refresh when start,
+         * I hope it fix.
+         */
+        if (this.isStarted) {
+            this.widgetSelected = this.loadedWidgetList.get(0);
+
+            this.isStarted = false;
         }
 
         if (this.widgetSelected != null) {

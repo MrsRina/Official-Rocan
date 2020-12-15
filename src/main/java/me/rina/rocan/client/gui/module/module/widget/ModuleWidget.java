@@ -4,6 +4,7 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.module.Module;
+import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
@@ -11,6 +12,7 @@ import me.rina.rocan.client.gui.module.setting.container.SettingContainer;
 import me.rina.turok.render.font.management.TurokFontManager;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.util.TurokMath;
+import me.rina.turok.util.TurokTick;
 
 import java.awt.*;
 
@@ -35,6 +37,8 @@ public class ModuleWidget extends Widget {
 
     private int alphaEffect;
 
+    private TurokTick doubleClickTick = new TurokTick();
+
     /*
      * We load here the setting container, but the author said about
      * this specify comment.
@@ -44,6 +48,9 @@ public class ModuleWidget extends Widget {
      * this make the code not professional.".
      */
     private SettingContainer settingContainer;
+
+    private boolean isMouseClickedLeft;
+    private boolean isSelected;
 
     public Flag flagMouse = Flag.MouseNotOver;
 
@@ -82,6 +89,14 @@ public class ModuleWidget extends Widget {
         return module;
     }
 
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
     public void setOffsetX(int offsetX) {
         this.offsetX = offsetX;
     }
@@ -115,7 +130,56 @@ public class ModuleWidget extends Widget {
     }
 
     @Override
+    public void onCustomMouseReleased(int button) {
+        if (this.isMouseClickedLeft) {
+            if (this.flagMouse == Flag.MouseOver) {
+                this.module.toggle();
+            }
+
+            this.isMouseClickedLeft = false;
+        }
+
+        this.settingContainer.onCustomMouseReleased(button);
+    }
+
+    @Override
+    public void onCustomMouseClicked(int button) {
+        if (this.settingContainer.flagMouse == Flag.MouseNotOver) {
+            this.container.resetWidget();
+        }
+
+        if (this.flagMouse == Flag.MouseOver) {
+            if (button == 0) {
+                if (!this.doubleClickTick.isPassedMS(500)) {
+                    this.isMouseClickedLeft = true;
+                } else {
+                    this.doubleClickTick.reset();
+                }
+
+                this.container.resetWidget();
+
+                this.isSelected = true;
+            }
+
+            if (button == 1) {
+                this.container.resetWidget();
+
+                this.isSelected = true;
+            }
+        }
+
+        this.settingContainer.onCustomMouseClicked(button);
+    }
+
+    @Override
     public void onRender() {
+        this.flagMouse = Flag.MouseNotOver;
+
+        this.settingContainer.onRender();
+    }
+
+    @Override
+    public void onCustomRender() {
         this.rect.setX(this.container.getScrollRect().getX() + this.offsetX);
         this.rect.setY(this.container.getScrollRect().getY() + this.offsetY);
 
@@ -135,14 +199,10 @@ public class ModuleWidget extends Widget {
 
         TurokFontManager.render(Rocan.getGUI().fontModuleWidget, this.rect.getTag(), this.rect.getX() + 2, this.rect.getY() + 5, true, new Color(255, 255, 255));
 
-        this.settingContainer.onRender();
-    }
+        if (this.isSelected) {
+            TurokRenderGL.color(Rocan.getGUI().colorWidgetSelected[0], Rocan.getGUI().colorWidgetSelected[1], Rocan.getGUI().colorWidgetSelected[2], Rocan.getGUI().colorWidgetSelected[3]);
+            TurokRenderGL.drawOutlineRect(this.rect);
 
-    @Override
-    public void onCustomRender() {
-        this.flagMouse = Flag.MouseNotOver;
-
-        if (this.widget.isSelected()) {
             this.settingContainer.getRect().setWidth((int) TurokMath.linearInterpolation(this.settingContainer.getRect().getWidth(), this.settingContainer.getWidthScale(), this.master.getPartialTicks()));
 
             if (this.settingContainer.getRect().getWidth() >= this.settingContainer.getWidthScale() - 10) {

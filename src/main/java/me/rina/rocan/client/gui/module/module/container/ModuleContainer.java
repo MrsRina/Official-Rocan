@@ -69,7 +69,7 @@ public class ModuleContainer extends Container {
          * and glitching the GUI.
          */
         this.scrollRect.setHeight(0);
-        this.offsetY = 0;
+        this.offsetY = 3;
 
         for (Module modules : ModuleManager.get(this.category)) {
             ModuleWidget moduleWidget = new ModuleWidget(this.master, this.frame, this.widget, this, modules);
@@ -87,6 +87,16 @@ public class ModuleContainer extends Container {
 
         this.rect.setX(this.frame.getRect().getX() + scale);
         this.rect.setY(this.frame.getRect().getY() + this.widget.getRect().getHeight() + scale);
+    }
+
+    public void resetWidget() {
+        for (Widget widgets : this.loadedWidgetList) {
+            if (widgets instanceof ModuleWidget) {
+                ModuleWidget moduleWidget = (ModuleWidget) widgets;
+
+                moduleWidget.setSelected(false);
+            }
+        }
     }
 
     public int getWidthScale() {
@@ -140,7 +150,30 @@ public class ModuleContainer extends Container {
     }
 
     @Override
+    public void onCustomMouseReleased(int button) {
+        for (Widget widgets : this.loadedWidgetList) {
+            widgets.onCustomMouseReleased(button);
+        }
+    }
+
+    @Override
+    public void onCustomMouseClicked(int button) {
+        for (Widget widgets : this.loadedWidgetList) {
+            widgets.onCustomMouseClicked(button);
+        }
+    }
+
+    @Override
     public void onRender() {
+        this.flagMouse = Flag.MouseNotOver;
+
+        for (Widget widgets : this.loadedWidgetList) {
+            widgets.onRender();
+        }
+    }
+
+    @Override
+    public void onCustomRender() {
         this.updateSpecifyScale();
 
         int minimumScroll = (this.rect.getHeight() - this.scrollRect.getHeight()) - 2;
@@ -176,18 +209,9 @@ public class ModuleContainer extends Container {
         TurokRenderGL.drawScissor(this.rect.getX() - offsetFixOutline, this.rect.getY(), this.rect.getWidth() + (offsetFixOutline * 2), this.rect.getHeight());
 
         for (Widget widgets : this.loadedWidgetList) {
-            widgets.onRender();
+            widgets.onCustomRender();
         }
 
         TurokRenderGL.disable(GL11.GL_SCISSOR_TEST);
-    }
-
-    @Override
-    public void onCustomRender() {
-        this.flagMouse = Flag.MouseNotOver;
-
-        for (Widget widgets : this.loadedWidgetList) {
-            widgets.onCustomRender();
-        }
     }
 }
