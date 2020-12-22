@@ -10,6 +10,7 @@ import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
+import me.rina.rocan.client.gui.module.setting.widget.SettingBooleanWidget;
 import me.rina.rocan.client.gui.module.visual.LabelWidget;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.util.TurokMath;
@@ -39,9 +40,16 @@ public class SettingContainer extends Container {
 
     private ArrayList<Widget> loadedWidgetList;
 
+    /*
+     * We need create the label that is the description of the module in the container.
+     * Later we will need use this to get the height and reset height scroll, so, easy concept.
+     */
+    private LabelWidget descriptionLabel;
+
     private TurokRect scrollRect = new TurokRect("I will go to canada and forget everything make me bad.", 0, 0);
 
     public Flag flagMouse = Flag.MouseNotOver;
+    public Flag flagDescription = Flag.MouseNotOver;
 
     public SettingContainer(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer container, ModuleWidget widgetModule) {
         super(widgetModule.getModule().getTag());
@@ -64,20 +72,77 @@ public class SettingContainer extends Container {
             this.loadedWidgetList.clear();
         }
 
+        this.descriptionLabel = new LabelWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, this.widgetModule.getModule().getDescription());
+
         this.scrollRect.setHeight(0);
         this.offsetY = 3;
 
-        LabelWidget labelWidget = new LabelWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, this.widgetModule.getModule().getDescription());
+        this.descriptionLabel.setOffsetY(this.scrollRect.getHeight());
 
-        labelWidget.setOffsetY(this.scrollRect.getHeight());
+        this.loadedWidgetList.add(this.descriptionLabel);
 
-        this.loadedWidgetList.add(labelWidget);
-
-        this.scrollRect.height += labelWidget.getRect().getHeight() + 1;
+        this.scrollRect.height += this.descriptionLabel.getRect().getHeight() + 1;
 
         for (Setting settings : this.widgetModule.getModule().getSettingList()) {
-            // Nnegro.
+            if (settings.getValue() instanceof Boolean) {
+                SettingBooleanWidget settingBooleanWidget = new SettingBooleanWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, settings);
+
+                settingBooleanWidget.setOffsetY(this.scrollRect.getHeight());
+
+                this.loadedWidgetList.add(settingBooleanWidget);
+
+                this.scrollRect.height += settingBooleanWidget.getRect().getHeight() + 1;
+            }
         }
+    }
+
+    public void onRefreshWidget() {
+        // Set 0 the start up height value.
+        this.scrollRect.setHeight(0);
+
+        // Clear the list.
+        this.loadedWidgetList.clear();
+
+        // Set the last save y offset.
+        this.descriptionLabel.setOffsetY(this.scrollRect.getHeight());
+
+        // Put in the loaded widget list to enable render.
+        this.loadedWidgetList.add(this.descriptionLabel);
+
+        // Update height with the height of description label.
+        this.scrollRect.height += this.descriptionLabel.getRect().getHeight() + 1;
+
+        for (Setting settings : this.widgetModule.getModule().getSettingList()) {
+            if (!settings.isEnabled()) {
+                continue;
+            }
+
+            if (settings.getValue() instanceof Boolean) {
+                SettingBooleanWidget settingBooleanWidget = new SettingBooleanWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, settings);
+
+                settingBooleanWidget.setOffsetY(this.scrollRect.getHeight());
+
+                this.loadedWidgetList.add(settingBooleanWidget);
+
+                this.scrollRect.height += settingBooleanWidget.getRect().getHeight() + 1;
+            }
+        }
+    }
+
+    protected void setWidgetModule(ModuleWidget widgetModule) {
+        this.widgetModule = widgetModule;
+    }
+
+    public ModuleWidget getWidgetModule() {
+        return widgetModule;
+    }
+
+    public void setDescriptionLabel(LabelWidget descriptionLabel) {
+        this.descriptionLabel = descriptionLabel;
+    }
+
+    public LabelWidget getDescriptionLabel() {
+        return descriptionLabel;
     }
 
     public int getWidthScale() {
@@ -209,5 +274,11 @@ public class SettingContainer extends Container {
         } else {
             this.flagMouse = Flag.MouseNotOver;
         }
+
+        if (this.flagDescription == Flag.MouseNotOver) {
+            this.descriptionLabel.setText(this.widgetModule.getModule().getDescription());
+        }
+
+        this.flagDescription = Flag.MouseNotOver;
     }
 }

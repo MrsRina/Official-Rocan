@@ -314,12 +314,34 @@ public class TurokRenderGL {
 
 		enableAlphaBlend();
 
-		prepare(GL11.GL_LINE_LOOP);
+		prepare(GL11.GL_LINES);
 		{
 			addVertex(x, y);
 			addVertex(x,y + height);
+		}
+
+		release();
+
+		prepare(GL11.GL_LINES);
+		{
+			addVertex(x, y + height - 0.5f);
+			addVertex(x + width - 0.5f, y + height);
+		}
+
+		release();
+
+		prepare(GL11.GL_LINES);
+		{
 			addVertex(x + width, y + height);
+			addVertex(x + width, y + 0.5f);
+		}
+
+		release();
+
+		prepare(GL11.GL_LINES);
+		{
 			addVertex(x + width, y);
+			addVertex(x, y);
 		}
 
 		release();
@@ -401,12 +423,13 @@ public class TurokRenderGL {
 
 		enableAlphaBlend();
 
-		prepare(GL11.GL_QUADS);
+		prepare(GL11.GL_POLYGON);
 		{
 			addVertex(x, y);
-			addVertex(x, y + height);
-			addVertex(x + width, y + height);
-			addVertex(x + width, y);
+			addVertex(x,y + height);
+
+			addVertex(x + width - 0.5f, y + height);
+			addVertex(x + width - 0.5f, y);
 		}
 
 		release();

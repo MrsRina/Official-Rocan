@@ -101,7 +101,7 @@ public class LabelWidget extends Widget {
         this.rect.setX(this.settingContainer.getScrollRect().getX() + this.offsetX);
         this.rect.setY(this.settingContainer.getScrollRect().getY() + this.offsetY);
 
-        TurokFontManager.render(Rocan.getGUI().fontSmallWidget, this.rect.getTag(), this.rect.getX() + 1, this.rect.getY() + 5, true, new Color(255, 255, 255));
+        TurokFontManager.render(Rocan.getGUI().fontSmallWidget, this.rect.getTag(), this.rect.getX() + 2, this.rect.getY() + 5, true, new Color(255, 255, 255));
     }
 
     @Override
