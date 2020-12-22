@@ -24,7 +24,6 @@ public class Module implements ISLClass {
     public Minecraft mc = Rocan.MC;
 
     private String name, tag, description;
-
     private String infoHUDEnabledList;
 
     private ModuleCategory category;
@@ -38,7 +37,7 @@ public class Module implements ISLClass {
     public static Setting toggleMessage = new Setting("Toggle Message", "ToggleMessage", "Send a message when enable or disable.", true);
 
     /*
-     * Basic render;
+     * Frustum camera for render in 3D space.
      */
     public ICamera camera = new Frustum();
 
@@ -126,6 +125,14 @@ public class Module implements ISLClass {
         this.settingList.add(setting);
     }
 
+    public void setSettingList(ArrayList<Setting> settingList) {
+        this.settingList = settingList;
+    }
+
+    public ArrayList<Setting> getSettingList() {
+        return settingList;
+    }
+
     public Setting get(Class clazz) {
         for (Setting settings : this.settingList) {
             if (settings.getClass() == clazz) {
@@ -146,9 +153,6 @@ public class Module implements ISLClass {
         return null;
     }
 
-    /*
-     * Tools.
-     */
     public void toggle() {
         this.setEnabled(!this.isEnabled);
     }
@@ -185,15 +189,9 @@ public class Module implements ISLClass {
         this.onDisable();
     }
 
-    /*
-     * Overrides.
-     */
     protected void onEnable() {}
     protected void onDisable() {}
 
-    /*
-     * Class content;
-     */
     @Override
     public void onSave() {
         try {
@@ -260,7 +258,7 @@ public class Module implements ISLClass {
 
             JsonObject mainJson = new JsonParser().parse(new InputStreamReader(file)).getAsJsonObject();
 
-            if(mainJson.get("enabled") != null) this.setEnabled(mainJson.get("enabled").getAsBoolean());
+            if (mainJson.get("enabled") != null) this.setEnabled(mainJson.get("enabled").getAsBoolean());
 
             if (mainJson.get("settings") != null) {
                 JsonObject jsonSettingList = mainJson.get("settings").getAsJsonObject();

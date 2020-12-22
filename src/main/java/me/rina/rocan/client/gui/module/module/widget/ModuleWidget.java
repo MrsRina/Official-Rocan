@@ -4,7 +4,7 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.module.Module;
-import me.rina.rocan.api.util.chat.ChatUtil;
+import me.rina.rocan.api.setting.Setting;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
@@ -35,7 +35,8 @@ public class ModuleWidget extends Widget {
     private int offsetWidth;
     private int offsetHeight;
 
-    private int alphaEffect;
+    private int alphaEffectHighlight;
+    private int alphaEffectSelected;
 
     private TurokTick doubleClickTick = new TurokTick();
 
@@ -51,6 +52,7 @@ public class ModuleWidget extends Widget {
 
     private boolean isMouseClickedLeft;
     private boolean isSelected;
+    private boolean isLocked;
 
     public Flag flagMouse = Flag.MouseNotOver;
 
@@ -65,12 +67,10 @@ public class ModuleWidget extends Widget {
 
         this.module = module;
 
-        this.rect.setWidth(this.container.getRect().getWidth() - (this.offsetX * 2));
-        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getGUI().fontModuleWidget, this.rect.getTag()) + 5);
+        this.settingContainer = new SettingContainer(this.master, this.frame, this.widget, this.container, this);
 
-        if (this.settingContainer == null) {
-            this.settingContainer = new SettingContainer(this.master, this.frame, this.widget, this.container, this);
-        }
+        this.rect.setWidth(this.container.getRect().getWidth() - (this.offsetX * 2));
+        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getGUI().fontNormalWidget, this.rect.getTag()) + 5);
     }
 
     protected void setSettingContainer(SettingContainer settingContainer) {
@@ -95,6 +95,14 @@ public class ModuleWidget extends Widget {
 
     public boolean isSelected() {
         return isSelected;
+    }
+
+    public void setLocked(boolean locked) {
+        isLocked = locked;
+    }
+
+    public boolean isLocked() {
+        return isLocked;
     }
 
     public void setOffsetX(int offsetX) {
@@ -130,6 +138,16 @@ public class ModuleWidget extends Widget {
     }
 
     @Override
+    public void onKeyboard(char character, int key) {
+        this.settingContainer.onKeyboard(character, key);
+    }
+
+    @Override
+    public void onCustomKeyboard(char character, int key) {
+        this.settingContainer.onCustomKeyboard(character, key);
+    }
+
+    @Override
     public void onCustomMouseReleased(int button) {
         if (this.isMouseClickedLeft) {
             if (this.flagMouse == Flag.MouseOver) {
@@ -144,7 +162,7 @@ public class ModuleWidget extends Widget {
 
     @Override
     public void onCustomMouseClicked(int button) {
-        if (this.settingContainer.flagMouse == Flag.MouseNotOver) {
+        if (this.settingContainer.flagMouse == Flag.MouseNotOver && this.flagMouse == Flag.MouseNotOver) {
             this.container.resetWidget();
         }
 
@@ -156,15 +174,15 @@ public class ModuleWidget extends Widget {
                     this.doubleClickTick.reset();
                 }
 
-                this.container.resetWidget();
+                this.container.resetWidget(this.getClass());
 
-                this.isSelected = true;
+                this.isLocked = true;
             }
 
             if (button == 1) {
-                this.container.resetWidget();
+                this.container.resetWidget(this.getClass());
 
-                this.isSelected = true;
+                this.isLocked = true;
             }
         }
 
@@ -190,18 +208,28 @@ public class ModuleWidget extends Widget {
         }
 
         this.rect.setWidth(this.container.getRect().getWidth() - (this.offsetX * 2));
-        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getGUI().fontModuleWidget, this.rect.getTag()) + 5);
+        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getGUI().fontNormalWidget, this.rect.getTag()) + 5);
 
-        this.alphaEffect = (int) (this.flagMouse == Flag.MouseOver ? TurokMath.linearInterpolation(this.alphaEffect, Rocan.getGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : TurokMath.linearInterpolation(this.alphaEffect, 0, this.master.getPartialTicks()));
+        this.alphaEffectHighlight = (int) (this.flagMouse == Flag.MouseOver ? TurokMath.linearInterpolation(this.alphaEffectHighlight, Rocan.getGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : TurokMath.linearInterpolation(this.alphaEffectHighlight, 0, this.master.getPartialTicks()));
 
-        TurokRenderGL.color(Rocan.getGUI().colorWidgetHighlight[0], Rocan.getGUI().colorWidgetHighlight[1], Rocan.getGUI().colorWidgetHighlight[2], this.alphaEffect);
+        TurokRenderGL.color(Rocan.getGUI().colorWidgetHighlight[0], Rocan.getGUI().colorWidgetHighlight[1], Rocan.getGUI().colorWidgetHighlight[2], this.alphaEffectHighlight);
         TurokRenderGL.drawOutlineRect(this.rect);
 
-        TurokFontManager.render(Rocan.getGUI().fontModuleWidget, this.rect.getTag(), this.rect.getX() + 2, this.rect.getY() + 5, true, new Color(255, 255, 255));
+        TurokFontManager.render(Rocan.getGUI().fontNormalWidget, this.rect.getTag(), this.rect.getX() + 2, this.rect.getY() + 5, true, new Color(255, 255, 255));
+
+        if (this.isLocked) { // I need verify if is locked to set selected, actually this works great with animation.
+            this.isSelected = true;
+        } else {
+            // The fun animation is here, so set the selected when mouse over with flag.
+            // OBS: this make mixed the settings sometimes but is pretty cool!
+            this.isSelected = this.flagMouse == Flag.MouseOver;
+        }
+
+        TurokRenderGL.color(Rocan.getGUI().colorWidgetSelected[0], Rocan.getGUI().colorWidgetSelected[1], Rocan.getGUI().colorWidgetSelected[2], this.alphaEffectSelected);
+        TurokRenderGL.drawOutlineRect(this.rect);
 
         if (this.isSelected) {
-            TurokRenderGL.color(Rocan.getGUI().colorWidgetSelected[0], Rocan.getGUI().colorWidgetSelected[1], Rocan.getGUI().colorWidgetSelected[2], Rocan.getGUI().colorWidgetSelected[3]);
-            TurokRenderGL.drawOutlineRect(this.rect);
+            this.alphaEffectSelected = (int) TurokMath.linearInterpolation(this.alphaEffectSelected, Rocan.getGUI().colorWidgetSelected[3], this.master.getPartialTicks());
 
             this.settingContainer.getRect().setWidth((int) TurokMath.linearInterpolation(this.settingContainer.getRect().getWidth(), this.settingContainer.getWidthScale(), this.master.getPartialTicks()));
 
@@ -215,6 +243,8 @@ public class ModuleWidget extends Widget {
                 this.settingContainer.getRect().setHeight(this.container.getHeightScale());
             }
         } else {
+            this.alphaEffectSelected = (int) TurokMath.linearInterpolation(this.alphaEffectSelected, 0, this.master.getPartialTicks());
+
             this.settingContainer.getRect().setWidth((int) TurokMath.linearInterpolation(this.settingContainer.getRect().getWidth(), 0, this.master.getPartialTicks()));
             this.settingContainer.getRect().setHeight((int) TurokMath.linearInterpolation(this.settingContainer.getRect().getHeight(), 0, this.master.getPartialTicks()));
         }

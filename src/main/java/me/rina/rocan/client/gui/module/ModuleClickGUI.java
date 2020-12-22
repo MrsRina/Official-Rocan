@@ -86,8 +86,10 @@ public class ModuleClickGUI extends GuiScreen {
 
     @Override
     public void keyTyped(char character, int key) {
+        this.motherFrame.onKeyboard(character, key);
+
         if (this.isCanceledCloseGUI) {
-            this.motherFrame.onKeyboard(character, key);
+            this.motherFrame.onCustomKeyboard(character, key);
         } else {
             if (key == Keyboard.KEY_ESCAPE) {
                 this.isOpened = false;
@@ -99,7 +101,6 @@ public class ModuleClickGUI extends GuiScreen {
     public void mouseReleased(int mousePositionX, int mousePositionY, int button) {
         this.motherFrame.onMouseReleased(button);
     }
-
 
     @Override
     public void mouseClicked(int mousePositionX, int mousePositionY, int button) {

@@ -20,38 +20,22 @@ public interface ISLClass {
     /*
      * Save classes using ISLClass;
      */
-    public static void onReloadSave(Object object) {
-        if (!(object instanceof ArrayList<?>)) {
-            return;
-        }
+    public static void onReloadSave(ArrayList arrayList) {
+        for (Object objects : arrayList) {
+            ISLClass _ISLClass = (ISLClass) objects;
 
-        ArrayList<?> objectList = (ArrayList<?>) object;
-
-        for (Object objects : objectList) {
-            if (objects instanceof ISLClass) {
-                ISLClass _ISLClass = (ISLClass) objects;
-
-                _ISLClass.onSave();
-            }
+            _ISLClass.onSave();
         }
     }
 
     /*
      * Load classes using ISLClass;
      */
-    public static void onReloadLoad(Object object) {
-        if (!(object instanceof ArrayList<?>)) {
-            return;
-        }
+    public static void onReloadLoad(ArrayList arrayList) {
+        for (Object objects : arrayList) {
+            ISLClass _ISLClass = (ISLClass) objects;
 
-        ArrayList<?> objectList = (ArrayList<?>) object;
-
-        for (Object objects : objectList) {
-            if (objects instanceof ISLClass) {
-                ISLClass _ISLClass = (ISLClass) objects;
-
-                _ISLClass.onLoad();
-            }
+            _ISLClass.onSave();
         }
     }
 }

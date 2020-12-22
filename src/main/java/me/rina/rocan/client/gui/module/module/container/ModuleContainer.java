@@ -95,6 +95,20 @@ public class ModuleContainer extends Container {
                 ModuleWidget moduleWidget = (ModuleWidget) widgets;
 
                 moduleWidget.setSelected(false);
+                moduleWidget.setLocked(false);
+            }
+        }
+    }
+
+    public void resetWidget(Class clazz) {
+        for (Widget widgets : this.loadedWidgetList) {
+            if (widgets instanceof ModuleWidget) {
+                ModuleWidget moduleWidget = (ModuleWidget) widgets;
+
+                if (moduleWidget.getClass() != clazz) {
+                    moduleWidget.setLocked(false);
+                    moduleWidget.setSelected(false);
+                }
             }
         }
     }
@@ -147,6 +161,20 @@ public class ModuleContainer extends Container {
 
     public int getOffsetHeight() {
         return offsetHeight;
+    }
+
+    @Override
+    public void onKeyboard(char character, int key) {
+        for (Widget widgets : this.loadedWidgetList) {
+            widgets.onKeyboard(character, key);
+        }
+    }
+
+    @Override
+    public void onCustomKeyboard(char character, int key) {
+        for (Widget widgets : this.loadedWidgetList) {
+            widgets.onCustomKeyboard(character, key);
+        }
     }
 
     @Override

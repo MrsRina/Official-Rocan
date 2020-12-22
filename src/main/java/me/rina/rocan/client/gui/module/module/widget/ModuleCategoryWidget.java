@@ -43,10 +43,18 @@ public class ModuleCategoryWidget extends Widget {
         this.category = category;
 
         this.rect.setWidth(100);
-        this.rect.setHeight(6 + TurokFontManager.getStringHeight(Rocan.getGUI().fontModuleCategoryWidget, this.rect.getTag()) + 6);
+        this.rect.setHeight(6 + TurokFontManager.getStringHeight(Rocan.getGUI().fontBigWidget, this.rect.getTag()) + 6);
 
         this.container = new ModuleContainer(this.master, this.frame, this, this.category);
         this.container.init();
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
     }
 
     public void setOffsetX(int offsetX) {
@@ -89,19 +97,20 @@ public class ModuleCategoryWidget extends Widget {
         return isMouseClickedLeft;
     }
 
-    public void setSelected(boolean selected) {
-        isSelected = selected;
+    @Override
+    public void onKeyboard(char character, int key) {
+        this.container.onKeyboard(character, key);
     }
 
-    public boolean isSelected() {
-        return isSelected;
+    @Override
+    public void onCustomKeyboard(char character, int key) {
+        this.container.onCustomKeyboard(character, key);
     }
 
     @Override
     public void onMouseReleased(int button) {
         if (this.flagMouse == Flag.MouseOver && this.isMouseClickedLeft) {
-            this.frame.resetModuleCategoryWidget();
-            this.frame.setWidgetSelected(this);
+            this.frame.resetWidget();
 
             this.container.init();
 
@@ -135,13 +144,13 @@ public class ModuleCategoryWidget extends Widget {
         this.rect.setY(this.frame.getRect().getY() + this.offsetY);
 
         this.rect.setWidth(100);
-        this.rect.setHeight(6 + TurokFontManager.getStringHeight(Rocan.getGUI().fontModuleCategoryWidget, this.rect.getTag()) + 6);
+        this.rect.setHeight(6 + TurokFontManager.getStringHeight(Rocan.getGUI().fontBigWidget, this.rect.getTag()) + 6);
 
         this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
 
         this.alphaEffect = (int) (this.flagMouse == Flag.MouseOver ? TurokMath.linearInterpolation(this.alphaEffect, Rocan.getGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : TurokMath.linearInterpolation(this.alphaEffect, 0, this.master.getPartialTicks()));
 
-        TurokFontManager.render(Rocan.getGUI().fontModuleCategoryWidget, this.rect.getTag(), this.rect.getX() + (this.rect.getWidth() / 2 - (TurokFontManager.getStringWidth(Rocan.getGUI().fontModuleCategoryWidget, this.rect.getTag()) / 2)), this.rect.getY() + 6, true, new Color(255, 255, 255));
+        TurokFontManager.render(Rocan.getGUI().fontBigWidget, this.rect.getTag(), this.rect.getX() + (this.rect.getWidth() / 2 - (TurokFontManager.getStringWidth(Rocan.getGUI().fontBigWidget, this.rect.getTag()) / 2)), this.rect.getY() + 6, true, new Color(255, 255, 255));
 
         TurokRenderGL.color(Rocan.getGUI().colorWidgetHighlight[0], Rocan.getGUI().colorWidgetHighlight[1], Rocan.getGUI().colorWidgetHighlight[2], this.alphaEffect);
         TurokRenderGL.drawOutlineRect(this.rect);

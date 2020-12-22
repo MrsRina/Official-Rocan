@@ -8,6 +8,7 @@ import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
+import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
@@ -37,7 +38,6 @@ public class MotherFrame extends Frame {
 
     private int widgetHeight;
 
-    private Widget widgetSelected;
     private TurokRect rectWidgetSelected;
 
     private boolean isStarted = true;
@@ -65,8 +65,6 @@ public class MotherFrame extends Frame {
             this.loadedWidgetList.add(moduleCategoryWidget);
 
             this.widgetHeight = moduleCategoryWidget.getRect().getHeight();
-            this.widgetSelected = moduleCategoryWidget;
-
             this.scaleWidth += moduleCategoryWidget.getRect().getWidth() + 1;
         }
     }
@@ -83,7 +81,7 @@ public class MotherFrame extends Frame {
         this.scaleY = this.master.getDisplay().getScaledHeight() / (((this.scale * 2) + (this.scale * 2)));
     }
 
-    public void resetModuleCategoryWidget() {
+    public void resetWidget() {
         for (Widget widgets : this.loadedWidgetList) {
             if (widgets instanceof ModuleCategoryWidget) {
                 ModuleCategoryWidget moduleCategoryWidget = (ModuleCategoryWidget) widgets;
@@ -91,14 +89,6 @@ public class MotherFrame extends Frame {
                 moduleCategoryWidget.setSelected(false);
             }
         }
-    }
-
-    public void setWidgetSelected(Widget widgetSelected) {
-        this.widgetSelected = widgetSelected;
-    }
-
-    public Widget getWidgetSelected() {
-        return widgetSelected;
     }
 
     public void setScale(int scale) {
@@ -142,13 +132,33 @@ public class MotherFrame extends Frame {
     }
 
     @Override
+    public void onKeyboard(char character, int key) {
+        for (Widget widgets : this.loadedWidgetList) {
+            widgets.onKeyboard(character, key);
+        }
+    }
+
+    @Override
+    public void onCustomKeyboard(char character, int key) {
+        for (Widget widgets : this.loadedWidgetList) {
+            if (widgets instanceof ModuleCategoryWidget) {
+                ModuleCategoryWidget moduleCategoryWidget = (ModuleCategoryWidget) widgets;
+
+                if (moduleCategoryWidget.isSelected()) moduleCategoryWidget.onCustomKeyboard(character, key);
+            }
+        }
+    }
+
+    @Override
     public void onMouseReleased(int button) {
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onMouseReleased(button);
-        }
 
-        if (this.widgetSelected != null) {
-            this.widgetSelected.onCustomMouseReleased(button);
+            if (widgets instanceof ModuleCategoryWidget) {
+                ModuleCategoryWidget moduleCategoryWidget = (ModuleCategoryWidget) widgets;
+
+                if (moduleCategoryWidget.isSelected()) moduleCategoryWidget.onCustomMouseReleased(button);
+            }
         }
     }
 
@@ -156,10 +166,12 @@ public class MotherFrame extends Frame {
     public void onMouseClicked(int button) {
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onMouseClicked(button);
-        }
 
-        if (this.widgetSelected != null) {
-            this.widgetSelected.onCustomMouseClicked(button);
+            if (widgets instanceof ModuleCategoryWidget) {
+                ModuleCategoryWidget moduleCategoryWidget = (ModuleCategoryWidget) widgets;
+
+                if (moduleCategoryWidget.isSelected()) moduleCategoryWidget.onCustomMouseClicked(button);
+            }
         }
     }
 
@@ -173,34 +185,31 @@ public class MotherFrame extends Frame {
         this.rect.setWidth(this.scaleWidth);
         this.rect.setHeight(TurokMath.min(this.scaleHeight, 200));
 
-        /*
-         * We just set the sizes for height and y.
-         */
+        // Set the rect of selected widget for y & width, so we can't change.
         this.rectWidgetSelected.setY(this.rect.getY());
         this.rectWidgetSelected.setHeight(this.widgetHeight);
+
+        this.scaleHeight = this.master.getDisplay().getScaledHeight() / 2;
 
         TurokRenderGL.color(Rocan.getGUI().colorFrameBackground[0], Rocan.getGUI().colorFrameBackground[1], Rocan.getGUI().colorFrameBackground[2], Rocan.getGUI().colorFrameBackground[3]);
         TurokRenderGL.drawSolidRect(this.rect);
 
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onRender();
+
+            if (widgets instanceof ModuleCategoryWidget) widgets.onCustomRender();
         }
 
-        /*
-         * For some reason the loaded list do not refresh when start,
-         * I hope it fix.
-         */
+        TurokRenderGL.color(Rocan.getGUI().colorWidgetSelected[0], Rocan.getGUI().colorWidgetSelected[1], Rocan.getGUI().colorWidgetSelected[2], Rocan.getGUI().colorWidgetSelected[3]);
+        TurokRenderGL.drawOutlineRect(this.rectWidgetSelected);
+
         if (this.isStarted) {
-            this.widgetSelected = this.loadedWidgetList.get(0);
+            Widget widget = this.loadedWidgetList.get(0);
+
+            // Set true the first widget on loadedWidgetList.
+            if (widget instanceof ModuleCategoryWidget) ((ModuleCategoryWidget) widget).setSelected(true);
 
             this.isStarted = false;
-        }
-
-        if (this.widgetSelected != null) {
-            this.widgetSelected.onCustomRender();
-
-            TurokRenderGL.color(Rocan.getGUI().colorWidgetSelected[0], Rocan.getGUI().colorWidgetSelected[1], Rocan.getGUI().colorWidgetSelected[2], Rocan.getGUI().colorWidgetSelected[3]);
-            TurokRenderGL.drawOutlineRect(this.rectWidgetSelected);
         }
     }
 }
