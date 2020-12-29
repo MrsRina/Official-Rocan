@@ -9,9 +9,7 @@ import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.rocan.client.gui.module.setting.container.SettingContainer;
-import me.rina.turok.render.font.TurokFont;
 import me.rina.turok.render.font.management.TurokFontManager;
-import me.rina.turok.render.opengl.TurokRenderGL;
 
 import java.awt.*;
 
@@ -50,7 +48,7 @@ public class LabelWidget extends Widget {
         this.settingContainer = settingContainer;
 
         this.rect.setWidth(this.settingContainer.getRect().getWidth());
-        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getGUI().fontNormalWidget, this.rect.getTag()) + 5);
+        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
     }
 
     public void setText(String text) {
@@ -69,6 +67,11 @@ public class LabelWidget extends Widget {
         return offsetX;
     }
 
+    /**
+     * Set the space referenced with main rect position y.
+     *
+     * @param offsetY
+     */
     public void setOffsetY(int offsetY) {
         this.offsetY = offsetY;
     }
@@ -96,12 +99,12 @@ public class LabelWidget extends Widget {
     @Override
     public void onRender() {
         this.rect.setWidth(this.settingContainer.getRect().getWidth());
-        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getGUI().fontNormalWidget, this.rect.getTag()) + 5);
+        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
 
         this.rect.setX(this.settingContainer.getScrollRect().getX() + this.offsetX);
         this.rect.setY(this.settingContainer.getScrollRect().getY() + this.offsetY);
 
-        TurokFontManager.render(Rocan.getGUI().fontSmallWidget, this.rect.getTag(), this.rect.getX() + 2, this.rect.getY() + 5, true, new Color(255, 255, 255));
+        TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag(), this.rect.getX() + 2, this.rect.getY() + 5, true, new Color(255, 255, 255));
     }
 
     @Override

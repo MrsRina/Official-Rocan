@@ -15,14 +15,14 @@ import org.lwjgl.input.Keyboard;
 public class ModuleClickGUI extends Module {
     public static Setting button = new Setting("Button", "Button", "Simple button widget.", false);
     public static Setting slider = new Setting("Slider", "Slider", "Simple slider widget.", 5, 0, 10);
-    public static Setting mode   = new Setting("Mode", "Mode", "Simple mode widget.", Mode.Option_2);
-
-    public enum Mode {
-        Option_1, Option_2;
-    }
+    public static Setting mode   = new Setting("Mode", "Mode", "Simple mode widget.", Mode.Option2);
 
     public ModuleClickGUI() {
         super("Module Click GUI", "ModuleClickGUI", "Open GUI to manage module, settings...", ModuleCategory.Client);
+    }
+
+    protected enum Mode {
+        Option1, Option2;
     }
 
     @Listener

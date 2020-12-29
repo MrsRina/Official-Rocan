@@ -38,9 +38,12 @@ public class SettingContainer extends Container {
     private int offsetWidth;
     private int offsetHeight;
 
+    /**
+     * Main list of widget of the setting container of type Widget.
+     */
     private ArrayList<Widget> loadedWidgetList;
 
-    /*
+    /**
      * We need create the label that is the description of the module in the container.
      * Later we will need use this to get the height and reset height scroll, so, easy concept.
      */
@@ -77,12 +80,6 @@ public class SettingContainer extends Container {
         this.scrollRect.setHeight(0);
         this.offsetY = 3;
 
-        this.descriptionLabel.setOffsetY(this.scrollRect.getHeight());
-
-        this.loadedWidgetList.add(this.descriptionLabel);
-
-        this.scrollRect.height += this.descriptionLabel.getRect().getHeight() + 1;
-
         for (Setting settings : this.widgetModule.getModule().getSettingList()) {
             if (settings.getValue() instanceof Boolean) {
                 SettingBooleanWidget settingBooleanWidget = new SettingBooleanWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, settings);
@@ -96,21 +93,15 @@ public class SettingContainer extends Container {
         }
     }
 
+    /**
+     * A quick time event to refresh the positions offsetY of widgets on loadedWidgetList.
+     */
     public void onRefreshWidget() {
         // Set 0 the start up height value.
         this.scrollRect.setHeight(0);
 
         // Clear the list.
         this.loadedWidgetList.clear();
-
-        // Set the last save y offset.
-        this.descriptionLabel.setOffsetY(this.scrollRect.getHeight());
-
-        // Put in the loaded widget list to enable render.
-        this.loadedWidgetList.add(this.descriptionLabel);
-
-        // Update height with the height of description label.
-        this.scrollRect.height += this.descriptionLabel.getRect().getHeight() + 1;
 
         for (Setting settings : this.widgetModule.getModule().getSettingList()) {
             if (!settings.isEnabled()) {
@@ -249,18 +240,25 @@ public class SettingContainer extends Container {
         int positionXScaled = (this.container.getRect().getX() + this.container.getRect().getWidth()) + (2 * this.frame.getScale());
         int positionYScaled = this.container.getRect().getY();
 
+        int realScrollY = this.rect.getY() + this.descriptionLabel.getRect().getHeight() + 1;
+
         this.rect.setX(positionXScaled);
         this.rect.setY(positionYScaled);
 
         this.scrollRect.setX(this.rect.getX());
-        this.scrollRect.setY((int) TurokMath.linearInterpolation(this.scrollRect.getY(), this.rect.getY() + this.offsetY, this.master.getPartialTicks()));
+        this.scrollRect.setY((int) TurokMath.linearInterpolation(this.scrollRect.getY(), realScrollY + this.offsetY, this.master.getPartialTicks()));
 
+        // Its the offset geometry problem.
         int offsetFixOutline = 1;
 
         if (this.widgetModule.isSelected()) {
             this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
 
-            TurokRenderGL.color(Rocan.getGUI().colorContainerBackground[0], Rocan.getGUI().colorContainerBackground[1], Rocan.getGUI().colorContainerBackground[2], Rocan.getGUI().colorContainerBackground[3]);
+            // Render the description label widget.
+            this.descriptionLabel.setOffsetY(0);
+            this.descriptionLabel.onRender();
+
+            TurokRenderGL.color(Rocan.getWrapperGUI().colorContainerBackground[0], Rocan.getWrapperGUI().colorContainerBackground[1], Rocan.getWrapperGUI().colorContainerBackground[2], Rocan.getWrapperGUI().colorContainerBackground[3]);
             TurokRenderGL.drawSolidRect(this.rect);
 
             for (Widget widgets : this.loadedWidgetList) {
@@ -268,7 +266,7 @@ public class SettingContainer extends Container {
             }
 
             TurokRenderGL.enable(GL11.GL_SCISSOR_TEST);
-            TurokRenderGL.drawScissor(this.rect.getX(), this.rect.getY() - offsetFixOutline, this.rect.getWidth() + (offsetFixOutline * 2), this.rect.getHeight());
+            TurokRenderGL.drawScissor(this.rect.getX(), realScrollY - offsetFixOutline, this.rect.getWidth() + (offsetFixOutline * 2), this.rect.getHeight());
 
             TurokRenderGL.disable(GL11.GL_SCISSOR_TEST);
         } else {

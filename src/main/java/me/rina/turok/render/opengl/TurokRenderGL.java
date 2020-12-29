@@ -4,7 +4,6 @@ import me.rina.turok.hardware.mouse.TurokMouse;
 import me.rina.turok.util.TurokDisplay;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -19,8 +18,6 @@ import java.util.HashMap;
  * @since 26/09/20 at 1:33pm
  */
 public class TurokRenderGL {
-	private static final Minecraft mc = Minecraft.getMinecraft();
-
 	private static TurokRenderGL INSTANCE;
 
 	protected TurokDisplay display;
@@ -73,20 +70,12 @@ public class TurokRenderGL {
 		this.program = GL20.glCreateProgram();
 		this.uniforms = new HashMap<>();
 
-		switch (INSTANCE.program) {
-			case TUROKGL_NULL : {
-				System.err.println("Turok: Shader creation failed, returned " + INSTANCE.program);
+		if (INSTANCE.program == TUROKGL_NULL) {
+			System.err.println("Turok: Shader creation failed, returned " + INSTANCE.program);
 
-				isShaderInitializedWithoutErrors = false;
-
-				break;
-			}
-
-			default : {
-				isShaderInitializedWithoutErrors = true;
-
-				break;
-			}
+			isShaderInitializedWithoutErrors = false;
+		} else {
+			isShaderInitializedWithoutErrors = true;
 		}
 	}
 
@@ -181,13 +170,10 @@ public class TurokRenderGL {
 	}
 
 	public static void drawScissor(int x, int y, int w, int h) {
-		int calculatedX = x;
-		int calculatedY = y;
+		int calculatedW = x + w;
+		int calculatedH = y + h;
 
-		int calculatedW = calculatedX + w;
-		int calculatedH = calculatedY + h;
-
-		GL11.glScissor((int) (calculatedX * INSTANCE.display.getScaleFactor()), (int) (INSTANCE.display.getHeight() - (calculatedH * INSTANCE.display.getScaleFactor())), (int) ((calculatedW - calculatedX) * INSTANCE.display.getScaleFactor()), (int) ((calculatedH - calculatedY) * INSTANCE.display.getScaleFactor()));
+		GL11.glScissor((int) (x * INSTANCE.display.getScaleFactor()), (int) (INSTANCE.display.getHeight() - (calculatedH * INSTANCE.display.getScaleFactor())), (int) ((calculatedW - x) * INSTANCE.display.getScaleFactor()), (int) ((calculatedH - y) * INSTANCE.display.getScaleFactor()));
 	}
 
 	public static void drawTexture(float x, float y, float width, float height) {
@@ -324,7 +310,7 @@ public class TurokRenderGL {
 
 		prepare(GL11.GL_LINES);
 		{
-			addVertex(x, y + height - 0.5f);
+			addVertex(x, y + height);
 			addVertex(x + width - 0.5f, y + height);
 		}
 

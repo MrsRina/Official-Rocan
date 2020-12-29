@@ -104,7 +104,7 @@ public class EventManager {
          * This make any color update as the color fully smooth.
          * And we update the colors of the GUI too.
          */
-        Rocan.getGUI().onUpdateColor();
+        Rocan.getWrapperGUI().onUpdateColor();
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH, receiveCanceled = true)

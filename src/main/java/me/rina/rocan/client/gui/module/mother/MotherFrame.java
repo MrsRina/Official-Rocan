@@ -5,10 +5,8 @@ import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.frame.Frame;
 import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.module.impl.ModuleCategory;
-import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
-import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
@@ -191,7 +189,7 @@ public class MotherFrame extends Frame {
 
         this.scaleHeight = this.master.getDisplay().getScaledHeight() / 2;
 
-        TurokRenderGL.color(Rocan.getGUI().colorFrameBackground[0], Rocan.getGUI().colorFrameBackground[1], Rocan.getGUI().colorFrameBackground[2], Rocan.getGUI().colorFrameBackground[3]);
+        TurokRenderGL.color(Rocan.getWrapperGUI().colorFrameBackground[0], Rocan.getWrapperGUI().colorFrameBackground[1], Rocan.getWrapperGUI().colorFrameBackground[2], Rocan.getWrapperGUI().colorFrameBackground[3]);
         TurokRenderGL.drawSolidRect(this.rect);
 
         for (Widget widgets : this.loadedWidgetList) {
@@ -200,7 +198,7 @@ public class MotherFrame extends Frame {
             if (widgets instanceof ModuleCategoryWidget) widgets.onCustomRender();
         }
 
-        TurokRenderGL.color(Rocan.getGUI().colorWidgetSelected[0], Rocan.getGUI().colorWidgetSelected[1], Rocan.getGUI().colorWidgetSelected[2], Rocan.getGUI().colorWidgetSelected[3]);
+        TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetSelected[0], Rocan.getWrapperGUI().colorWidgetSelected[1], Rocan.getWrapperGUI().colorWidgetSelected[2], Rocan.getWrapperGUI().colorWidgetSelected[3]);
         TurokRenderGL.drawOutlineRect(this.rectWidgetSelected);
 
         if (this.isStarted) {

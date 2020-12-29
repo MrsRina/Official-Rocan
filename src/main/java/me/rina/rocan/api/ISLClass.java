@@ -35,7 +35,7 @@ public interface ISLClass {
         for (Object objects : arrayList) {
             ISLClass _ISLClass = (ISLClass) objects;
 
-            _ISLClass.onSave();
+            _ISLClass.onLoad();
         }
     }
 }

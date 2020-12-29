@@ -5,5 +5,13 @@ package me.rina.rocan.api.gui.flag;
  * @since 07/12/20 at 02:30pm
  */
 public enum Flag {
-    MouseOver, MouseNotOver;
+    /**
+     * When mouse is over something.
+     */
+    MouseOver,
+
+    /**
+     * When mouse is not more over something.
+     */
+    MouseNotOver;
 }

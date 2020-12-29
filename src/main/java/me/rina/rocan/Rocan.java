@@ -43,7 +43,7 @@ public enum Rocan {
     private CommandManager commandManager;
 
     private ModuleClickGUI moduleClickGUI;
-    private GUI _GUI;
+    private GUI wrapperGUI;
 
     public void onRegistry() {
         // Modules.
@@ -69,7 +69,7 @@ public enum Rocan {
         this.clientEventManager = new EventManager();
         this.commandManager = new CommandManager();
 
-        this._GUI = new GUI();
+        this.wrapperGUI = new GUI();
 
         this.moduleClickGUI = new ModuleClickGUI();
 
@@ -96,8 +96,8 @@ public enum Rocan {
         return INSTANCE.moduleClickGUI;
     }
 
-    public static GUI getGUI() {
-        return INSTANCE._GUI;
+    public static GUI getWrapperGUI() {
+        return INSTANCE.wrapperGUI;
     }
 
     public static Minecraft getMinecraft() {

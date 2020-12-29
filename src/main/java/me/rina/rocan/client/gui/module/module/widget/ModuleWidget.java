@@ -4,7 +4,6 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.module.Module;
-import me.rina.rocan.api.setting.Setting;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
@@ -70,7 +69,7 @@ public class ModuleWidget extends Widget {
         this.settingContainer = new SettingContainer(this.master, this.frame, this.widget, this.container, this);
 
         this.rect.setWidth(this.container.getRect().getWidth() - (this.offsetX * 2));
-        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getGUI().fontNormalWidget, this.rect.getTag()) + 5);
+        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
     }
 
     protected void setSettingContainer(SettingContainer settingContainer) {
@@ -208,14 +207,14 @@ public class ModuleWidget extends Widget {
         }
 
         this.rect.setWidth(this.container.getRect().getWidth() - (this.offsetX * 2));
-        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getGUI().fontNormalWidget, this.rect.getTag()) + 5);
+        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
 
-        this.alphaEffectHighlight = (int) (this.flagMouse == Flag.MouseOver ? TurokMath.linearInterpolation(this.alphaEffectHighlight, Rocan.getGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : TurokMath.linearInterpolation(this.alphaEffectHighlight, 0, this.master.getPartialTicks()));
+        this.alphaEffectHighlight = (int) (this.flagMouse == Flag.MouseOver ? TurokMath.linearInterpolation(this.alphaEffectHighlight, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : TurokMath.linearInterpolation(this.alphaEffectHighlight, 0, this.master.getPartialTicks()));
 
-        TurokRenderGL.color(Rocan.getGUI().colorWidgetHighlight[0], Rocan.getGUI().colorWidgetHighlight[1], Rocan.getGUI().colorWidgetHighlight[2], this.alphaEffectHighlight);
+        TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetHighlight[0], Rocan.getWrapperGUI().colorWidgetHighlight[1], Rocan.getWrapperGUI().colorWidgetHighlight[2], this.alphaEffectHighlight);
         TurokRenderGL.drawOutlineRect(this.rect);
 
-        TurokFontManager.render(Rocan.getGUI().fontNormalWidget, this.rect.getTag(), this.rect.getX() + 2, this.rect.getY() + 5, true, new Color(255, 255, 255));
+        TurokFontManager.render(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag(), this.rect.getX() + 2, this.rect.getY() + 5, true, new Color(255, 255, 255));
 
         if (this.isLocked) { // I need verify if is locked to set selected, actually this works great with animation.
             this.isSelected = true;
@@ -225,11 +224,11 @@ public class ModuleWidget extends Widget {
             this.isSelected = this.flagMouse == Flag.MouseOver;
         }
 
-        TurokRenderGL.color(Rocan.getGUI().colorWidgetSelected[0], Rocan.getGUI().colorWidgetSelected[1], Rocan.getGUI().colorWidgetSelected[2], this.alphaEffectSelected);
+        TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetSelected[0], Rocan.getWrapperGUI().colorWidgetSelected[1], Rocan.getWrapperGUI().colorWidgetSelected[2], this.alphaEffectSelected);
         TurokRenderGL.drawOutlineRect(this.rect);
 
         if (this.isSelected) {
-            this.alphaEffectSelected = (int) TurokMath.linearInterpolation(this.alphaEffectSelected, Rocan.getGUI().colorWidgetSelected[3], this.master.getPartialTicks());
+            this.alphaEffectSelected = (int) TurokMath.linearInterpolation(this.alphaEffectSelected, Rocan.getWrapperGUI().colorWidgetSelected[3], this.master.getPartialTicks());
 
             this.settingContainer.getRect().setWidth((int) TurokMath.linearInterpolation(this.settingContainer.getRect().getWidth(), this.settingContainer.getWidthScale(), this.master.getPartialTicks()));
 
