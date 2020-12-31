@@ -27,6 +27,8 @@ public class LabelWidget extends Widget {
     private ModuleWidget widgetModule;
     private SettingContainer settingContainer;
 
+    private boolean isScroll;
+
     private int offsetX;
     private int offsetY;
 
@@ -57,6 +59,14 @@ public class LabelWidget extends Widget {
 
     public String getText() {
         return this.rect.getTag();
+    }
+
+    public void setScroll(boolean scroll) {
+        this.isScroll = scroll;
+    }
+
+    public boolean isScroll() {
+        return this.isScroll;
     }
 
     public void setOffsetX(int offsetX) {
@@ -101,8 +111,10 @@ public class LabelWidget extends Widget {
         this.rect.setWidth(this.settingContainer.getRect().getWidth());
         this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
 
+        int onTopPositionY = this.isScroll ? this.settingContainer.getScrollRect().getY() : this.settingContainer.getRect().getY();
+
         this.rect.setX(this.settingContainer.getScrollRect().getX() + this.offsetX);
-        this.rect.setY(this.settingContainer.getScrollRect().getY() + this.offsetY);
+        this.rect.setY(onTopPositionY + this.offsetY);
 
         TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag(), this.rect.getX() + 2, this.rect.getY() + 5, true, new Color(255, 255, 255));
     }

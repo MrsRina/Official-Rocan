@@ -1,5 +1,7 @@
 package me.rina.rocan.client.gui.module;
 
+import me.rina.rocan.api.module.management.ModuleManager;
+import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.turok.hardware.mouse.TurokMouse;
 import me.rina.turok.render.opengl.TurokRenderGL;
@@ -24,14 +26,17 @@ public class ModuleClickGUI extends GuiScreen {
     private boolean isOpened;
     private boolean isCanceledCloseGUI;
 
+    protected me.rina.rocan.client.module.client.ModuleClickGUI moduleClientGUI;
+
     public ModuleClickGUI() {
         TurokRenderGL.init();
-
-        this.init();
     }
 
     public void init() {
         this.motherFrame = new MotherFrame(this);
+
+        // To turn off when you close the GUi.
+        this.moduleClientGUI = (me.rina.rocan.client.module.client.ModuleClickGUI) ModuleManager.get(me.rina.rocan.client.module.client.ModuleClickGUI.class);
     }
 
     protected void setDisplay(TurokDisplay display) {
@@ -81,6 +86,8 @@ public class ModuleClickGUI extends GuiScreen {
 
     @Override
     public void onGuiClosed() {
+        this.moduleClientGUI.setDisabled();
+
         this.isOpened = false;
     }
 
@@ -131,15 +138,19 @@ public class ModuleClickGUI extends GuiScreen {
 
         this.motherFrame.onRender();
 
-        int calculatedScaledX = (this.display.getScaledWidth() - this.motherFrame.getScaleWidth()) /  (this.motherFrame.getScale());
+        int calculatedScaledX = (this.display.getScaledWidth() / 2) - (this.motherFrame.getRect().getWidth() / this.motherFrame.getScale());
 
         if (this.isOpened) {
-            this.motherFrame.setScaleX((int) TurokMath.linearInterpolation(this.motherFrame.getScaleX(), calculatedScaledX, partialTicks));
+            this.motherFrame.setScaleX((int) TurokMath.lerp(this.motherFrame.getScaleX(), calculatedScaledX, partialTicks));
         } else {
-            this.motherFrame.setScaleX((int) TurokMath.linearInterpolation(this.motherFrame.getScaleX(), TurokMath.negative(this.motherFrame.getRect().getWidth()) - 10, partialTicks));
+            int currentFrameMotherRealWidth = ((this.display.getScaledWidth() / 2) + (this.motherFrame.getRect().getWidth() / this.motherFrame.getScale())) + this.motherFrame.getRect().getWidth();
 
-            if (this.motherFrame.getRect().getX() <= TurokMath.negative(this.motherFrame.getRect().getWidth())) {
+            this.motherFrame.setScaleX((int) TurokMath.lerp(this.motherFrame.getScaleX(), TurokMath.negative(currentFrameMotherRealWidth) - 10, partialTicks));
+
+            if (this.motherFrame.getRect().getX() <= TurokMath.negative(currentFrameMotherRealWidth)) {
                 this.onGuiClosed();
+
+                ChatUtil.print("e");
 
                 this.mouse.setPos(this.display.getScaledWidth() / 2, this.display.getScaledHeight() / 2);
 

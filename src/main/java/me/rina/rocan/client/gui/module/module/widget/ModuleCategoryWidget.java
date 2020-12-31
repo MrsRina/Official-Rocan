@@ -42,7 +42,7 @@ public class ModuleCategoryWidget extends Widget {
 
         this.category = category;
 
-        this.rect.setWidth(100);
+        this.rect.setWidth(75);
         this.rect.setHeight(6 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontBigWidget, this.rect.getTag()) + 6);
 
         this.container = new ModuleContainer(this.master, this.frame, this, this.category);
@@ -143,12 +143,12 @@ public class ModuleCategoryWidget extends Widget {
         this.rect.setX(this.frame.getRect().getX() + this.offsetX);
         this.rect.setY(this.frame.getRect().getY() + this.offsetY);
 
-        this.rect.setWidth(100);
+        this.rect.setWidth(75);
         this.rect.setHeight(6 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontBigWidget, this.rect.getTag()) + 6);
 
         this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
 
-        this.alphaEffect = (int) (this.flagMouse == Flag.MouseOver ? TurokMath.linearInterpolation(this.alphaEffect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : TurokMath.linearInterpolation(this.alphaEffect, 0, this.master.getPartialTicks()));
+        this.alphaEffect = (int) (this.flagMouse == Flag.MouseOver ? TurokMath.lerp(this.alphaEffect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : TurokMath.lerp(this.alphaEffect, 0, this.master.getPartialTicks()));
 
         TurokFontManager.render(Rocan.getWrapperGUI().fontBigWidget, this.rect.getTag(), this.rect.getX() + (this.rect.getWidth() / 2 - (TurokFontManager.getStringWidth(Rocan.getWrapperGUI().fontBigWidget, this.rect.getTag()) / 2)), this.rect.getY() + 6, true, new Color(255, 255, 255));
 
@@ -161,26 +161,26 @@ public class ModuleCategoryWidget extends Widget {
          * to fix slow linear slow interpolation.
          */
         if (this.isSelected) {
-            this.container.getRect().setWidth((int) TurokMath.linearInterpolation(this.container.getRect().getWidth(), this.container.getWidthScale(), this.master.getPartialTicks()));
+            this.container.getRect().setWidth((int) TurokMath.lerp(this.container.getRect().getWidth(), this.container.getWidthScale(), this.master.getPartialTicks()));
 
             if (this.container.getRect().getWidth() >= this.container.getWidthScale() - 10) {
                 this.container.getRect().setWidth(this.container.getWidthScale());
             }
 
-            this.container.getRect().setHeight((int) TurokMath.linearInterpolation(this.container.getRect().getHeight(), this.container.getHeightScale(), this.master.getPartialTicks()));
+            this.container.getRect().setHeight((int) TurokMath.lerp(this.container.getRect().getHeight(), this.container.getHeightScale(), this.master.getPartialTicks()));
 
             if (this.container.getRect().getHeight() >= this.container.getHeightScale() - 10) {
                 this.container.getRect().setHeight(this.container.getHeightScale());
             }
 
-            this.frame.getRectWidgetSelected().setX((int) TurokMath.linearInterpolation(this.frame.getRectWidgetSelected().getX(), this.rect.getX(), this.master.getPartialTicks()));
+            this.frame.getRectWidgetSelected().setX((int) TurokMath.lerp(this.frame.getRectWidgetSelected().getX(), this.rect.getX(), this.master.getPartialTicks()));
 
             if (this.frame.getRectWidgetSelected().getDistance(this.rect) <= 10) {
                 this.frame.getRectWidgetSelected().setX(this.rect.getX());
             }
         } else {
-            this.container.getRect().setWidth((int) TurokMath.linearInterpolation(this.container.getRect().getWidth(), 0, this.master.getPartialTicks()));
-            this.container.getRect().setHeight((int) TurokMath.linearInterpolation(this.container.getRect().getHeight(), 0, this.master.getPartialTicks()));
+            this.container.getRect().setWidth((int) TurokMath.lerp(this.container.getRect().getWidth(), 0, this.master.getPartialTicks()));
+            this.container.getRect().setHeight((int) TurokMath.lerp(this.container.getRect().getHeight(), 0, this.master.getPartialTicks()));
         }
 
         this.frame.getRectWidgetSelected().setWidth(this.rect.getWidth());

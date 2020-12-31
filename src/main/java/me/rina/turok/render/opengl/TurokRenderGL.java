@@ -310,8 +310,8 @@ public class TurokRenderGL {
 
 		prepare(GL11.GL_LINES);
 		{
-			addVertex(x, y + height);
-			addVertex(x + width - 0.5f, y + height);
+			addVertex(x, y + height - 0.5f);
+			addVertex(x + width - 0.5f, y + height - 0.5f);
 		}
 
 		release();

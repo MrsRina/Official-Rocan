@@ -27,14 +27,15 @@ public class ModuleClickGUI extends Module {
 
     @Listener
     public void onListenClientEvent(ClientTickEvent event) {
-        if (this.getKeyCode() != Keyboard.KEY_P) {
-            this.setKeyCode(Keyboard.KEY_P);
-        }
-
-        if (mc.currentScreen == null) {
+        if (mc.currentScreen != Rocan.getModuleClickGUI()) {
             mc.displayGuiScreen(Rocan.getModuleClickGUI());
+        }
+    }
 
-            setDisabled();
+    @Override
+    public void onDisable() {
+        if (mc.currentScreen == Rocan.getModuleClickGUI()) {
+            Rocan.getModuleClickGUI().setOpened(false);
         }
     }
 }

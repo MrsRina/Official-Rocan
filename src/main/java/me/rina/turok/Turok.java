@@ -8,7 +8,7 @@ package me.rina.turok;
  */
 public class Turok {
     public static String AUTHOR  = "SrRina";
-    public static String VERSION = "5.1.0 Official Rocan Version";
+    public static String VERSION = "6.0.1";
     public static String NAME    = "Turok Framework";
 
     public static String getAuthor() {

@@ -156,9 +156,9 @@ public class SettingBooleanWidget extends Widget {
         this.rectCheckbox.setY(this.rect.getY() + this.rect.getHeight() - (this.rectCheckbox.getHeight() + 5));
 
         // Where the smooth animation works.
-        this.alphaEffectHighlightCheckbox = this.rectCheckbox.collideWithMouse(this.master.getMouse()) ? (int) TurokMath.linearInterpolation(this.alphaEffectHighlightCheckbox, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.linearInterpolation(this.alphaEffectHighlightCheckbox, 0, this.master.getPartialTicks());
-        this.alphaEffectHighlightRect = this.rect.collideWithMouse(this.master.getMouse()) ? (int) TurokMath.linearInterpolation(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.linearInterpolation(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
-        this.alphaEffectPressed = (boolean) this.setting.getValue() ? (int) TurokMath.linearInterpolation(this.alphaEffectPressed, Rocan.getWrapperGUI().colorWidgetPressed[3], this.master.getPartialTicks()) : (int) TurokMath.linearInterpolation(this.alphaEffectPressed, 0, this.master.getPartialTicks());
+        this.alphaEffectHighlightCheckbox = this.rectCheckbox.collideWithMouse(this.master.getMouse()) ? (int) TurokMath.lerp(this.alphaEffectHighlightCheckbox, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightCheckbox, 0, this.master.getPartialTicks());
+        this.alphaEffectHighlightRect = this.rect.collideWithMouse(this.master.getMouse()) ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
+        this.alphaEffectPressed = (boolean) this.setting.getValue() ? (int) TurokMath.lerp(this.alphaEffectPressed, Rocan.getWrapperGUI().colorWidgetPressed[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectPressed, 0, this.master.getPartialTicks());
 
         TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag(), this.rectCheckbox.getX() + this.rectCheckbox.getWidth() + 2, this.rect.getY() + 5, true, new Color(255, 255, 255));
 

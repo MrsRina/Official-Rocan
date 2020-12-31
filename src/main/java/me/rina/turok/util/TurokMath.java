@@ -32,7 +32,7 @@ public class TurokMath {
         return decimal.doubleValue();
     }
 
-    public static Vec3d linearInterpolation(Vec3d a, Vec3d b, float ticks) {
+    public static Vec3d lerp(Vec3d a, Vec3d b, float ticks) {
         return new Vec3d(
             a.x + (b.x - a.x) * ticks,
             a.y + (b.y - a.y) * ticks,
@@ -40,11 +40,11 @@ public class TurokMath {
         );
     }
 
-    public static float linearInterpolation(int a, int b, float ticks) {
+    public static float lerp(int a, int b, float ticks) {
         return (a + (b - a) * ticks);
     }
 
-    public static float linearInterpolation(float a, float b, float ticks) {
+    public static float lerp(float a, float b, float ticks) {
         return (a + (b - a) * ticks);
     }
 

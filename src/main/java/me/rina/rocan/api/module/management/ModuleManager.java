@@ -1,5 +1,6 @@
 package me.rina.rocan.api.module.management;
 
+import me.rina.rocan.api.ISavableLoadable;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.setting.Setting;
@@ -11,7 +12,7 @@ import java.util.ArrayList;
  * @author SrRina
  * @since 15/11/20 at 5:30pm
  */
-public class ModuleManager {
+public class ModuleManager implements ISavableLoadable {
     public static ModuleManager INSTANCE;
 
     private ArrayList<Module> moduleList;
@@ -91,5 +92,19 @@ public class ModuleManager {
         }
 
         return moduleListRequested;
+    }
+
+    @Override
+    public void onSave() {
+        for (Module modules : this.getModuleList()) {
+            modules.onSave();
+        }
+    }
+
+    @Override
+    public void onLoad() {
+        for (Module modules : this.getModuleList()) {
+            modules.onLoad();
+        }
     }
 }

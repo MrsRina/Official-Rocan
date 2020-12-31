@@ -76,6 +76,7 @@ public class SettingContainer extends Container {
         }
 
         this.descriptionLabel = new LabelWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, this.widgetModule.getModule().getDescription());
+        this.descriptionLabel.setScroll(false);
 
         this.scrollRect.setHeight(0);
         this.offsetY = 3;
@@ -246,7 +247,7 @@ public class SettingContainer extends Container {
         this.rect.setY(positionYScaled);
 
         this.scrollRect.setX(this.rect.getX());
-        this.scrollRect.setY((int) TurokMath.linearInterpolation(this.scrollRect.getY(), realScrollY + this.offsetY, this.master.getPartialTicks()));
+        this.scrollRect.setY((int) TurokMath.lerp(this.scrollRect.getY(), realScrollY + this.offsetY, this.master.getPartialTicks()));
 
         // Its the offset geometry problem.
         int offsetFixOutline = 1;
@@ -254,12 +255,13 @@ public class SettingContainer extends Container {
         if (this.widgetModule.isSelected()) {
             this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
 
-            // Render the description label widget.
-            this.descriptionLabel.setOffsetY(0);
-            this.descriptionLabel.onRender();
-
+            // The fully background rect.
             TurokRenderGL.color(Rocan.getWrapperGUI().colorContainerBackground[0], Rocan.getWrapperGUI().colorContainerBackground[1], Rocan.getWrapperGUI().colorContainerBackground[2], Rocan.getWrapperGUI().colorContainerBackground[3]);
             TurokRenderGL.drawSolidRect(this.rect);
+
+            // Render the description label widget.
+            this.descriptionLabel.setOffsetY(1);
+            this.descriptionLabel.onRender();
 
             for (Widget widgets : this.loadedWidgetList) {
                 widgets.onRender();

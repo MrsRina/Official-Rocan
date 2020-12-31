@@ -1,7 +1,6 @@
 package me.rina.rocan;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
-import me.rina.rocan.api.ISLClass;
 import me.rina.rocan.api.command.management.CommandManager;
 import me.rina.rocan.api.event.management.EventManager;
 import me.rina.rocan.api.module.management.ModuleManager;
@@ -12,7 +11,6 @@ import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.module.render.ModuleBlockHighlight;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 
 /**
@@ -45,6 +43,9 @@ public enum Rocan {
     private ModuleClickGUI moduleClickGUI;
     private GUI wrapperGUI;
 
+    /**
+     * Registry all components.
+     */
     public void onRegistry() {
         // Modules.
         this.moduleManager.registry(new me.rina.rocan.client.module.client.ModuleClickGUI());
@@ -55,15 +56,21 @@ public enum Rocan {
         this.commandManager.registry(new CommandToggle());
     }
 
-    public void onInit() {
-        ISLClass.onReloadLoad(this.moduleManager.getModuleList());
+    /**
+     * Method non-static to init the client.
+     */
+    public void onInitClient() {
+        this.moduleClickGUI.init();
+        this.moduleManager.onLoad();
     }
 
-    public static void onEnd() {
-        ISLClass.onReloadSave(INSTANCE.moduleManager.getModuleList());
+    /**
+     * Method static to end client, save or disable something.
+     */
+    public static void onEndClient() {
+        INSTANCE.moduleManager.onSave();
     }
 
-    @Mod.EventHandler
     public void onClientStarted(FMLInitializationEvent event) {
         this.moduleManager = new ModuleManager();
         this.clientEventManager = new EventManager();
@@ -77,7 +84,7 @@ public enum Rocan {
         MinecraftForge.EVENT_BUS.register(this.commandManager);
 
         this.onRegistry();
-        this.onInit();
+        this.onInitClient();
     }
 
     public static ModuleManager getModuleManager() {

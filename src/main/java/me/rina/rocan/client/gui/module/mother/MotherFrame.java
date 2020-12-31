@@ -76,7 +76,7 @@ public class MotherFrame extends Frame {
     }
 
     public void updateScale() {
-        this.scaleY = this.master.getDisplay().getScaledHeight() / (((this.scale * 2) + (this.scale * 2)));
+        this.scaleY = (this.master.getDisplay().getScaledHeight() / 2) - (this.rect.getHeight() / this.scale);
     }
 
     public void resetWidget() {

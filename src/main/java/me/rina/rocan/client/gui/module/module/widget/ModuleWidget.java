@@ -36,6 +36,7 @@ public class ModuleWidget extends Widget {
 
     private int alphaEffectHighlight;
     private int alphaEffectSelected;
+    private int alphaEffectPressed;
 
     private TurokTick doubleClickTick = new TurokTick();
 
@@ -200,6 +201,9 @@ public class ModuleWidget extends Widget {
         this.rect.setX(this.container.getScrollRect().getX() + this.offsetX);
         this.rect.setY(this.container.getScrollRect().getY() + this.offsetY);
 
+        // Automatically set cool off
+        this.offsetX = 2;
+
         if (this.container.flagMouse == Flag.MouseOver) {
             this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
         } else {
@@ -209,12 +213,21 @@ public class ModuleWidget extends Widget {
         this.rect.setWidth(this.container.getRect().getWidth() - (this.offsetX * 2));
         this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
 
-        this.alphaEffectHighlight = (int) (this.flagMouse == Flag.MouseOver ? TurokMath.linearInterpolation(this.alphaEffectHighlight, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : TurokMath.linearInterpolation(this.alphaEffectHighlight, 0, this.master.getPartialTicks()));
+        this.alphaEffectHighlight = (int) (this.flagMouse == Flag.MouseOver ? TurokMath.lerp(this.alphaEffectHighlight, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : TurokMath.lerp(this.alphaEffectHighlight, 0, this.master.getPartialTicks()));
 
         TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetHighlight[0], Rocan.getWrapperGUI().colorWidgetHighlight[1], Rocan.getWrapperGUI().colorWidgetHighlight[2], this.alphaEffectHighlight);
         TurokRenderGL.drawOutlineRect(this.rect);
 
+        TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetPressed[0], Rocan.getWrapperGUI().colorWidgetPressed[1], Rocan.getWrapperGUI().colorWidgetPressed[2], this.alphaEffectPressed);
+        TurokRenderGL.drawSolidRect(this.rect);
+
         TurokFontManager.render(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag(), this.rect.getX() + 2, this.rect.getY() + 5, true, new Color(255, 255, 255));
+
+        if (this.module.isEnabled()) {
+            this.alphaEffectPressed = (int) TurokMath.lerp(this.alphaEffectPressed, Rocan.getWrapperGUI().colorWidgetPressed[3], this.master.getPartialTicks());
+        } else {
+            this.alphaEffectPressed = (int) TurokMath.lerp(this.alphaEffectPressed, 0, this.master.getPartialTicks());
+        }
 
         if (this.isLocked) { // I need verify if is locked to set selected, actually this works great with animation.
             this.isSelected = true;
@@ -228,24 +241,24 @@ public class ModuleWidget extends Widget {
         TurokRenderGL.drawOutlineRect(this.rect);
 
         if (this.isSelected) {
-            this.alphaEffectSelected = (int) TurokMath.linearInterpolation(this.alphaEffectSelected, Rocan.getWrapperGUI().colorWidgetSelected[3], this.master.getPartialTicks());
+            this.alphaEffectSelected = (int) TurokMath.lerp(this.alphaEffectSelected, Rocan.getWrapperGUI().colorWidgetSelected[3], this.master.getPartialTicks());
 
-            this.settingContainer.getRect().setWidth((int) TurokMath.linearInterpolation(this.settingContainer.getRect().getWidth(), this.settingContainer.getWidthScale(), this.master.getPartialTicks()));
+            this.settingContainer.getRect().setWidth((int) TurokMath.lerp(this.settingContainer.getRect().getWidth(), this.settingContainer.getWidthScale(), this.master.getPartialTicks()));
 
             if (this.settingContainer.getRect().getWidth() >= this.settingContainer.getWidthScale() - 10) {
                 this.settingContainer.getRect().setWidth(this.settingContainer.getWidthScale());
             }
 
-            this.settingContainer.getRect().setHeight((int) TurokMath.linearInterpolation(this.settingContainer.getRect().getHeight(), this.container.getRect().getHeight(), this.master.getPartialTicks()));
+            this.settingContainer.getRect().setHeight((int) TurokMath.lerp(this.settingContainer.getRect().getHeight(), this.container.getRect().getHeight(), this.master.getPartialTicks()));
 
             if (this.settingContainer.getRect().getHeight() >= this.container.getHeightScale() - 10) {
                 this.settingContainer.getRect().setHeight(this.container.getHeightScale());
             }
         } else {
-            this.alphaEffectSelected = (int) TurokMath.linearInterpolation(this.alphaEffectSelected, 0, this.master.getPartialTicks());
+            this.alphaEffectSelected = (int) TurokMath.lerp(this.alphaEffectSelected, 0, this.master.getPartialTicks());
 
-            this.settingContainer.getRect().setWidth((int) TurokMath.linearInterpolation(this.settingContainer.getRect().getWidth(), 0, this.master.getPartialTicks()));
-            this.settingContainer.getRect().setHeight((int) TurokMath.linearInterpolation(this.settingContainer.getRect().getHeight(), 0, this.master.getPartialTicks()));
+            this.settingContainer.getRect().setWidth((int) TurokMath.lerp(this.settingContainer.getRect().getWidth(), 0, this.master.getPartialTicks()));
+            this.settingContainer.getRect().setHeight((int) TurokMath.lerp(this.settingContainer.getRect().getHeight(), 0, this.master.getPartialTicks()));
         }
 
         this.settingContainer.onCustomRender();

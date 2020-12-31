@@ -17,11 +17,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinMinecraft {
     @Inject(method = "shutdown", at = @At("HEAD"))
     public void onShutdown(CallbackInfo callbackInfo) {
-        Rocan.onEnd();
+        Rocan.onEndClient();
     }
 
     @Redirect(method = "run", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;displayCrashReport(Lnet/minecraft/crash/CrashReport;)V"))
     public void onRun(Minecraft minecraft, CrashReport crashReport) {
-        Rocan.onEnd();
+        Rocan.onEndClient();
     }
 }

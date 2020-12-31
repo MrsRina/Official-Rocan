@@ -207,7 +207,7 @@ public class ModuleContainer extends Container {
         int maximumScroll = 3;
 
         this.scrollRect.setX(this.rect.getX());
-        this.scrollRect.setY((int) TurokMath.linearInterpolation(this.scrollRect.getY(), this.rect.getY() + this.offsetY, this.master.getPartialTicks()));
+        this.scrollRect.setY((int) TurokMath.lerp(this.scrollRect.getY(), this.rect.getY() + this.offsetY, this.master.getPartialTicks()));
 
         this.scrollRect.setWidth(this.rect.getWidth());
 
