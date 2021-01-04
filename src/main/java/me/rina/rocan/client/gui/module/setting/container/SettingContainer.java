@@ -11,6 +11,7 @@ import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.rocan.client.gui.module.setting.widget.SettingBooleanWidget;
+import me.rina.rocan.client.gui.module.setting.widget.SettingNumberWidget;
 import me.rina.rocan.client.gui.module.visual.LabelWidget;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.util.TurokMath;
@@ -117,6 +118,16 @@ public class SettingContainer extends Container {
                 this.loadedWidgetList.add(settingBooleanWidget);
 
                 this.scrollRect.height += settingBooleanWidget.getRect().getHeight() + 1;
+            }
+
+            if (settings.getValue() instanceof Number) {
+                SettingNumberWidget settingNumberWidget = new SettingNumberWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, settings);
+
+                settingNumberWidget.setOffsetY(this.scrollRect.getHeight());
+
+                this.loadedWidgetList.add(settingNumberWidget);
+
+                this.scrollRect.height += settingNumberWidget.getRect().getHeight() + 1;
             }
         }
     }

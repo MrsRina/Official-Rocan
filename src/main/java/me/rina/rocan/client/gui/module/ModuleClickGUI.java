@@ -35,7 +35,7 @@ public class ModuleClickGUI extends GuiScreen {
     public void init() {
         this.motherFrame = new MotherFrame(this);
 
-        // To turn off when you close the GUi.
+        // To turn off when you close the GUI.
         this.moduleClientGUI = (me.rina.rocan.client.module.client.ModuleClickGUI) ModuleManager.get(me.rina.rocan.client.module.client.ModuleClickGUI.class);
     }
 
@@ -121,9 +121,7 @@ public class ModuleClickGUI extends GuiScreen {
         this.display = new TurokDisplay(mc);
         this.mouse = new TurokMouse(mousePositionX, mousePositionY);
 
-        if (true) {
-            this.drawDefaultBackground();
-        }
+        this.drawDefaultBackground();
 
         TurokRenderGL.init(this.display);
         TurokRenderGL.init(this.mouse);

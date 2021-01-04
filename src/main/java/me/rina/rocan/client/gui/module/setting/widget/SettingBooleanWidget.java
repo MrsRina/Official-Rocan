@@ -122,9 +122,6 @@ public class SettingBooleanWidget extends Widget {
                 this.setting.setValue(!(boolean) this.setting.getValue());
 
                 this.isMouseClickedLeft = false;
-
-                // Refresh for verify if enable or disable, pretty cool!
-//                this.settingContainer.onRefreshWidget();
             }
         } else {
             this.isMouseClickedLeft = false;
