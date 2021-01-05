@@ -146,6 +146,20 @@ public class MotherFrame extends Frame {
     }
 
     @Override
+    public void onClose() {
+        for (Widget widgets : this.loadedWidgetList) {
+            widgets.onClose();
+        }
+    }
+
+    @Override
+    public void onOpen() {
+        for (Widget widgets : this.loadedWidgetList) {
+            widgets.onOpen();
+        }
+    }
+
+    @Override
     public void onKeyboard(char character, int key) {
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onKeyboard(character, key);

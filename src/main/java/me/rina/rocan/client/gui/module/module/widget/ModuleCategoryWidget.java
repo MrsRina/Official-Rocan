@@ -98,6 +98,16 @@ public class ModuleCategoryWidget extends Widget {
     }
 
     @Override
+    public void onClose() {
+        this.container.onClose();
+    }
+
+    @Override
+    public void onOpen() {
+        this.container.onOpen();
+    }
+
+    @Override
     public void onKeyboard(char character, int key) {
         this.container.onKeyboard(character, key);
     }

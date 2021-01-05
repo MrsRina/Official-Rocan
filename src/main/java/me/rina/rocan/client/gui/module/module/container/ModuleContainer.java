@@ -7,6 +7,7 @@ import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.module.management.ModuleManager;
+import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
@@ -163,6 +164,20 @@ public class ModuleContainer extends Container {
     }
 
     @Override
+    public void onClose() {
+        for (Widget widgets : this.loadedWidgetList) {
+            widgets.onClose();
+        }
+    }
+
+    @Override
+    public void onOpen() {
+        for (Widget widgets : this.loadedWidgetList) {
+            widgets.onOpen();
+        }
+    }
+
+    @Override
     public void onKeyboard(char character, int key) {
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onKeyboard(character, key);
@@ -212,6 +227,8 @@ public class ModuleContainer extends Container {
         this.scrollRect.setWidth(this.rect.getWidth());
 
         boolean isScrollLimit = this.scrollRect.getY() + this.scrollRect.getHeight() >= this.rect.getY() + this.rect.getHeight() - 3;
+
+        ChatUtil.print("" + this.offsetY);
 
         if (this.master.getMouse().hasWheel() && isScrollLimit) {
             this.offsetY -= this.master.getMouse().getScroll();

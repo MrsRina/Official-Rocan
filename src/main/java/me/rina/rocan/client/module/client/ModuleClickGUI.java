@@ -7,7 +7,6 @@ import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.setting.Setting;
 import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
-import org.lwjgl.input.Keyboard;
 
 /**
  * @author SrRina
@@ -29,8 +28,6 @@ public class ModuleClickGUI extends Module {
         if (mc.currentScreen != Rocan.getModuleClickGUI()) {
             mc.displayGuiScreen(Rocan.getModuleClickGUI());
         }
-
-        ChatUtil.print("" + ((Integer) width.getValue()).doubleValue());
 
         if ((Integer) width.getValue() != Rocan.getModuleClickGUI().getMotherFrame().getScaleWidth()) {
             Rocan.getModuleClickGUI().getMotherFrame().setNewScaleWidth((Integer) width.getValue());

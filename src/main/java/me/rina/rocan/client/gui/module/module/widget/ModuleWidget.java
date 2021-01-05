@@ -138,6 +138,16 @@ public class ModuleWidget extends Widget {
     }
 
     @Override
+    public void onClose() {
+        this.settingContainer.onClose();
+    }
+
+    @Override
+    public void onOpen() {
+        this.settingContainer.onOpen();
+    }
+
+    @Override
     public void onKeyboard(char character, int key) {
         this.settingContainer.onKeyboard(character, key);
     }

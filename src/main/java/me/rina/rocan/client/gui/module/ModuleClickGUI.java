@@ -90,6 +90,8 @@ public class ModuleClickGUI extends GuiScreen {
     @Override
     public void initGui() {
         this.isOpened = true;
+
+        this.motherFrame.onOpen();
     }
 
     @Override
@@ -97,6 +99,8 @@ public class ModuleClickGUI extends GuiScreen {
         this.moduleClientGUI.setDisabled();
 
         this.isOpened = false;
+
+        this.motherFrame.onClose();
     }
 
     @Override

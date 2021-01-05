@@ -24,6 +24,26 @@ public class Widget implements IGUI {
     }
 
     @Override
+    public void onClose() {
+
+    }
+
+    @Override
+    public void onCustomClose() {
+
+    }
+
+    @Override
+    public void onOpen() {
+
+    }
+
+    @Override
+    public void onCustomOpen() {
+
+    }
+
+    @Override
     public void onKeyboard(char character, int key) {
 
     }

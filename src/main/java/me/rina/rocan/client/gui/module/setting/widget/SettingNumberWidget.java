@@ -44,7 +44,7 @@ public class SettingNumberWidget extends Widget {
      * We use doubles to set the current value, minimum & maximum.
      * We need verifiy and cast to double.
      */
-    private double value, minimum, maximum;
+    private double _value, minimum, maximum;
 
     private boolean isMouseClickedLeft;
 
@@ -122,6 +122,15 @@ public class SettingNumberWidget extends Widget {
     }
 
     @Override
+    public void onClose() {
+        this.isMouseClickedLeft = false;
+    }
+
+    @Override
+    public void onOpen() {
+    }
+
+    @Override
     public void onCustomMouseReleased(int button) {
         if (this.flagMouseSlider == Flag.MouseOver && this.settingContainer.flagMouse == Flag.MouseOver) {
             if (this.isMouseClickedLeft) {
@@ -150,7 +159,7 @@ public class SettingNumberWidget extends Widget {
         this.rect.setY(this.settingContainer.getScrollRect().getY() + this.offsetY);
 
         // The current value of setting, cast to Number and doubleValue();
-        this.value = ((Number) this.setting.getValue()).doubleValue();
+        this._value = ((Number) this.setting.getValue()).doubleValue();
 
         // The min and maximum of the setting, here he cast to Number and doubleValue(0;
         this.minimum = ((Number) this.setting.getMinimum()).doubleValue();
@@ -158,7 +167,7 @@ public class SettingNumberWidget extends Widget {
 
         int clampedSliderRectWidth = this.rect.getWidth() - (offsetWidthSliderRect * 2);
 
-        this.offsetWidth = ((int) ((clampedSliderRectWidth) * (this.value - this.minimum) / (this.maximum - this.minimum)));
+        this.offsetWidth = ((int) ((clampedSliderRectWidth) * (this._value - this.minimum) / (this.maximum - this.minimum)));
 
         this.rectSlider.setWidth(clampedSliderRectWidth);
         this.rectSlider.setHeight(6);
@@ -179,7 +188,9 @@ public class SettingNumberWidget extends Widget {
         this.alphaEffectHighlightSlider = this.flagMouseSlider == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightSlider, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightSlider, 0, this.master.getPartialTicks());
         this.alphaEffectHighlightRect = this.flagMouse == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
 
-        TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag(), this.rect.getX() + 2, this.rect.getY() + 1, true, new Color(255, 255, 255));
+        String currentSettingValue = ((Number) this.setting.getValue()).toString();
+
+        TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag() + ": " + currentSettingValue, this.rect.getX() + 2, this.rect.getY() + 1, true, new Color(255, 255, 255));
 
         float checkBoxPressedOffsetX = 0.5f;
         float checkBoxPressedOffsetY = 1f;

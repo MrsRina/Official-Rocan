@@ -15,6 +15,26 @@ public interface IGUI {
     public TurokRect getRect();
 
     /**
+     * When abstract closes this override is called.
+     */
+    public void onClose();
+
+    /**
+     * When abstract closes this custom override is called.
+     */
+    public void onCustomClose();
+
+    /**
+     * When abstract opens this override is called.
+     */
+    public void onOpen();
+
+    /**
+     * When abstract opens this custom override is called.
+     */
+    public void onCustomOpen();
+
+    /**
      * Method for keyboard events.
      *
      * @param character - Typed char on keyboard.

@@ -5,6 +5,7 @@ import me.rina.rocan.api.gui.container.Container;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.setting.Setting;
+import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
@@ -51,6 +52,7 @@ public class SettingContainer extends Container {
     private LabelWidget descriptionLabel;
 
     private TurokRect scrollRect = new TurokRect("I will go to canada and forget everything make me bad.", 0, 0);
+    private TurokRect realRect = new TurokRect("Real rect", 0, 0);
 
     public Flag flagMouse = Flag.MouseNotOver;
     public Flag flagDescription = Flag.MouseNotOver;
@@ -206,6 +208,20 @@ public class SettingContainer extends Container {
     }
 
     @Override
+    public void onClose() {
+        for (Widget widgets : this.loadedWidgetList) {
+            widgets.onClose();
+        }
+    }
+
+    @Override
+    public void onOpen() {
+        for (Widget widgets : this.loadedWidgetList) {
+            widgets.onOpen();
+        }
+    }
+
+    @Override
     public void onKeyboard(char character, int key) {
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onKeyboard(character, key);
@@ -251,6 +267,7 @@ public class SettingContainer extends Container {
         }
     }
 
+    @Override
     public void onCustomRender() {
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onCustomRender();
@@ -270,11 +287,17 @@ public class SettingContainer extends Container {
         this.scrollRect.setX(this.rect.getX());
         this.scrollRect.setY((int) TurokMath.lerp(this.scrollRect.getY(), this.rect.getY() + realScrollHeight + this.offsetY, this.master.getPartialTicks()));
 
+        this.realRect.setX(this.rect.getX());
+        this.realRect.setY(this.rect.getY() + realScrollHeight);
+
+        this.realRect.setWidth(this.rect.getWidth());
+        this.realRect.setHeight(this.rect.getHeight() - realScrollHeight);
+
         // Its the offset geometry problem.
         int offsetFixOutline = 1;
 
         if (this.widgetModule.isSelected()) {
-            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+            this.flagMouse = this.realRect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
 
             // The fully background rect.
             TurokRenderGL.color(Rocan.getWrapperGUI().colorContainerBackground[0], Rocan.getWrapperGUI().colorContainerBackground[1], Rocan.getWrapperGUI().colorContainerBackground[2], Rocan.getWrapperGUI().colorContainerBackground[3]);
@@ -290,7 +313,7 @@ public class SettingContainer extends Container {
             boolean isScrollLimit = this.scrollRect.getY() + this.scrollRect.getHeight() >= this.rect.getY() + this.rect.getHeight() - realScrollHeight - 3;
 
             if (this.master.getMouse().hasWheel() && isScrollLimit) {
-                this.offsetY -= this.master.getMouse().getScroll();
+                this.offsetY += this.master.getMouse().getScroll();
 
                 if (this.offsetY <= minimumScroll) {
                     this.offsetY = minimumScroll;
