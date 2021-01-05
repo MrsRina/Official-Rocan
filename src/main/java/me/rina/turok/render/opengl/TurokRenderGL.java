@@ -300,6 +300,8 @@ public class TurokRenderGL {
 
 		enableAlphaBlend();
 
+		lineSize(1);
+
 		prepare(GL11.GL_LINES);
 		{
 			addVertex(x, y);
@@ -307,6 +309,8 @@ public class TurokRenderGL {
 		}
 
 		release();
+
+		lineSize(1);
 
 		prepare(GL11.GL_LINES);
 		{
@@ -316,6 +320,8 @@ public class TurokRenderGL {
 
 		release();
 
+		lineSize(1);
+
 		prepare(GL11.GL_LINES);
 		{
 			addVertex(x + width, y + height);
@@ -323,6 +329,8 @@ public class TurokRenderGL {
 		}
 
 		release();
+
+		lineSize(1);
 
 		prepare(GL11.GL_LINES);
 		{
