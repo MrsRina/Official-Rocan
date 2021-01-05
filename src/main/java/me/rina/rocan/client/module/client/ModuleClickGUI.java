@@ -5,6 +5,7 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.setting.Setting;
+import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import org.lwjgl.input.Keyboard;
 
@@ -13,9 +14,7 @@ import org.lwjgl.input.Keyboard;
  * @since 07/12/20 at 12:48pm
  */
 public class ModuleClickGUI extends Module {
-    public static Setting button = new Setting("Button", "Button", "Simple button widget.", false);
-    public static Setting slider = new Setting("Slider", "Slider", "Simple slider widget.", 5, 0, 10);
-    public static Setting mode   = new Setting("Mode", "Mode", "Simple mode widget.", Mode.Option2);
+    public static Setting width = new Setting("Width", "Width", "Scale width of the GUI.", 75, 75, 300);
 
     public ModuleClickGUI() {
         super("Module Click GUI", "ModuleClickGUI", "Open GUI to manage module, settings...", ModuleCategory.Client);
@@ -29,6 +28,12 @@ public class ModuleClickGUI extends Module {
     public void onListenClientEvent(ClientTickEvent event) {
         if (mc.currentScreen != Rocan.getModuleClickGUI()) {
             mc.displayGuiScreen(Rocan.getModuleClickGUI());
+        }
+
+        ChatUtil.print("" + ((Integer) width.getValue()).doubleValue());
+
+        if ((Integer) width.getValue() != Rocan.getModuleClickGUI().getMotherFrame().getScaleWidth()) {
+            Rocan.getModuleClickGUI().getMotherFrame().setNewScaleWidth((Integer) width.getValue());
         }
     }
 

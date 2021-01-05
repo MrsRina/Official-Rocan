@@ -4,6 +4,7 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.frame.Frame;
 import me.rina.rocan.api.gui.widget.Widget;
+import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
@@ -64,6 +65,21 @@ public class MotherFrame extends Frame {
 
             this.widgetHeight = moduleCategoryWidget.getRect().getHeight();
             this.scaleWidth += moduleCategoryWidget.getRect().getWidth() + 1;
+        }
+    }
+
+    public void setNewScaleWidth(int size) {
+        this.scaleWidth = 1;
+
+        for (Widget widgets : this.loadedWidgetList) {
+            if (widgets instanceof ModuleCategoryWidget) {
+                ModuleCategoryWidget moduleCategoryWidget = (ModuleCategoryWidget) widgets;
+
+                moduleCategoryWidget.getRect().setWidth(TurokMath.clamp(size, 75, 300));
+                moduleCategoryWidget.setOffsetX(this.scaleWidth);
+
+                this.scaleWidth += TurokMath.clamp(size, 75, 300) + 1;
+            }
         }
     }
 

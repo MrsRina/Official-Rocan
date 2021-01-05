@@ -92,6 +92,16 @@ public class SettingContainer extends Container {
 
                 this.scrollRect.height += settingBooleanWidget.getRect().getHeight() + 1;
             }
+
+            if (settings.getValue() instanceof Number) {
+                SettingNumberWidget settingNumberWidget = new SettingNumberWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, settings);
+
+                settingNumberWidget.setOffsetY(this.scrollRect.getHeight());
+
+                this.loadedWidgetList.add(settingNumberWidget);
+
+                this.scrollRect.height += settingNumberWidget.getRect().getHeight() + 1;
+            }
         }
     }
 
@@ -120,7 +130,7 @@ public class SettingContainer extends Container {
                 this.scrollRect.height += settingBooleanWidget.getRect().getHeight() + 1;
             }
 
-            if (settings.getValue() instanceof Number) {
+            if ((settings.getValue() instanceof Integer) || (settings.getValue() instanceof Double) || (settings.getValue() instanceof Float)) {
                 SettingNumberWidget settingNumberWidget = new SettingNumberWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, settings);
 
                 settingNumberWidget.setOffsetY(this.scrollRect.getHeight());
@@ -252,13 +262,13 @@ public class SettingContainer extends Container {
         int positionXScaled = (this.container.getRect().getX() + this.container.getRect().getWidth()) + (2 * this.frame.getScale());
         int positionYScaled = this.container.getRect().getY();
 
-        int realScrollY = this.rect.getY() + this.descriptionLabel.getRect().getHeight() + 1;
+        int realScrollHeight = this.descriptionLabel.getRect().getHeight() + 1;
 
         this.rect.setX(positionXScaled);
         this.rect.setY(positionYScaled);
 
         this.scrollRect.setX(this.rect.getX());
-        this.scrollRect.setY((int) TurokMath.lerp(this.scrollRect.getY(), realScrollY + this.offsetY, this.master.getPartialTicks()));
+        this.scrollRect.setY((int) TurokMath.lerp(this.scrollRect.getY(), this.rect.getY() + realScrollHeight + this.offsetY, this.master.getPartialTicks()));
 
         // Its the offset geometry problem.
         int offsetFixOutline = 1;
@@ -274,12 +284,29 @@ public class SettingContainer extends Container {
             this.descriptionLabel.setOffsetY(1);
             this.descriptionLabel.onRender();
 
-            for (Widget widgets : this.loadedWidgetList) {
-                widgets.onRender();
+            int minimumScroll = (this.rect.getHeight() - this.scrollRect.getHeight()) - 2;
+            int maximumScroll = 3;
+
+            boolean isScrollLimit = this.scrollRect.getY() + this.scrollRect.getHeight() >= this.rect.getY() + this.rect.getHeight() - realScrollHeight - 3;
+
+            if (this.master.getMouse().hasWheel() && isScrollLimit) {
+                this.offsetY -= this.master.getMouse().getScroll();
+
+                if (this.offsetY <= minimumScroll) {
+                    this.offsetY = minimumScroll;
+                }
+            }
+
+            if (this.offsetY >= maximumScroll) {
+                this.offsetY = maximumScroll;
             }
 
             TurokRenderGL.enable(GL11.GL_SCISSOR_TEST);
-            TurokRenderGL.drawScissor(this.rect.getX(), realScrollY - offsetFixOutline, this.rect.getWidth() + (offsetFixOutline * 2), this.rect.getHeight());
+            TurokRenderGL.drawScissor(this.rect.getX(), (this.rect.getY() + realScrollHeight) - offsetFixOutline, this.rect.getWidth() + (offsetFixOutline * 2), this.rect.getHeight() - (realScrollHeight));
+
+            for (Widget widgets : this.loadedWidgetList) {
+                widgets.onRender();
+            }
 
             TurokRenderGL.disable(GL11.GL_SCISSOR_TEST);
         } else {

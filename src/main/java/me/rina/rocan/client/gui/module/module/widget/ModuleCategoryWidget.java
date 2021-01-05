@@ -143,7 +143,6 @@ public class ModuleCategoryWidget extends Widget {
         this.rect.setX(this.frame.getRect().getX() + this.offsetX);
         this.rect.setY(this.frame.getRect().getY() + this.offsetY);
 
-        this.rect.setWidth(75);
         this.rect.setHeight(6 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontBigWidget, this.rect.getTag()) + 6);
 
         this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;

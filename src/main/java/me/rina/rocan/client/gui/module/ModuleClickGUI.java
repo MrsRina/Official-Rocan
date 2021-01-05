@@ -39,6 +39,14 @@ public class ModuleClickGUI extends GuiScreen {
         this.moduleClientGUI = (me.rina.rocan.client.module.client.ModuleClickGUI) ModuleManager.get(me.rina.rocan.client.module.client.ModuleClickGUI.class);
     }
 
+    public void setMotherFrame(MotherFrame motherFrame) {
+        this.motherFrame = motherFrame;
+    }
+
+    public MotherFrame getMotherFrame() {
+        return motherFrame;
+    }
+
     protected void setDisplay(TurokDisplay display) {
         this.display = display;
     }

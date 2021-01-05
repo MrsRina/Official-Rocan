@@ -146,7 +146,11 @@ public class SettingBooleanWidget extends Widget {
         this.rectCheckbox.setWidth(8);
         this.rectCheckbox.setHeight(8);
 
-        this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+        if (this.settingContainer.flagMouse == Flag.MouseOver) {
+            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+        } else {
+            this.flagMouse = Flag.MouseNotOver;
+        }
 
         // We need set the check box rect on the end of main rect.
         this.rectCheckbox.setX(this.rect.getX() + 2);

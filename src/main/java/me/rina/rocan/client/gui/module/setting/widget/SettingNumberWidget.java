@@ -123,10 +123,8 @@ public class SettingNumberWidget extends Widget {
 
     @Override
     public void onCustomMouseReleased(int button) {
-        if (this.flagMouseSlider == Flag.MouseOver) {
+        if (this.flagMouseSlider == Flag.MouseOver && this.settingContainer.flagMouse == Flag.MouseOver) {
             if (this.isMouseClickedLeft) {
-                this.setting.setValue(!(boolean) this.setting.getValue());
-
                 this.isMouseClickedLeft = false;
             }
         } else {
@@ -136,7 +134,7 @@ public class SettingNumberWidget extends Widget {
 
     @Override
     public void onCustomMouseClicked(int button) {
-        if (this.flagMouseSlider == Flag.MouseOver) {
+        if (this.flagMouseSlider == Flag.MouseOver && this.settingContainer.flagMouse == Flag.MouseOver) {
             this.isMouseClickedLeft = button == 0;
         }
     }
@@ -151,47 +149,48 @@ public class SettingNumberWidget extends Widget {
         this.rect.setX(this.settingContainer.getScrollRect().getX() + this.offsetX);
         this.rect.setY(this.settingContainer.getScrollRect().getY() + this.offsetY);
 
-        if (this.setting.getValue() instanceof Integer) {
-            this.value = ((Integer) this.setting.getValue()).doubleValue();
+        // The current value of setting, cast to Number and doubleValue();
+        this.value = ((Number) this.setting.getValue()).doubleValue();
 
-            this.minimum = ((Integer) this.setting.getMinimum()).doubleValue();
-            this.maximum = ((Integer) this.setting.getMaximum()).doubleValue();
-        } else if (this.setting.getValue() instanceof Double) {
-            this.value = ((Double) this.setting.getValue());
-
-            this.minimum = ((Double) this.setting.getMinimum());
-            this.maximum = ((Double) this.setting.getMaximum());
-        } else if (this.setting.getValue() instanceof Float) {
-            this.value = ((Float) this.setting.getValue()).doubleValue();
-
-            this.minimum = ((Float) this.setting.getMinimum()).doubleValue();
-            this.maximum = ((Float) this.setting.getMaximum()).doubleValue();
-        }
+        // The min and maximum of the setting, here he cast to Number and doubleValue(0;
+        this.minimum = ((Number) this.setting.getMinimum()).doubleValue();
+        this.maximum = ((Number) this.setting.getMaximum()).doubleValue();
 
         int clampedSliderRectWidth = this.rect.getWidth() - (offsetWidthSliderRect * 2);
 
-        this.rect.setWidth((int) (clampedSliderRectWidth * (this.value - this.minimum) / (this.maximum - this.minimum)));
-        this.rectSlider.setHeight(8);
+        this.offsetWidth = ((int) ((clampedSliderRectWidth) * (this.value - this.minimum) / (this.maximum - this.minimum)));
 
-        this.flagMouseSlider = this.rectSlider.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
-        this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+        this.rectSlider.setWidth(clampedSliderRectWidth);
+        this.rectSlider.setHeight(6);
+
+        if (this.settingContainer.flagMouse == Flag.MouseOver) {
+            this.flagMouseSlider = this.rectSlider.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+        } else {
+            this.flagMouseSlider = Flag.MouseNotOver;
+            this.flagMouse = Flag.MouseNotOver;
+        }
 
         // We need set the slider rect on the end of main rect.
         this.rectSlider.setX(this.rect.getX() + offsetWidthSliderRect);
         this.rectSlider.setY(this.rect.getY() + this.rect.getHeight() - (this.rectSlider.getHeight() + 2));
 
         // Where the smooth animation works.
-        this.alphaEffectHighlightSlider = this.rectSlider.collideWithMouse(this.master.getMouse()) ? (int) TurokMath.lerp(this.alphaEffectHighlightSlider, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightSlider, 0, this.master.getPartialTicks());
-        this.alphaEffectHighlightRect = this.rect.collideWithMouse(this.master.getMouse()) ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
+        this.alphaEffectHighlightSlider = this.flagMouseSlider == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightSlider, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightSlider, 0, this.master.getPartialTicks());
+        this.alphaEffectHighlightRect = this.flagMouse == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
 
-        TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag(), this.rect.getX(), this.rect.getY() + 5, true, new Color(255, 255, 255));
+        TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag(), this.rect.getX() + 2, this.rect.getY() + 1, true, new Color(255, 255, 255));
 
         float checkBoxPressedOffsetX = 0.5f;
         float checkBoxPressedOffsetY = 1f;
 
-        // The solid pressed checkbox.
+        // The solid pressed slider.
         TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetPressed[0], Rocan.getWrapperGUI().colorWidgetPressed[1], Rocan.getWrapperGUI().colorWidgetPressed[2], Rocan.getWrapperGUI().colorWidgetPressed[3]);
-        TurokRenderGL.drawSolidRect(this.rectSlider);
+        TurokRenderGL.drawSolidRect(this.rectSlider.getX(), this.rectSlider.getY(), this.offsetWidth, this.rectSlider.getHeight());
+
+        // The check slider unpressed.
+        TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetPressed[0], Rocan.getWrapperGUI().colorWidgetPressed[1], Rocan.getWrapperGUI().colorWidgetPressed[2], Rocan.getWrapperGUI().colorWidgetPressed[3]);
+        TurokRenderGL.drawOutlineRect(this.rectSlider);
 
         // Outline on rect render.
         TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetHighlight[0], Rocan.getWrapperGUI().colorWidgetHighlight[1], Rocan.getWrapperGUI().colorWidgetHighlight[2], this.alphaEffectHighlightRect);
@@ -199,22 +198,22 @@ public class SettingNumberWidget extends Widget {
 
         // The slider outline highlight.
         TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetHighlight[0], Rocan.getWrapperGUI().colorWidgetHighlight[1], Rocan.getWrapperGUI().colorWidgetHighlight[2], this.alphaEffectHighlightSlider);
-        TurokRenderGL.drawOutlineRect(this.rectSlider);
+        TurokRenderGL.drawOutlineRect(this.rectSlider.getX(), this.rectSlider.getY(), this.offsetWidth, this.rectSlider.getHeight());
 
-        double mouse = Math.min(this.rect.getWidth(), Math.max(0, this.master.getMouse().getX() - this.rect.getX()));
+        double mouse = Math.min(this.rectSlider.getWidth(), Math.max(0, this.master.getMouse().getX() - this.rect.getX()));
 
         if (this.isMouseClickedLeft) {
             if (mouse != 0) {
                 if (this.setting.getValue() instanceof Integer) {
-                    int roundedValue = (int) TurokMath.round((mouse / clampedSliderRectWidth) * (maximum - minimum) + minimum);
+                    int roundedValue = (int) TurokMath.round(((mouse / this.rectSlider.getWidth()) * (maximum - minimum) + minimum));
 
                     this.setting.setValue((Integer) roundedValue);
                 } else if (this.setting.getValue() instanceof Double) {
-                    double roundedValue = TurokMath.round((mouse / clampedSliderRectWidth) * (maximum - minimum) + minimum);
+                    double roundedValue = TurokMath.round(((mouse / this.rectSlider.getWidth()) * (maximum - minimum) + minimum));
 
                     this.setting.setValue((Double) roundedValue);
                 } else if (this.setting.getValue() instanceof Float) {
-                    float roundedValue = (float) TurokMath.round((mouse / clampedSliderRectWidth) * (maximum - minimum) + minimum);
+                    float roundedValue = (float) TurokMath.round(((mouse / this.rectSlider.getWidth()) * (maximum - minimum) + minimum));
 
                     this.setting.setValue((Float) roundedValue);
                 }

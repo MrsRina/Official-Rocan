@@ -95,9 +95,7 @@ public class EventManager {
 
         this.setCurrentRender3DPartialTicks(event.getPartialTicks());
 
-        Render3DEvent _event = new Render3DEvent(event.getPartialTicks());
-
-        Rocan.EVENT_BUS.dispatch(_event);
+        Rocan.EVENT_BUS.dispatch(new Render3DEvent(event.getPartialTicks()));
 
         /*
          * Basically the ticks are more smooth in event RenderWorldLastEvent;
@@ -114,7 +112,7 @@ public class EventManager {
         }
     }
 
-    @SubscribeEvent(priority =  EventPriority.NORMAL)
+    @SubscribeEvent(priority = EventPriority.NORMAL)
     public void onChat(ClientChatEvent event) {
         String message = event.getMessage();
 
