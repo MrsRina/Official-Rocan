@@ -29,11 +29,11 @@ public class LabelWidget extends Widget {
 
     private boolean isScroll;
 
-    private int offsetX;
-    private int offsetY;
+    private float offsetX;
+    private float offsetY;
 
-    private int offsetWidth;
-    private int offsetHeight;
+    private float offsetWidth;
+    private float offsetHeight;
 
     public Flag flagMouse = Flag.MouseNotOver;
 
@@ -69,11 +69,11 @@ public class LabelWidget extends Widget {
         return this.isScroll;
     }
 
-    public void setOffsetX(int offsetX) {
+    public void setOffsetX(float offsetX) {
         this.offsetX = offsetX;
     }
 
-    public int getOffsetX() {
+    public float getOffsetX() {
         return offsetX;
     }
 
@@ -82,27 +82,27 @@ public class LabelWidget extends Widget {
      *
      * @param offsetY
      */
-    public void setOffsetY(int offsetY) {
+    public void setOffsetY(float offsetY) {
         this.offsetY = offsetY;
     }
 
-    public int getOffsetY() {
+    public float getOffsetY() {
         return offsetY;
     }
 
-    public void setOffsetWidth(int offsetWidth) {
+    public void setOffsetWidth(float offsetWidth) {
         this.offsetWidth = offsetWidth;
     }
 
-    public int getOffsetWidth() {
+    public float getOffsetWidth() {
         return offsetWidth;
     }
 
-    public void setOffsetHeight(int offsetHeight) {
+    public void setOffsetHeight(float offsetHeight) {
         this.offsetHeight = offsetHeight;
     }
 
-    public int getOffsetHeight() {
+    public float getOffsetHeight() {
         return offsetHeight;
     }
 
@@ -111,7 +111,7 @@ public class LabelWidget extends Widget {
         this.rect.setWidth(this.settingContainer.getRect().getWidth());
         this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
 
-        int onTopPositionY = this.isScroll ? this.settingContainer.getScrollRect().getY() : this.settingContainer.getRect().getY();
+        float onTopPositionY = this.isScroll ? this.settingContainer.getScrollRect().getY() : this.settingContainer.getRect().getY();
 
         this.rect.setX(this.settingContainer.getScrollRect().getX() + this.offsetX);
         this.rect.setY(onTopPositionY + this.offsetY);

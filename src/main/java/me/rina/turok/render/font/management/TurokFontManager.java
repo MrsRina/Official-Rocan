@@ -12,7 +12,7 @@ import java.awt.*;
  * @since 26/09/20 at 1:23pm
  */
 public class TurokFontManager {
-	public static void render(TurokFont fontRenderer, String string, int x, int y, boolean shadow, Color color) {
+	public static void render(TurokFont fontRenderer, String string, float x, float y, boolean shadow, Color color) {
 		TurokRenderGL.enable(GL11.GL_TEXTURE_2D);
 		TurokRenderGL.enableAlphaBlend();
 
@@ -22,13 +22,13 @@ public class TurokFontManager {
 			if (fontRenderer.isRenderingCustomFont()) {
 				fontRenderer.drawStringWithShadow(string, x, y, color.getRGB());
 			} else {
-				Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(string, x, y, color.getRGB());
+				Minecraft.getMinecraft().fontRenderer.drawStringWithShadow(string, (int) x, (int) y, color.getRGB());
 			}
 		} else {
 			if (fontRenderer.isRenderingCustomFont()) {
 				fontRenderer.drawString(string, x, y, color.getRGB());
 			} else {
-				Minecraft.getMinecraft().fontRenderer.drawString(string, x, y, color.getRGB());
+				Minecraft.getMinecraft().fontRenderer.drawString(string, (int) x, (int) y, color.getRGB());
 			}
 		}
 

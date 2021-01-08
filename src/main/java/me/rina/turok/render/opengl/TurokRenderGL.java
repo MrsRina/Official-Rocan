@@ -23,15 +23,6 @@ public class TurokRenderGL {
 	protected TurokDisplay display;
 	protected TurokMouse mouse;
 
-	protected int program;
-	protected HashMap<String, Integer> uniforms;
-	protected boolean isShaderInitializedWithoutErrors;
-
-	public static final int TUROKGL_NULL = 0;
-	public static final int TUROKGL_INIT = 1;
-	public static final int TUROKGL_SHADER = 2;
-	public static final int TUROKGL_UNIFORM_NULL = 0xFFFFFFFF;
-
 	public static void init() {
 		INSTANCE = new TurokRenderGL();
 	}
@@ -44,43 +35,6 @@ public class TurokRenderGL {
 		if (object instanceof TurokMouse) {
 			INSTANCE.mouse = (TurokMouse) object;
 		}
-
-		if (object instanceof Integer) {
-			switch ((Integer) object) {
-				case TUROKGL_NULL : {
-					break;
-				}
-
-				case TUROKGL_INIT : {
-					init();
-
-					break;
-				}
-
-				case TUROKGL_SHADER: {
-					INSTANCE.initializeShader();
-
-					break;
-				}
-			}
-		}
-	}
-
-	public void initializeShader() {
-		this.program = GL20.glCreateProgram();
-		this.uniforms = new HashMap<>();
-
-		if (INSTANCE.program == TUROKGL_NULL) {
-			System.err.println("Turok: Shader creation failed, returned " + INSTANCE.program);
-
-			isShaderInitializedWithoutErrors = false;
-		} else {
-			isShaderInitializedWithoutErrors = true;
-		}
-	}
-
-	public static boolean isShaderProgramInitialized() {
-		return INSTANCE.isShaderInitializedWithoutErrors;
 	}
 
 	public static void drawOutlineRectFadingMouse(TurokRect rect, int radius, Color color) {
@@ -169,9 +123,9 @@ public class TurokRenderGL {
 		popMatrix();
 	}
 
-	public static void drawScissor(int x, int y, int w, int h) {
-		int calculatedW = x + w;
-		int calculatedH = y + h;
+	public static void drawScissor(float x, float y, float w, float h) {
+		float calculatedW = x + w;
+		float calculatedH = y + h;
 
 		GL11.glScissor((int) (x * INSTANCE.display.getScaleFactor()), (int) (INSTANCE.display.getHeight() - (calculatedH * INSTANCE.display.getScaleFactor())), (int) ((calculatedW - x) * INSTANCE.display.getScaleFactor()), (int) ((calculatedH - y) * INSTANCE.display.getScaleFactor()));
 	}
@@ -345,10 +299,6 @@ public class TurokRenderGL {
 		popMatrix();
 	}
 
-	public static void drawOutlineRect(int x, int y, int width, int height) {
-		drawOutlineRect((float) x, (float) y, (float) width, (float) height);
-	}
-
 	public static void drawOutlineRect(TurokRect rect) {
 		drawOutlineRect((float) rect.getX(), (float) rect.getY(), (float) (rect.getWidth()), (float) (rect.getHeight()));
 	}
@@ -508,100 +458,6 @@ public class TurokRenderGL {
 		translate(INSTANCE.display.getScaledWidth(), INSTANCE.display.getScaledHeight());
 		scale(0.5f, 0.5f, 0.5f);
 		popMatrix();
-	}
-
-	public static void addVertexShader(String text) {
-		try {
-			addProgram(text, GL20.GL_VERTEX_SHADER);
-		} catch (Exception exc) {
-			exc.printStackTrace();
-		}
-
-	}
-
-	public static void addGeometryShader(String text) {
-		try {
-			addProgram(text, GL32.GL_GEOMETRY_SHADER);
-		} catch (Exception exc) {
-			exc.printStackTrace();
-		}
-	}
-
-	public static void addFragmentShader(String text) {
-		try {
-			addProgram(text, GL20.GL_FRAGMENT_SHADER);
-		} catch (Exception exc) {
-			exc.printStackTrace();
-		}
-	}
-
-	public static void addTessellationControlShader(String text) {
-		try {
-			addProgram(text, GL40.GL_TESS_CONTROL_SHADER);
-		} catch (Exception exc) {
-			exc.printStackTrace();
-		}
-	}
-
-	public static void addTessellationEvaluationShader(String text) {
-		try {
-			addProgram(text, GL40.GL_TESS_EVALUATION_SHADER);
-		} catch (Exception exc) {
-			exc.printStackTrace();
-		}
-	}
-
-	public void addComputeShader(String text) {
-		try {
-			addProgram(text, GL43.GL_COMPUTE_SHADER);
-		} catch (Exception exc) {
-			exc.printStackTrace();
-		}
-	}
-
-	public static void compileShader() throws Exception {
-		GL20.glLinkProgram(INSTANCE.program);
-
-		if (GL20.glGetProgrami(INSTANCE.program, GL20.GL_LINK_STATUS) != TUROKGL_NULL) {
-			GL20.glValidateProgram(INSTANCE.program);
-
-			if (GL20.glGetProgrami(INSTANCE.program, GL20.GL_VALIDATE_STATUS) == TUROKGL_NULL) {
-				throw new Exception("Turok: Failed to compile shader, " + INSTANCE.getClass().getName() + " " + GL20.glGetProgramInfoLog(INSTANCE.program, 1024));
-			}
-		} else {
-			throw new Exception("Turok: Failed to compile shader, " + INSTANCE.getClass().getName() + " " + GL20.glGetProgramInfoLog(INSTANCE.program, 1024));
-		}
-	}
-
-	public static void addUniform(String uniform) throws Exception {
-		int uniformLocation = GL20.glGetUniformLocation(INSTANCE.program, uniform);
-
-		if (uniformLocation != TUROKGL_UNIFORM_NULL) {
-			INSTANCE.uniforms.put(uniform, uniformLocation);
-		} else {
-			throw new Exception("Turok: Failed to load uniform.");
-		}
-	}
-
-	public static void addProgram(String program, int type) throws Exception {
-		int shader = GL20.glCreateShader(type);
-
-		if (shader != TUROKGL_NULL) {
-			GL20.glShaderSource(shader, program);
-			GL20.glCompileShader(shader);
-
-			if (GL20.glGetShaderi(shader, GL20.GL_COMPILE_STATUS) == TUROKGL_NULL) {
-				GL20.glAttachShader(INSTANCE.program, shader);
-			} else {
-				throw new Exception("Turok: " + INSTANCE.getClass().getName() + " " + GL20.glGetShaderInfoLog(shader, 1024));
-			}
-		} else {
-			throw new Exception("Turok: Failed to load shader.");
-		}
-	}
-
-	public static void bind() {
-		GL20.glUseProgram(INSTANCE.program);
 	}
 
 	public static void color(float r, float g, float b, float a) {

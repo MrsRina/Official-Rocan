@@ -31,14 +31,14 @@ public class SettingNumberWidget extends Widget {
     private ModuleWidget widgetModule;
     private SettingContainer settingContainer;
 
-    private int offsetX;
-    private int offsetY;
+    private float offsetX;
+    private float offsetY;
 
-    private int offsetWidth;
-    private int offsetHeight;
+    private float offsetWidth;
+    private float offsetHeight;
 
-    private int alphaEffectHighlightSlider;
-    private int alphaEffectHighlightRect;
+    private float alphaEffectHighlightSlider;
+    private float alphaEffectHighlightRect;
 
     /**
      * We use doubles to set the current value, minimum & maximum.
@@ -89,35 +89,35 @@ public class SettingNumberWidget extends Widget {
         return setting;
     }
 
-    public void setOffsetX(int offsetX) {
+    public void setOffsetX(float offsetX) {
         this.offsetX = offsetX;
     }
 
-    public int getOffsetX() {
+    public float getOffsetX() {
         return offsetX;
     }
 
-    public void setOffsetY(int offsetY) {
+    public void setOffsetY(float offsetY) {
         this.offsetY = offsetY;
     }
 
-    public int getOffsetY() {
+    public float getOffsetY() {
         return offsetY;
     }
 
-    public void setOffsetWidth(int offsetWidth) {
+    public void setOffsetWidth(float offsetWidth) {
         this.offsetWidth = offsetWidth;
     }
 
-    public int getOffsetWidth() {
+    public float getOffsetWidth() {
         return offsetWidth;
     }
 
-    public void setOffsetHeight(int offsetHeight) {
+    public void setOffsetHeight(float offsetHeight) {
         this.offsetHeight = offsetHeight;
     }
 
-    public int getOffsetHeight() {
+    public float getOffsetHeight() {
         return offsetHeight;
     }
 
@@ -132,7 +132,7 @@ public class SettingNumberWidget extends Widget {
 
     @Override
     public void onCustomMouseReleased(int button) {
-        if (this.flagMouseSlider == Flag.MouseOver && this.settingContainer.flagMouse == Flag.MouseOver) {
+        if (this.flagMouseSlider == Flag.MouseOver && this.settingContainer.flagMouseRealRect == Flag.MouseOver) {
             if (this.isMouseClickedLeft) {
                 this.isMouseClickedLeft = false;
             }
@@ -143,7 +143,7 @@ public class SettingNumberWidget extends Widget {
 
     @Override
     public void onCustomMouseClicked(int button) {
-        if (this.flagMouseSlider == Flag.MouseOver && this.settingContainer.flagMouse == Flag.MouseOver) {
+        if (this.flagMouseSlider == Flag.MouseOver && this.settingContainer.flagMouseRealRect == Flag.MouseOver) {
             this.isMouseClickedLeft = button == 0;
         }
     }
@@ -165,14 +165,14 @@ public class SettingNumberWidget extends Widget {
         this.minimum = ((Number) this.setting.getMinimum()).doubleValue();
         this.maximum = ((Number) this.setting.getMaximum()).doubleValue();
 
-        int clampedSliderRectWidth = this.rect.getWidth() - (offsetWidthSliderRect * 2);
+        float clampedSliderRectWidth = this.rect.getWidth() - (offsetWidthSliderRect * 2);
 
         this.offsetWidth = ((int) ((clampedSliderRectWidth) * (this._value - this.minimum) / (this.maximum - this.minimum)));
 
         this.rectSlider.setWidth(clampedSliderRectWidth);
         this.rectSlider.setHeight(6);
 
-        if (this.settingContainer.flagMouse == Flag.MouseOver) {
+        if (this.settingContainer.flagMouseRealRect == Flag.MouseOver) {
             this.flagMouseSlider = this.rectSlider.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
             this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
         } else {

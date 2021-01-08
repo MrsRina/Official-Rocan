@@ -14,4 +14,8 @@ public class TurokClass {
 
         return null;
     }
+
+    public static boolean isAnnotationPreset(Class clazz, Class clazz1) {
+        return clazz.isAnnotationPresent(clazz1);
+    }
 }

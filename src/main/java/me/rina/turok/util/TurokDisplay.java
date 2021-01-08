@@ -13,8 +13,6 @@ public class TurokDisplay {
 
     private int scaleFactor;
 
-    private float partialTicks;
-
     public TurokDisplay(Minecraft mc) {
         this.mc = mc;
     }
@@ -43,14 +41,7 @@ public class TurokDisplay {
         return scaleFactor;
     }
 
-    public float getPartialTicks() {
-        this.onUpdate();
-
-        return partialTicks;
-    }
-
     protected void onUpdate() {
-        this.partialTicks = this.mc.isGamePaused() ? mc.renderPartialTicksPaused : mc.getRenderPartialTicks();
         this.scaleFactor = 1;
 
         boolean isUnicode = this.mc.isUnicode();

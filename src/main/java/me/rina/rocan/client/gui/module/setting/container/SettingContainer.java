@@ -5,7 +5,6 @@ import me.rina.rocan.api.gui.container.Container;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.setting.Setting;
-import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
@@ -34,11 +33,11 @@ public class SettingContainer extends Container {
 
     private ModuleWidget widgetModule;
 
-    private int offsetX;
-    private int offsetY;
+    private float offsetX;
+    private float offsetY;
 
-    private int offsetWidth;
-    private int offsetHeight;
+    private float offsetWidth;
+    private float offsetHeight;
 
     /**
      * Main list of widget of the setting container of type Widget.
@@ -55,6 +54,7 @@ public class SettingContainer extends Container {
     private TurokRect realRect = new TurokRect("Real rect", 0, 0);
 
     public Flag flagMouse = Flag.MouseNotOver;
+    public Flag flagMouseRealRect = Flag.MouseNotOver;
     public Flag flagDescription = Flag.MouseNotOver;
 
     public SettingContainer(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer container, ModuleWidget widgetModule) {
@@ -112,34 +112,17 @@ public class SettingContainer extends Container {
      */
     public void onRefreshWidget() {
         // Set 0 the start up height value.
-        this.scrollRect.setHeight(0);
+        this.scrollRect.setHeight(1);
 
-        // Clear the list.
-        this.loadedWidgetList.clear();
+        for (Widget widgets : this.loadedWidgetList) {
+            if (widgets instanceof SettingBooleanWidget) {
+                SettingBooleanWidget settingBooleanWidget = (SettingBooleanWidget) widgets;
 
-        for (Setting settings : this.widgetModule.getModule().getSettingList()) {
-            if (!settings.isEnabled()) {
-                continue;
-            }
+                if (settingBooleanWidget.getSetting().isEnabled()) {
+                    settingBooleanWidget.setOffsetY(this.scrollRect.getHeight());
 
-            if (settings.getValue() instanceof Boolean) {
-                SettingBooleanWidget settingBooleanWidget = new SettingBooleanWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, settings);
-
-                settingBooleanWidget.setOffsetY(this.scrollRect.getHeight());
-
-                this.loadedWidgetList.add(settingBooleanWidget);
-
-                this.scrollRect.height += settingBooleanWidget.getRect().getHeight() + 1;
-            }
-
-            if ((settings.getValue() instanceof Integer) || (settings.getValue() instanceof Double) || (settings.getValue() instanceof Float)) {
-                SettingNumberWidget settingNumberWidget = new SettingNumberWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, settings);
-
-                settingNumberWidget.setOffsetY(this.scrollRect.getHeight());
-
-                this.loadedWidgetList.add(settingNumberWidget);
-
-                this.scrollRect.height += settingNumberWidget.getRect().getHeight() + 1;
+                    this.scrollRect.height += settingBooleanWidget.getRect().getHeight() + 1;
+                }
             }
         }
     }
@@ -160,9 +143,9 @@ public class SettingContainer extends Container {
         return descriptionLabel;
     }
 
-    public int getWidthScale() {
-        int currentScaleX = (5 * this.frame.getScale());
-        int scale = (2 * this.frame.getScale());
+    public float getWidthScale() {
+        float currentScaleX = (5 * this.frame.getScale());
+        float scale = (2 * this.frame.getScale());
 
         return (this.frame.getRect().getWidth() - this.container.getRect().getWidth() - currentScaleX - scale + 1);
     }
@@ -175,35 +158,35 @@ public class SettingContainer extends Container {
         return scrollRect;
     }
 
-    public void setOffsetX(int offsetX) {
+    public void setOffsetX(float offsetX) {
         this.offsetX = offsetX;
     }
 
-    public int getOffsetX() {
+    public float getOffsetX() {
         return offsetX;
     }
 
-    public void setOffsetY(int offsetY) {
+    public void setOffsetY(float offsetY) {
         this.offsetY = offsetY;
     }
 
-    public int getOffsetY() {
+    public float getOffsetY() {
         return offsetY;
     }
 
-    public void setOffsetWidth(int offsetWidth) {
+    public void setOffsetWidth(float offsetWidth) {
         this.offsetWidth = offsetWidth;
     }
 
-    public int getOffsetWidth() {
+    public float getOffsetWidth() {
         return offsetWidth;
     }
 
-    public void setOffsetHeight(int offsetHeight) {
+    public void setOffsetHeight(float offsetHeight) {
         this.offsetHeight = offsetHeight;
     }
 
-    public int getOffsetHeight() {
+    public float getOffsetHeight() {
         return offsetHeight;
     }
 
@@ -224,21 +207,63 @@ public class SettingContainer extends Container {
     @Override
     public void onKeyboard(char character, int key) {
         for (Widget widgets : this.loadedWidgetList) {
-            widgets.onKeyboard(character, key);
+            if (widgets instanceof SettingBooleanWidget) {
+                SettingBooleanWidget settingBooleanWidget = (SettingBooleanWidget) widgets;
+
+                if (settingBooleanWidget.getSetting().isEnabled()) {
+                    widgets.onKeyboard(character, key);
+                }
+            }
+
+            if (widgets instanceof SettingNumberWidget) {
+                SettingNumberWidget settingNumberWidget = (SettingNumberWidget) widgets;
+
+                if (settingNumberWidget.getSetting().isEnabled()) {
+                    widgets.onKeyboard(character, key);
+                }
+            }
         }
     }
 
     @Override
     public void onCustomKeyboard(char character, int key) {
         for (Widget widgets : this.loadedWidgetList) {
-            widgets.onCustomKeyboard(character, key);
+            if (widgets instanceof SettingBooleanWidget) {
+                SettingBooleanWidget settingBooleanWidget = (SettingBooleanWidget) widgets;
+
+                if (settingBooleanWidget.getSetting().isEnabled()) {
+                    widgets.onCustomKeyboard(character, key);
+                }
+            }
+
+            if (widgets instanceof SettingNumberWidget) {
+                SettingNumberWidget settingNumberWidget = (SettingNumberWidget) widgets;
+
+                if (settingNumberWidget.getSetting().isEnabled()) {
+                    widgets.onCustomKeyboard(character, key);
+                }
+            }
         }
     }
 
     @Override
     public void onMouseReleased(int button) {
         for (Widget widgets : this.loadedWidgetList) {
-            widgets.onMouseReleased(button);
+            if (widgets instanceof SettingBooleanWidget) {
+                SettingBooleanWidget settingBooleanWidget = (SettingBooleanWidget) widgets;
+
+                if (settingBooleanWidget.getSetting().isEnabled()) {
+                    widgets.onMouseReleased(button);
+                }
+            }
+
+            if (widgets instanceof SettingNumberWidget) {
+                SettingNumberWidget settingNumberWidget = (SettingNumberWidget) widgets;
+
+                if (settingNumberWidget.getSetting().isEnabled()) {
+                    widgets.onMouseReleased(button);
+                }
+            }
         }
     }
 
@@ -246,7 +271,21 @@ public class SettingContainer extends Container {
     public void onCustomMouseReleased(int button) {
         if (this.widgetModule.isSelected()) {
             for (Widget widgets : this.loadedWidgetList) {
-                widgets.onCustomMouseReleased(button);
+                if (widgets instanceof SettingBooleanWidget) {
+                    SettingBooleanWidget settingBooleanWidget = (SettingBooleanWidget) widgets;
+
+                    if (settingBooleanWidget.getSetting().isEnabled()) {
+                        widgets.onCustomMouseReleased(button);
+                    }
+                }
+
+                if (widgets instanceof SettingNumberWidget) {
+                    SettingNumberWidget settingNumberWidget = (SettingNumberWidget) widgets;
+
+                    if (settingNumberWidget.getSetting().isEnabled()) {
+                        widgets.onCustomMouseReleased(button);
+                    }
+                }
             }
         }
     }
@@ -254,7 +293,21 @@ public class SettingContainer extends Container {
     @Override
     public void onMouseClicked(int button) {
         for (Widget widgets : this.loadedWidgetList) {
-            widgets.onMouseClicked(button);
+            if (widgets instanceof SettingBooleanWidget) {
+                SettingBooleanWidget settingBooleanWidget = (SettingBooleanWidget) widgets;
+
+                if (settingBooleanWidget.getSetting().isEnabled()) {
+                    widgets.onMouseClicked(button);
+                }
+            }
+
+            if (widgets instanceof SettingNumberWidget) {
+                SettingNumberWidget settingNumberWidget = (SettingNumberWidget) widgets;
+
+                if (settingNumberWidget.getSetting().isEnabled()) {
+                    widgets.onMouseClicked(button);
+                }
+            }
         }
     }
 
@@ -262,24 +315,31 @@ public class SettingContainer extends Container {
     public void onCustomMouseClicked(int button) {
         if (this.widgetModule.isSelected()) {
             for (Widget widgets : this.loadedWidgetList) {
-                widgets.onCustomMouseClicked(button);
+                if (widgets instanceof SettingBooleanWidget) {
+                    SettingBooleanWidget settingBooleanWidget = (SettingBooleanWidget) widgets;
+
+                    if (settingBooleanWidget.getSetting().isEnabled()) {
+                        widgets.onCustomMouseClicked(button);
+                    }
+                }
+
+                if (widgets instanceof SettingNumberWidget) {
+                    SettingNumberWidget settingNumberWidget = (SettingNumberWidget) widgets;
+
+                    if (settingNumberWidget.getSetting().isEnabled()) {
+                        widgets.onCustomMouseClicked(button);
+                    }
+                }
             }
         }
     }
 
     @Override
-    public void onCustomRender() {
-        for (Widget widgets : this.loadedWidgetList) {
-            widgets.onCustomRender();
-        }
-    }
-
-    @Override
     public void onRender() {
-        int positionXScaled = (this.container.getRect().getX() + this.container.getRect().getWidth()) + (2 * this.frame.getScale());
-        int positionYScaled = this.container.getRect().getY();
+        float positionXScaled = (this.container.getRect().getX() + this.container.getRect().getWidth()) + (2 * this.frame.getScale());
+        float positionYScaled = this.container.getRect().getY();
 
-        int realScrollHeight = this.descriptionLabel.getRect().getHeight() + 1;
+        float realScrollHeight = this.descriptionLabel.getRect().getHeight() + 1;
 
         this.rect.setX(positionXScaled);
         this.rect.setY(positionYScaled);
@@ -297,7 +357,8 @@ public class SettingContainer extends Container {
         int offsetFixOutline = 1;
 
         if (this.widgetModule.isSelected()) {
-            this.flagMouse = this.realRect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+            this.flagMouseRealRect = this.realRect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
 
             // The fully background rect.
             TurokRenderGL.color(Rocan.getWrapperGUI().colorContainerBackground[0], Rocan.getWrapperGUI().colorContainerBackground[1], Rocan.getWrapperGUI().colorContainerBackground[2], Rocan.getWrapperGUI().colorContainerBackground[3]);
@@ -307,13 +368,13 @@ public class SettingContainer extends Container {
             this.descriptionLabel.setOffsetY(1);
             this.descriptionLabel.onRender();
 
-            int minimumScroll = (this.rect.getHeight() - this.scrollRect.getHeight()) - 2;
-            int maximumScroll = 3;
+            float minimumScroll = this.rect.getHeight() - this.scrollRect.getHeight() - realScrollHeight - 2;
+            float maximumScroll = 3;
 
             boolean isScrollLimit = this.scrollRect.getY() + this.scrollRect.getHeight() >= this.rect.getY() + this.rect.getHeight() - realScrollHeight - 3;
 
-            if (this.master.getMouse().hasWheel() && isScrollLimit) {
-                this.offsetY += this.master.getMouse().getScroll();
+            if (this.flagMouseRealRect == Flag.MouseOver && this.master.getMouse().hasWheel() && isScrollLimit) {
+                this.offsetY -= this.master.getMouse().getScroll();
 
                 if (this.offsetY <= minimumScroll) {
                     this.offsetY = minimumScroll;
@@ -324,16 +385,33 @@ public class SettingContainer extends Container {
                 this.offsetY = maximumScroll;
             }
 
+            // We need push matrix to start scissor test.
+            TurokRenderGL.pushMatrix();
             TurokRenderGL.enable(GL11.GL_SCISSOR_TEST);
-            TurokRenderGL.drawScissor(this.rect.getX(), (this.rect.getY() + realScrollHeight) - offsetFixOutline, this.rect.getWidth() + (offsetFixOutline * 2), this.rect.getHeight() - (realScrollHeight));
+            TurokRenderGL.drawScissor(this.rect.getX() - offsetFixOutline, (this.rect.getY() + realScrollHeight), this.rect.getWidth() + (offsetFixOutline * 2), this.rect.getHeight() - (realScrollHeight));
 
             for (Widget widgets : this.loadedWidgetList) {
-                widgets.onRender();
+                if (widgets instanceof SettingBooleanWidget) {
+                    SettingBooleanWidget settingBooleanWidget = (SettingBooleanWidget) widgets;
+
+                    if (settingBooleanWidget.getSetting().isEnabled()) {
+                        widgets.onRender();
+                    }
+                }
+
+                if (widgets instanceof SettingNumberWidget) {
+                    SettingNumberWidget settingNumberWidget = (SettingNumberWidget) widgets;
+
+                    if (settingNumberWidget.getSetting().isEnabled()) {
+                        widgets.onRender();
+                    }
+                }
             }
 
             TurokRenderGL.disable(GL11.GL_SCISSOR_TEST);
+            TurokRenderGL.popMatrix();
         } else {
-            this.flagMouse = Flag.MouseNotOver;
+            this.flagMouseRealRect = Flag.MouseNotOver;
         }
 
         if (this.flagDescription == Flag.MouseNotOver) {
@@ -341,5 +419,26 @@ public class SettingContainer extends Container {
         }
 
         this.flagDescription = Flag.MouseNotOver;
+    }
+
+    @Override
+    public void onCustomRender() {
+        for (Widget widgets : this.loadedWidgetList) {
+            if (widgets instanceof SettingBooleanWidget) {
+                SettingBooleanWidget settingBooleanWidget = (SettingBooleanWidget) widgets;
+
+                if (settingBooleanWidget.getSetting().isEnabled()) {
+                    widgets.onCustomRender();
+                }
+            }
+
+            if (widgets instanceof SettingNumberWidget) {
+                SettingNumberWidget settingNumberWidget = (SettingNumberWidget) widgets;
+
+                if (settingNumberWidget.getSetting().isEnabled()) {
+                    widgets.onCustomRender();
+                }
+            }
+        }
     }
 }

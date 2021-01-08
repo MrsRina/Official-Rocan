@@ -31,15 +31,15 @@ public class SettingBooleanWidget extends Widget {
     private ModuleWidget widgetModule;
     private SettingContainer settingContainer;
 
-    private int offsetX;
-    private int offsetY;
+    private float offsetX;
+    private float offsetY;
 
-    private int offsetWidth;
-    private int offsetHeight;
+    private float offsetWidth;
+    private float offsetHeight;
 
-    private int alphaEffectPressed;
-    private int alphaEffectHighlightCheckbox;
-    private int alphaEffectHighlightRect;
+    private float alphaEffectPressed;
+    private float alphaEffectHighlightCheckbox;
+    private float alphaEffectHighlightRect;
 
     private boolean isMouseClickedLeft;
 
@@ -83,35 +83,35 @@ public class SettingBooleanWidget extends Widget {
         return setting;
     }
 
-    public void setOffsetX(int offsetX) {
+    public void setOffsetX(float offsetX) {
         this.offsetX = offsetX;
     }
 
-    public int getOffsetX() {
+    public float getOffsetX() {
         return offsetX;
     }
 
-    public void setOffsetY(int offsetY) {
+    public void setOffsetY(float offsetY) {
         this.offsetY = offsetY;
     }
 
-    public int getOffsetY() {
+    public float getOffsetY() {
         return offsetY;
     }
 
-    public void setOffsetWidth(int offsetWidth) {
+    public void setOffsetWidth(float offsetWidth) {
         this.offsetWidth = offsetWidth;
     }
 
-    public int getOffsetWidth() {
+    public float getOffsetWidth() {
         return offsetWidth;
     }
 
-    public void setOffsetHeight(int offsetHeight) {
+    public void setOffsetHeight(float offsetHeight) {
         this.offsetHeight = offsetHeight;
     }
 
-    public int getOffsetHeight() {
+    public float getOffsetHeight() {
         return offsetHeight;
     }
 
@@ -154,7 +154,7 @@ public class SettingBooleanWidget extends Widget {
         this.rectCheckbox.setWidth(8);
         this.rectCheckbox.setHeight(8);
 
-        if (this.settingContainer.flagMouse == Flag.MouseOver) {
+        if (this.settingContainer.flagMouseRealRect == Flag.MouseOver) {
             this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
         } else {
             this.flagMouse = Flag.MouseNotOver;

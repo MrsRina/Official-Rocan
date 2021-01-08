@@ -28,11 +28,11 @@ public class ModuleWidget extends Widget {
 
     private Module module;
 
-    private int offsetX;
-    private int offsetY;
+    private float offsetX;
+    private float offsetY;
 
-    private int offsetWidth;
-    private int offsetHeight;
+    private float offsetWidth;
+    private float offsetHeight;
 
     private int alphaEffectHighlight;
     private int alphaEffectSelected;
@@ -105,35 +105,35 @@ public class ModuleWidget extends Widget {
         return isLocked;
     }
 
-    public void setOffsetX(int offsetX) {
+    public void setOffsetX(float offsetX) {
         this.offsetX = offsetX;
     }
 
-    public int getOffsetX() {
+    public float getOffsetX() {
         return offsetX;
     }
 
-    public void setOffsetY(int offsetY) {
+    public void setOffsetY(float offsetY) {
         this.offsetY = offsetY;
     }
 
-    public int getOffsetY() {
+    public float getOffsetY() {
         return offsetY;
     }
 
-    public void setOffsetWidth(int offsetWidth) {
+    public void setOffsetWidth(float offsetWidth) {
         this.offsetWidth = offsetWidth;
     }
 
-    public int getOffsetWidth() {
+    public float getOffsetWidth() {
         return offsetWidth;
     }
 
-    public void setOffsetHeight(int offsetHeight) {
+    public void setOffsetHeight(float offsetHeight) {
         this.offsetHeight = offsetHeight;
     }
 
-    public int getOffsetHeight() {
+    public float getOffsetHeight() {
         return offsetHeight;
     }
 
@@ -178,17 +178,21 @@ public class ModuleWidget extends Widget {
 
         if (this.flagMouse == Flag.MouseOver) {
             if (button == 0) {
+                // The double click button up to enable module.
                 if (!this.doubleClickTick.isPassedMS(500)) {
                     this.isMouseClickedLeft = true;
                 } else {
                     this.doubleClickTick.reset();
                 }
 
+                // Reset the main container of modules using this class.
                 this.container.resetWidget(this.getClass());
 
+                // Lock the container setting to render.
                 this.isLocked = true;
             }
 
+            // Here works as main button but do not enable module.
             if (button == 1) {
                 this.container.resetWidget(this.getClass());
 
@@ -250,6 +254,7 @@ public class ModuleWidget extends Widget {
         TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetSelected[0], Rocan.getWrapperGUI().colorWidgetSelected[1], Rocan.getWrapperGUI().colorWidgetSelected[2], this.alphaEffectSelected);
         TurokRenderGL.drawOutlineRect(this.rect);
 
+        // If this is selected the current setting, we use lerp to set the sizes and if minimum 10 set the fully scaled width&height.
         if (this.isSelected) {
             this.alphaEffectSelected = (int) TurokMath.lerp(this.alphaEffectSelected, Rocan.getWrapperGUI().colorWidgetSelected[3], this.master.getPartialTicks());
 
@@ -259,7 +264,7 @@ public class ModuleWidget extends Widget {
                 this.settingContainer.getRect().setWidth(this.settingContainer.getWidthScale());
             }
 
-            this.settingContainer.getRect().setHeight((int) TurokMath.lerp(this.settingContainer.getRect().getHeight(), this.container.getRect().getHeight(), this.master.getPartialTicks()));
+            this.settingContainer.getRect().setHeight(TurokMath.lerp(this.settingContainer.getRect().getHeight(), this.container.getRect().getHeight(), this.master.getPartialTicks()));
 
             if (this.settingContainer.getRect().getHeight() >= this.container.getHeightScale() - 10) {
                 this.settingContainer.getRect().setHeight(this.container.getHeightScale());

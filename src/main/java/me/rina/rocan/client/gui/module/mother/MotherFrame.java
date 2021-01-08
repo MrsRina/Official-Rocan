@@ -4,15 +4,18 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.frame.Frame;
 import me.rina.rocan.api.gui.widget.Widget;
-import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
+import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
+import me.rina.turok.hardware.mouse.TurokMouse;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
 
 import java.util.ArrayList;
+
+import me.rina.turok.util.TurokRect.Dock;
 
 /**
  * @author SrRina
@@ -25,30 +28,42 @@ public class MotherFrame extends Frame {
      * Scale is the real factor of scale x, y, width & height.
      * We need factor the all values to fix the screen when is opening;
      */
-    protected int scale = 2;
+    protected float scale = 2;
 
-    protected int scaleX;
-    protected int scaleY;
+    private float saveX;
+    private float saveY;
 
-    protected int scaleWidth;
-    protected int scaleHeight;
+    protected float scaleWidth;
+    protected float scaleHeight;
+
+    private float currentScaleWidth;
+
+    private float dragX;
+    private float dragY;
+
+    private float resizeX;
+    private float resizeY;
+
+    private float size;
 
     private ArrayList<Widget> loadedWidgetList;
 
-    private int widgetHeight;
+    private float widgetHeight;
 
-    private TurokRect rectWidgetSelected;
+    private TurokRect rectWidgetSelected = new TurokRect("Canada", 0, 0);
+    private TurokRect rectResize = new TurokRect("Goo", 0, 0);
 
     private boolean isStarted = true;
+    private boolean isMouseClickedMiddle = false;
+    private boolean isMouseClickedLeft = false;
 
     public Flag flagMouse = Flag.MouseNotOver;
+    public Flag flagMouseResize = Flag.MouseNotOver;
 
     public MotherFrame(ModuleClickGUI master) {
         super("Mother");
 
         this.master = master;
-
-        this.rectWidgetSelected = new TurokRect("Canada", 0, 0);
 
         this.init();
     }
@@ -69,18 +84,6 @@ public class MotherFrame extends Frame {
     }
 
     public void setNewScaleWidth(int size) {
-        this.scaleWidth = 1;
-
-        for (Widget widgets : this.loadedWidgetList) {
-            if (widgets instanceof ModuleCategoryWidget) {
-                ModuleCategoryWidget moduleCategoryWidget = (ModuleCategoryWidget) widgets;
-
-                moduleCategoryWidget.getRect().setWidth(TurokMath.clamp(size, 75, 300));
-                moduleCategoryWidget.setOffsetX(this.scaleWidth);
-
-                this.scaleWidth += TurokMath.clamp(size, 75, 300) + 1;
-            }
-        }
     }
 
     public void setRectWidgetSelected(TurokRect rectWidgetSelected) {
@@ -89,10 +92,6 @@ public class MotherFrame extends Frame {
 
     public TurokRect getRectWidgetSelected() {
         return rectWidgetSelected;
-    }
-
-    public void updateScale() {
-        this.scaleY = (this.master.getDisplay().getScaledHeight() / 2) - (this.rect.getHeight() / this.scale);
     }
 
     public void resetWidget() {
@@ -109,39 +108,39 @@ public class MotherFrame extends Frame {
         this.scale = scale;
     }
 
-    public int getScale() {
+    public float getScale() {
         return scale;
     }
 
-    public void setScaleX(int scaleX) {
-        this.scaleX = scaleX;
+    public void setSaveX(float saveX) {
+        this.saveX = saveX;
     }
 
-    public int getScaleX() {
-        return scaleX;
+    public float getSaveX() {
+        return saveX;
     }
 
-    public void setScaleY(int scaleY) {
-        this.scaleY = scaleY;
+    public void setSaveY(float saveY) {
+        this.saveY = saveY;
     }
 
-    public int getScaleY() {
-        return scaleY;
+    public float getSaveY() {
+        return saveY;
     }
 
-    public void setScaleWidth(int scaleWidth) {
+    public void setScaleWidth(float scaleWidth) {
         this.scaleWidth = scaleWidth;
     }
 
-    public int getScaleWidth() {
+    public float getScaleWidth() {
         return scaleWidth;
     }
 
-    public void setScaleHeight(int scaleHeight) {
+    public void setScaleHeight(float scaleHeight) {
         this.scaleHeight = scaleHeight;
     }
 
-    public int getScaleHeight() {
+    public float getScaleHeight() {
         return scaleHeight;
     }
 
@@ -179,6 +178,14 @@ public class MotherFrame extends Frame {
 
     @Override
     public void onMouseReleased(int button) {
+        if (this.isMouseClickedMiddle) {
+            this.isMouseClickedMiddle = false;
+        }
+
+        if (this.isMouseClickedLeft) {
+            this.isMouseClickedLeft = false;
+        }
+
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onMouseReleased(button);
 
@@ -192,6 +199,22 @@ public class MotherFrame extends Frame {
 
     @Override
     public void onMouseClicked(int button) {
+        if (button == TurokMouse.BUTTON_MIDDLE) {
+            this.dragX = this.master.getMouse().getX() - this.rect.getX();
+            this.dragY = this.master.getMouse().getY() - this.rect.getY();
+
+            this.isMouseClickedMiddle = this.flagMouse == Flag.MouseOver;
+        }
+
+        if (button == TurokMouse.BUTTON_LEFT) {
+            if (this.flagMouseResize == Flag.MouseOver) {
+                this.resizeX = this.master.getMouse().getX() - this.rect.getX();
+                this.resizeY = this.master.getMouse().getY() - this.rect.getY();
+
+                this.isMouseClickedLeft = true;
+            }
+        }
+
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onMouseClicked(button);
 
@@ -205,31 +228,60 @@ public class MotherFrame extends Frame {
 
     @Override
     public void onRender() {
-        this.updateScale();
-
-        this.rect.setX(this.scaleX);
-        this.rect.setY(this.scaleY);
-
         this.rect.setWidth(this.scaleWidth);
         this.rect.setHeight(TurokMath.min(this.scaleHeight, 200));
+
+        // Set the x, y and size of rect resize, to we resize the main scale variables.
+        this.rectResize.setWidth(8);
+        this.rectResize.setHeight(8);
+
+        this.rectResize.setX(this.rect.getX() + this.rect.getWidth() - this.rectResize.getWidth());
+        this.rectResize.setY(this.rect.getY() + this.rect.getHeight() - this.rectResize.getHeight());
 
         // Set the rect of selected widget for y & width, so we can't change.
         this.rectWidgetSelected.setY(this.rect.getY());
         this.rectWidgetSelected.setHeight(this.widgetHeight);
 
-        this.scaleHeight = this.master.getDisplay().getScaledHeight() / 2;
+        this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+        this.flagMouseResize = this.rectResize.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+
+        this.scaleWidth = (int) TurokMath.lerp(this.scaleWidth, (TurokMath.clamp(this.size, (76) * this.loadedWidgetList.size(), (150 + this.loadedWidgetList.size() + 1) * this.loadedWidgetList.size())), this.master.getPartialTicks());
 
         TurokRenderGL.color(Rocan.getWrapperGUI().colorFrameBackground[0], Rocan.getWrapperGUI().colorFrameBackground[1], Rocan.getWrapperGUI().colorFrameBackground[2], Rocan.getWrapperGUI().colorFrameBackground[3]);
         TurokRenderGL.drawSolidRect(this.rect);
 
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onRender();
+            widgets.onCustomRender();
 
-            if (widgets instanceof ModuleCategoryWidget) widgets.onCustomRender();
+            if (widgets instanceof ModuleCategoryWidget) {
+                ModuleCategoryWidget moduleCategoryWidget = (ModuleCategoryWidget) widgets;
+
+                moduleCategoryWidget.getRect().setWidth(TurokMath.clamp((this.size - this.loadedWidgetList.size()) / this.loadedWidgetList.size(), 75, 150));
+                moduleCategoryWidget.setOffsetX((moduleCategoryWidget.getRect().getWidth() + 1) * this.loadedWidgetList.indexOf(widgets));
+            }
         }
 
         TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetSelected[0], Rocan.getWrapperGUI().colorWidgetSelected[1], Rocan.getWrapperGUI().colorWidgetSelected[2], Rocan.getWrapperGUI().colorWidgetSelected[3]);
         TurokRenderGL.drawOutlineRect(this.rectWidgetSelected);
+
+        if (this.isMouseClickedMiddle && this.master.isOpened()) {
+            float x = this.master.getMouse().getX() - this.dragX;
+            float y = this.master.getMouse().getY() - this.dragY;
+
+            // We set the drag position to rect smooooth.
+            this.rect.setX((int) TurokMath.lerp(this.rect.getX(), x, this.master.getPartialTicks()));
+            this.rect.setY((int) TurokMath.lerp(this.rect.getY(), y, this.master.getPartialTicks()));
+        }
+
+        if (this.isMouseClickedLeft) {
+            float x = (this.master.getMouse().getX() - this.rect.getX());
+            float y = (this.master.getMouse().getY() - this.rect.getY());
+
+            // The current scale have minimum 75 and maximum 160, but I add for fix the minimum problem.
+            this.size = x;
+            this.scaleHeight = (int) TurokMath.lerp(this.scaleHeight, y, this.master.getPartialTicks());
+        }
 
         if (this.isStarted) {
             Widget widget = this.loadedWidgetList.get(0);

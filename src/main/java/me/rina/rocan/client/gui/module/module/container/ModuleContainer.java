@@ -31,11 +31,11 @@ public class ModuleContainer extends Container {
 
     private ModuleCategory category;
 
-    private int offsetX;
-    private int offsetY;
+    private float offsetX;
+    private float offsetY;
 
-    private int offsetWidth;
-    private int offsetHeight;
+    private float offsetWidth;
+    private float offsetHeight;
 
     private ArrayList<Widget> loadedWidgetList;
 
@@ -83,7 +83,7 @@ public class ModuleContainer extends Container {
     }
 
     public void updateSpecifyScale() {
-        int scale = (2 * this.frame.getScale());
+        float scale = (2 * this.frame.getScale());
 
         this.rect.setX(this.frame.getRect().getX() + scale);
         this.rect.setY(this.frame.getRect().getY() + this.widget.getRect().getHeight() + scale);
@@ -113,12 +113,12 @@ public class ModuleContainer extends Container {
         }
     }
 
-    public int getWidthScale() {
-        return (int) (this.frame.getRect().getWidth() / 2.3);
+    public float getWidthScale() {
+        return this.frame.getRect().getWidth() / 2.3f;
     }
 
-    public int getHeightScale() {
-        int scale = (2 * this.frame.getScale());
+    public float getHeightScale() {
+        float scale = (2 * this.frame.getScale());
 
         return (this.frame.getRect().getHeight() - this.widget.getRect().getHeight()) - (scale * 2);
     }
@@ -135,31 +135,31 @@ public class ModuleContainer extends Container {
         this.offsetX = offsetX;
     }
 
-    public int getOffsetX() {
+    public float getOffsetX() {
         return offsetX;
     }
 
-    public void setOffsetY(int offsetY) {
+    public void setOffsetY(float offsetY) {
         this.offsetY = offsetY;
     }
 
-    public int getOffsetY() {
+    public float getOffsetY() {
         return offsetY;
     }
 
-    public void setOffsetWidth(int offsetWidth) {
+    public void setOffsetWidth(float offsetWidth) {
         this.offsetWidth = offsetWidth;
     }
 
-    public int getOffsetWidth() {
+    public float getOffsetWidth() {
         return offsetWidth;
     }
 
-    public void setOffsetHeight(int offsetHeight) {
+    public void setOffsetHeight(float offsetHeight) {
         this.offsetHeight = offsetHeight;
     }
 
-    public int getOffsetHeight() {
+    public float getOffsetHeight() {
         return offsetHeight;
     }
 
@@ -218,19 +218,17 @@ public class ModuleContainer extends Container {
     public void onCustomRender() {
         this.updateSpecifyScale();
 
-        int minimumScroll = (this.rect.getHeight() - this.scrollRect.getHeight()) - 2;
-        int maximumScroll = 3;
+        float minimumScroll = this.rect.getHeight() - this.scrollRect.getHeight() - 2f;
+        float maximumScroll = 3f;
 
         this.scrollRect.setX(this.rect.getX());
-        this.scrollRect.setY((int) TurokMath.lerp(this.scrollRect.getY(), this.rect.getY() + this.offsetY, this.master.getPartialTicks()));
+        this.scrollRect.setY(TurokMath.lerp(this.scrollRect.getY(), this.rect.getY() + this.offsetY, this.master.getPartialTicks()));
 
         this.scrollRect.setWidth(this.rect.getWidth());
 
         boolean isScrollLimit = this.scrollRect.getY() + this.scrollRect.getHeight() >= this.rect.getY() + this.rect.getHeight() - 3;
 
-        ChatUtil.print("" + this.offsetY);
-
-        if (this.master.getMouse().hasWheel() && isScrollLimit) {
+        if (this.flagMouse == Flag.MouseOver && this.master.getMouse().hasWheel() && isScrollLimit) {
             this.offsetY -= this.master.getMouse().getScroll();
 
             if (this.offsetY <= minimumScroll) {
@@ -247,7 +245,7 @@ public class ModuleContainer extends Container {
         TurokRenderGL.color(Rocan.getWrapperGUI().colorContainerBackground[0], Rocan.getWrapperGUI().colorContainerBackground[1], Rocan.getWrapperGUI().colorContainerBackground[2], Rocan.getWrapperGUI().colorContainerBackground[3]);
         TurokRenderGL.drawSolidRect(this.rect);
 
-        int offsetFixOutline = 1;
+        float offsetFixOutline = 1;
 
         TurokRenderGL.enable(GL11.GL_SCISSOR_TEST);
         TurokRenderGL.drawScissor(this.rect.getX() - offsetFixOutline, this.rect.getY(), this.rect.getWidth() + (offsetFixOutline * 2), this.rect.getHeight());

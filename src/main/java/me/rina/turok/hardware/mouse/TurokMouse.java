@@ -7,17 +7,21 @@ import org.lwjgl.input.Mouse;
  * @since 02/10/2020.
  */
 public class TurokMouse {
+    public final static int BUTTON_LEFT   = 0;
+    public final static int BUTTON_MIDDLE = 2;
+    public final static int BUTTON_RIGHT  = 3;
+
     private int scroll;
 
     private int x;
     private int y;
 
-    public TurokMouse(int mx, int my) {
-        this.x = mx;
-        this.y = my;
+    public void setPos(int x, int y) {
+        this.x = x;
+        this.y = y;
     }
 
-    public void setPos(int x, int y) {
+    public void setCursorPos(int x, int y) {
         this.x = x;
         this.y = y;
 
@@ -30,7 +34,7 @@ public class TurokMouse {
         };
     }
 
-    public void setX(int x) {
+    public void setCursorX(int x) {
         this.x = x;
 
         Mouse.setCursorPosition(this.x, this.y);
@@ -40,7 +44,7 @@ public class TurokMouse {
         return x;
     }
 
-    public void setY(int y) {
+    public void setCursorY(int y) {
         this.y = y;
 
         Mouse.setCursorPosition(this.x, this.y);

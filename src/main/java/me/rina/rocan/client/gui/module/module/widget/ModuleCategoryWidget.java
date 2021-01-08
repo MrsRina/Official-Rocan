@@ -19,11 +19,11 @@ public class ModuleCategoryWidget extends Widget {
 
     private MotherFrame frame;
 
-    private int offsetX;
-    private int offsetY;
+    private float offsetX;
+    private float offsetY;
 
-    private int offsetWidth;
-    private int offsetHeight;
+    private float offsetWidth;
+    private float offsetHeight;
 
     private ModuleContainer container;
 
@@ -57,35 +57,35 @@ public class ModuleCategoryWidget extends Widget {
         return isSelected;
     }
 
-    public void setOffsetX(int offsetX) {
+    public void setOffsetX(float offsetX) {
         this.offsetX = offsetX;
     }
 
-    public int getOffsetX() {
+    public float getOffsetX() {
         return offsetX;
     }
 
-    public void setOffsetY(int offsetY) {
+    public void setOffsetY(float offsetY) {
         this.offsetY = offsetY;
     }
 
-    public int getOffsetY() {
+    public float getOffsetY() {
         return offsetY;
     }
 
-    public void setOffsetWidth(int offsetWidth) {
+    public void setOffsetWidth(float offsetWidth) {
         this.offsetWidth = offsetWidth;
     }
 
-    public int getOffsetWidth() {
+    public float getOffsetWidth() {
         return offsetWidth;
     }
 
-    public void setOffsetHeight(int offsetHeight) {
+    public void setOffsetHeight(float offsetHeight) {
         this.offsetHeight = offsetHeight;
     }
 
-    public int getOffsetHeight() {
+    public float getOffsetHeight() {
         return offsetHeight;
     }
 
@@ -122,6 +122,7 @@ public class ModuleCategoryWidget extends Widget {
         if (this.flagMouse == Flag.MouseOver && this.isMouseClickedLeft) {
             this.frame.resetWidget();
 
+            // For some reason we need reload the current container, isn't loading at constructor.
             this.container.init();
 
             this.isSelected = true;
