@@ -1,6 +1,7 @@
 package me.rina.rocan.api.util.render;
 
 import me.rina.rocan.Rocan;
+import me.rina.turok.render.opengl.TurokGL;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderGlobal;
@@ -24,13 +25,13 @@ public class Render3DUtil  {
         GlStateManager.disableTexture2D();
         GlStateManager.depthMask(false);
 
-        TurokRenderGL.enable(GL11.GL_LINE_SMOOTH);
-        TurokRenderGL.hint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
-        TurokRenderGL.lineSize(line);
+        TurokGL.enable(GL11.GL_LINE_SMOOTH);
+        TurokGL.hint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
+        TurokGL.lineSize(line);
     }
 
     public static void release() {
-        TurokRenderGL.disable(GL11.GL_LINE_SMOOTH);
+        TurokGL.disable(GL11.GL_LINE_SMOOTH);
 
         GlStateManager.depthMask(true);
         GlStateManager.enableDepth();

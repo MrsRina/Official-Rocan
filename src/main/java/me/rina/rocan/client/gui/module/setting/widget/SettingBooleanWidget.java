@@ -37,9 +37,9 @@ public class SettingBooleanWidget extends Widget {
     private float offsetWidth;
     private float offsetHeight;
 
-    private float alphaEffectPressed;
-    private float alphaEffectHighlightCheckbox;
-    private float alphaEffectHighlightRect;
+    private int alphaEffectPressed;
+    private int alphaEffectHighlightCheckbox;
+    private int alphaEffectHighlightRect;
 
     private boolean isMouseClickedLeft;
 
@@ -151,8 +151,8 @@ public class SettingBooleanWidget extends Widget {
         this.rect.setX(this.settingContainer.getScrollRect().getX() + this.offsetX);
         this.rect.setY(this.settingContainer.getScrollRect().getY() + this.offsetY);
 
-        this.rectCheckbox.setWidth(8);
-        this.rectCheckbox.setHeight(8);
+        this.rectCheckbox.setWidth(10);
+        this.rectCheckbox.setHeight(10);
 
         if (this.settingContainer.flagMouseRealRect == Flag.MouseOver) {
             this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;

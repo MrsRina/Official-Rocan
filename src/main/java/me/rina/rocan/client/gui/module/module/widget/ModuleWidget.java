@@ -172,7 +172,7 @@ public class ModuleWidget extends Widget {
 
     @Override
     public void onCustomMouseClicked(int button) {
-        if (this.settingContainer.flagMouse == Flag.MouseNotOver && this.flagMouse == Flag.MouseNotOver) {
+        if (this.settingContainer.flagMouse == Flag.MouseNotOver && this.flagMouse == Flag.MouseNotOver && this.frame.flagMouseResize == Flag.MouseNotOver) {
             this.container.resetWidget();
         }
 

@@ -1,7 +1,9 @@
 package me.rina.turok.minecraft;
 
 import me.rina.turok.hardware.mouse.TurokMouse;
+import me.rina.turok.render.opengl.TurokGL;
 import me.rina.turok.render.opengl.TurokRenderGL;
+import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokClass;
 import me.rina.turok.util.TurokDisplay;
 import net.minecraft.client.Minecraft;
@@ -25,18 +27,14 @@ public class TurokGUI extends GuiScreen {
     protected float partialTicks;
 
     public TurokGUI() {
-        /**
-         * Init TurokRenderGL to help use the GUI.
-         */
-        TurokRenderGL.init();
-
         // Starts the mouse and display helpers hardware.
         this.mouse = new TurokMouse();
         this.display = new TurokDisplay(Minecraft.getMinecraft());
 
-        // Inject at the TurokRenderGL.
-        TurokRenderGL.init(this.mouse);
-        TurokRenderGL.init(this.display);
+        /**
+         * Init shader utils from TurokShaderGL.
+         */
+        TurokShaderGL.init(this.display, this.mouse);
 
         this.init();
     }
@@ -180,22 +178,29 @@ public class TurokGUI extends GuiScreen {
         // Set the current partial ticks to variable.
         this.partialTicks = partialTicks;
 
-        // We auto scale the screen.
-        TurokRenderGL.autoScale();
-        TurokRenderGL.disable(GL11.GL_TEXTURE_2D);
+        // We need fix the current matrix view to sync sizes display.
+        TurokGL.pushMatrix();
+
+        // Translate to display width, height.
+        TurokGL.translate(this.display.getWidth(), this.display.getHeight());
+        TurokGL.scale(0.5f, 0.5f, 0.5f);
+
+        TurokGL.popMatrix();
+
+        TurokGL.disable(GL11.GL_TEXTURE_2D);
 
         this.onRender();
 
-        TurokRenderGL.enable(GL11.GL_TEXTURE_2D);
+        TurokGL.enable(GL11.GL_TEXTURE_2D);
 
         // Disable any texture 2d and blend
-        TurokRenderGL.disable(GL11.GL_TEXTURE_2D);
-        TurokRenderGL.disable(GL11.GL_BLEND);
+        TurokGL.disable(GL11.GL_TEXTURE_2D);
+        TurokGL.disable(GL11.GL_BLEND);
 
         // Enable again to fix color.
-        TurokRenderGL.enable(GL11.GL_TEXTURE_2D);
+        TurokGL.enable(GL11.GL_TEXTURE_2D);
 
         // Color to white.
-        TurokRenderGL.color(255, 255, 255);
+        TurokGL.color(255, 255, 255);
     }
 }

@@ -1,8 +1,5 @@
 package me.rina.turok.render.opengl;
 
-import me.rina.turok.hardware.mouse.TurokMouse;
-import me.rina.turok.util.TurokDisplay;
-import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
@@ -10,215 +7,106 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.*;
 
-import java.awt.*;
-import java.util.HashMap;
-
 /**
  * @author SrRina
  * @since 26/09/20 at 1:33pm
  */
 public class TurokRenderGL {
-	private static TurokRenderGL INSTANCE;
-
-	protected TurokDisplay display;
-	protected TurokMouse mouse;
-
-	public static void init() {
-		INSTANCE = new TurokRenderGL();
-	}
-
-	public static void init(Object object) {
-		if (object instanceof TurokDisplay) {
-			INSTANCE.display = (TurokDisplay) object;
-		}
-
-		if (object instanceof TurokMouse) {
-			INSTANCE.mouse = (TurokMouse) object;
-		}
-	}
-
-	public static void drawOutlineRectFadingMouse(TurokRect rect, int radius, Color color) {
-		drawOutlineRectFadingMouse((float) rect.getX(), (float) rect.getY(), (float) rect.getWidth(), (float) rect.getHeight(), radius, color);
-	}
-
-	public static void drawOutlineRectFadingMouse(float x, float y, float w, float h, int radius, Color color) {
-		pushMatrix();
-
-		float offset = 0.5f;
-
-		float vx = x - INSTANCE.mouse.getX();
-		float vy = y - INSTANCE.mouse.getY();
-
-		float vw = (x + w) - INSTANCE.mouse.getX();
-		float vh = (y + h) - INSTANCE.mouse.getY();
-
-		int valueAlpha = color.getAlpha();
-
-		enableAlphaBlend();
-
-		shaderMode(GL11.GL_SMOOTH);
-
-		color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
-
-		lineSize(1.0f);
-
-		prepare(GL11.GL_LINE_LOOP);
-		{
-			color(color.getRed(), color.getGreen(), color.getBlue(), valueAlpha - TurokMath.clamp(TurokMath.sqrt(vx * vx + vy * vy) / (radius / 100f), 0, valueAlpha));
-			addVertex(x + offset, y);
-
-			color(color.getRed(), color.getGreen(), color.getBlue(), valueAlpha - TurokMath.clamp(TurokMath.sqrt(vx * vx + vh * vh) / (radius / 100f), 0, valueAlpha));
-			addVertex(x + offset,y + h + offset);
-
-			color(color.getRed(), color.getGreen(), color.getBlue(), valueAlpha - TurokMath.clamp(TurokMath.sqrt(vw * vw + vh * vh) / (radius / 100f), 0, valueAlpha));
-			addVertex(x + w, y + h);
-
-			color(color.getRed(), color.getGreen(), color.getBlue(), valueAlpha - TurokMath.clamp(TurokMath.sqrt(vw * vw + vy * vy) / (radius / 100f), 0, valueAlpha));
-			addVertex(x + w, y);
-		}
-
-		release();
-
-		disableAlphaBlend();
-
-		popMatrix();
-	}
-
-	public static void drawSolidRectFadingMouse(TurokRect rect, int radius, Color color) {
-		drawSolidRectFadingMouse((float) rect.getX(), (float) rect.getY(), (float) rect.getWidth(), (float) rect.getHeight(), radius, color);
-	}
-
-	public static void drawSolidRectFadingMouse(float x, float y, float w, float h, int radius, Color color) {
-		pushMatrix();
-
-		float vx = x - INSTANCE.mouse.getX();
-		float vy = y - INSTANCE.mouse.getY();
-
-		float vw = (x + w) - INSTANCE.mouse.getX();
-		float vh = (y + h) - INSTANCE.mouse.getY();
-
-		int valueAlpha = color.getAlpha();
-
-		enableAlphaBlend();
-
-		prepare(GL11.GL_QUADS);
-		{
-			color(color.getRed(), color.getGreen(), color.getBlue(), valueAlpha - TurokMath.clamp(TurokMath.sqrt(vx * vx + vy * vy) / (radius / 100f), 0, valueAlpha));
-			addVertex(x, y);
-
-			color(color.getRed(), color.getGreen(), color.getBlue(), valueAlpha - TurokMath.clamp(TurokMath.sqrt(vx * vx + vh * vh) / (radius / 100f), 0, valueAlpha));
-			addVertex(x, y + h);
-
-			color(color.getRed(), color.getGreen(), color.getBlue(), valueAlpha - TurokMath.clamp(TurokMath.sqrt(vw * vw + vh * vh) / (radius / 100f), 0, valueAlpha));
-			addVertex(x + w, y + h);
-
-			color(color.getRed(), color.getGreen(), color.getBlue(), valueAlpha - TurokMath.clamp(TurokMath.sqrt(vw * vw + vy * vy) / (radius / 100f), 0, valueAlpha));
-			addVertex(x + w, y);
-		}
-
-		release();
-
-		disableAlphaBlend();
-
-		popMatrix();
-	}
-
-	public static void drawScissor(float x, float y, float w, float h) {
-		float calculatedW = x + w;
-		float calculatedH = y + h;
-
-		GL11.glScissor((int) (x * INSTANCE.display.getScaleFactor()), (int) (INSTANCE.display.getHeight() - (calculatedH * INSTANCE.display.getScaleFactor())), (int) ((calculatedW - x) * INSTANCE.display.getScaleFactor()), (int) ((calculatedH - y) * INSTANCE.display.getScaleFactor()));
+	public static void color(int r, int g, int b, int a) {
+		TurokGL.color(r + 0f, g + 0f, b + 0f, a + 0f);
 	}
 
 	public static void drawTexture(float x, float y, float width, float height) {
-		prepare(GL11.GL_QUADS);
+		TurokGL.prepare(GL11.GL_QUADS);
 		{
-			sewTexture(0, 0);
-			addVertex(x, y);
-			sewTexture(0, 1);
-			addVertex(x, y + height);
-			sewTexture(1, 1);
-			addVertex(x + width, y + height);
-			sewTexture(1, 0);
-			addVertex(x + width, y);
+			TurokGL.sewTexture(0, 0);
+			TurokGL.addVertex(x, y);
+			TurokGL.sewTexture(0, 1);
+			TurokGL.addVertex(x, y + height);
+			TurokGL.sewTexture(1, 1);
+			TurokGL.addVertex(x + width, y + height);
+			TurokGL.sewTexture(1, 0);
+			TurokGL.addVertex(x + width, y);
 		}
 
-		release();
+		TurokGL.release();
 	}
 
 	public static void drawTextureInterpolated(float x, float y, float xx, float yy, float width, float height, float ww, float hh) {
-		prepare(GL11.GL_QUADS);
+		TurokGL.prepare(GL11.GL_QUADS);
 		{
-			sewTexture(0 + xx, 0 + hh);
-			addVertex(x, y);
-			sewTexture(0 + xx, 1 + hh);
-			addVertex(x, y + height);
-			sewTexture(1 + ww, 1 + hh);
-			addVertex(x + width, y + height);
-			sewTexture(1 + ww, 0 + hh);
-			addVertex(x + width, y);
+			TurokGL.sewTexture(0 + xx, 0 + hh);
+			TurokGL.addVertex(x, y);
+			TurokGL.sewTexture(0 + xx, 1 + hh);
+			TurokGL.addVertex(x, y + height);
+			TurokGL.sewTexture(1 + ww, 1 + hh);
+			TurokGL.addVertex(x + width, y + height);
+			TurokGL.sewTexture(1 + ww, 0 + hh);
+			TurokGL.addVertex(x + width, y);
 		}
 
-		release();
+		TurokGL.release();
 	}
 
 	public static void drawUpTriangle(float x, float y, float width, float height, int offsetX) {
-		pushMatrix();
+		TurokGL.pushMatrix();
 
-		enableAlphaBlend();
+		TurokGL.enable(GL11.GL_BLEND);
+		TurokGL.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		prepare(GL11.GL_TRIANGLE_FAN);
+		TurokGL.prepare(GL11.GL_TRIANGLE_FAN);
 		{
-			addVertex(x + width, y + height);
-			addVertex(x + width, y);
-			addVertex(x - offsetX, y);
+			TurokGL.addVertex(x + width, y + height);
+			TurokGL.addVertex(x + width, y);
+			TurokGL.addVertex(x - offsetX, y);
 		}
 
-		release();
+		TurokGL.release();
 
-		disableAlphaBlend();
-
-		popMatrix();
+		TurokGL.disable(GL11.GL_BLEND);
+		TurokGL.popMatrix();
 	}
 
 	public static void drawDownTriangle(float x, float y, float width, float height, int offsetX) {
-		pushMatrix();
+		TurokGL.pushMatrix();
 
-		enableAlphaBlend();
+		TurokGL.enable(GL11.GL_BLEND);
+		TurokGL.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		prepare(GL11.GL_TRIANGLE_FAN);
+		TurokGL.prepare(GL11.GL_TRIANGLE_FAN);
 		{
-			addVertex(x, y);
-			addVertex(x, y + height);
-			addVertex(x + width + offsetX, y + height);
+			TurokGL.addVertex(x, y);
+			TurokGL.addVertex(x, y + height);
+			TurokGL.addVertex(x + width + offsetX, y + height);
 		}
 
-		release();
+		TurokGL.release();
 
-		popMatrix();
+		TurokGL.disable(GL11.GL_BLEND);
+		TurokGL.popMatrix();
 	}
 
 	public static void drawArc(float cx, float cy, float r, float start_angle, float end_angle, float num_segments) {
-		pushMatrix();
+		TurokGL.pushMatrix();
 
-		enableAlphaBlend();
+		TurokGL.enable(GL11.GL_BLEND);
+		TurokGL.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		prepare(GL11.GL_TRIANGLES);
+		TurokGL.prepare(GL11.GL_TRIANGLES);
 
 		for (int i = (int) (num_segments / (360 / start_angle)) + 1; i <= num_segments / (360 / end_angle); i++) {
-			double previousAngle = 2 * Math.PI * (i - 1) / num_segments;
-			double angle = 2 * Math.PI * i / num_segments;
+			float previousAngle = (float) (2 * Math.PI * (i - 1) / num_segments);
+			float angle = (float) (2 * Math.PI * i / num_segments);
 
-			addVertex(cx, cy);
-			addVertex(cx + Math.cos(angle) * r, (cy + Math.sin(angle) * r));
-			addVertex(cx + Math.cos(previousAngle) * r, cy + Math.sin(previousAngle) * r);
+			TurokGL.addVertex(cx, cy);
+			TurokGL.addVertex((float) (cx + Math.cos(angle) * r), (float) (cy + Math.sin(angle) * r));
+			TurokGL.addVertex((float) (cx + Math.cos(previousAngle) * r), (float) (cy + Math.sin(previousAngle) * r));
 		}
 
-		release();
+		TurokGL.release();
 
-		disableAlphaBlend();
-
-		popMatrix();
+		TurokGL.disable(GL11.GL_BLEND);
+		TurokGL.popMatrix();
 	}
 
 	public static void drawArc(float x, float y, float radius) {
@@ -226,23 +114,23 @@ public class TurokRenderGL {
 	}
 
 	public static void drawArcOutline(float cx, float cy, float r, float start_angle, float end_angle, float num_segments) {
-		pushMatrix();
+		TurokGL.pushMatrix();
 
-		enableAlphaBlend();
+		TurokGL.enable(GL11.GL_BLEND);
+		TurokGL.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		prepare(GL11.GL_LINE_LOOP);
+		TurokGL.prepare(GL11.GL_LINE_LOOP);
 
 		for (int i = (int) (num_segments / (360 / start_angle)) + 1; i <= num_segments / (360 / end_angle); i++) {
-			double angle = 2 * Math.PI * i / num_segments;
+			float angle = (float) (2 * Math.PI * i / num_segments);
 
-			addVertex( cx + Math.cos(angle) * r, cy + Math.sin(angle) * r);
+			TurokGL.addVertex((float) (cx + Math.cos(angle) * r), (float) (cy + Math.sin(angle) * r));
 		}
 
-		release();
+		TurokGL.release();
 
-		disableAlphaBlend();
-
-		popMatrix();
+		TurokGL.disable(GL11.GL_BLEND);
+		TurokGL.popMatrix();
 	}
 
 	public static void drawArcOutline(float x, float y, float radius) {
@@ -250,53 +138,53 @@ public class TurokRenderGL {
 	}
 
 	public static void drawOutlineRect(float x, float y, float width, float height) {
-		pushMatrix();
+		TurokGL.pushMatrix();
 
-		enableAlphaBlend();
+		TurokGL.enable(GL11.GL_BLEND);
+		TurokGL.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		lineSize(1);
+		TurokGL.lineSize(1);
 
-		prepare(GL11.GL_LINES);
+		TurokGL.prepare(GL11.GL_LINES);
 		{
-			addVertex(x, y);
-			addVertex(x,y + height);
+			TurokGL.addVertex(x, y);
+			TurokGL.addVertex(x,y + height);
 		}
 
-		release();
+		TurokGL.release();
 
-		lineSize(1);
+		TurokGL.lineSize(1);
 
-		prepare(GL11.GL_LINES);
+		TurokGL.prepare(GL11.GL_LINES);
 		{
-			addVertex(x, y + height - 0.5f);
-			addVertex(x + width - 0.5f, y + height - 0.5f);
+			TurokGL.addVertex(x, y + height - 0.5f);
+			TurokGL.addVertex(x + width - 0.5f, y + height - 0.5f);
 		}
 
-		release();
+		TurokGL.release();
 
-		lineSize(1);
+		TurokGL.lineSize(1);
 
-		prepare(GL11.GL_LINES);
+		TurokGL.prepare(GL11.GL_LINES);
 		{
-			addVertex(x + width, y + height);
-			addVertex(x + width, y + 0.5f);
+			TurokGL.addVertex(x + width, y + height);
+			TurokGL.addVertex(x + width, y + 0.5f);
 		}
 
-		release();
+		TurokGL.release();
 
-		lineSize(1);
+		TurokGL.lineSize(1);
 
-		prepare(GL11.GL_LINES);
+		TurokGL.prepare(GL11.GL_LINES);
 		{
-			addVertex(x + width, y);
-			addVertex(x, y);
+			TurokGL.addVertex(x + width, y);
+			TurokGL.addVertex(x, y);
 		}
 
-		release();
+		TurokGL.release();
 
-		disableAlphaBlend();
-
-		popMatrix();
+		TurokGL.disable(GL11.GL_BLEND);
+		TurokGL.popMatrix();
 	}
 
 	public static void drawOutlineRect(TurokRect rect) {
@@ -306,56 +194,56 @@ public class TurokRenderGL {
 	public static void drawOutlineRoundedRect(float x, float y, float width, float height, float radius, float dR, float dG, float dB, float dA, float line_width) {
 		drawRoundedRect(x, y, width, height, radius);
 
-		color(dR, dG, dB, dA);
+		TurokGL.color(dR, dG, dB, dA);
 
 		drawRoundedRect(x + line_width, y + line_width, width - line_width * 2, height - line_width * 2, radius);
 	}
 
 	public static void drawRoundedRect(float x, float y, float width, float height, float radius) {
-		pushMatrix();
+		TurokGL.pushMatrix();
 
-		enableAlphaBlend();
+		TurokGL.enable(GL11.GL_BLEND);
+		TurokGL.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 		drawArc((x + width - radius), (y + height - radius), radius, 0, 90, 16);
 		drawArc((x + radius), (y + height - radius), radius, 90, 180, 16);
 		drawArc(x + radius, y + radius, radius, 180, 270, 16);
 		drawArc((x + width - radius), (y + radius), radius, 270, 360, 16);
 
-		prepare(GL11.GL_TRIANGLES);
+		TurokGL.prepare(GL11.GL_TRIANGLES);
 		{
-			addVertex(x + width - radius, y);
-			addVertex(x + radius, y);
+			TurokGL.addVertex(x + width - radius, y);
+			TurokGL.addVertex(x + radius, y);
 
-			addVertex(x + width - radius, y + radius);
-			addVertex(x + width - radius, y + radius);
+			TurokGL.addVertex(x + width - radius, y + radius);
+			TurokGL.addVertex(x + width - radius, y + radius);
 
-			addVertex(x + radius, y);
-			addVertex(x + radius, y + radius);
+			TurokGL.addVertex(x + radius, y);
+			TurokGL.addVertex(x + radius, y + radius);
 
-			addVertex(x + width, y + radius);
-			addVertex(x, y + radius);
+			TurokGL.addVertex(x + width, y + radius);
+			TurokGL.addVertex(x, y + radius);
 
-			addVertex(x, y + height - radius);
-			addVertex(x + width, y + radius);
+			TurokGL.addVertex(x, y + height - radius);
+			TurokGL.addVertex(x + width, y + radius);
 
-			addVertex(x, y + height-radius);
-			addVertex(x + width, y + height - radius);
+			TurokGL.addVertex(x, y + height-radius);
+			TurokGL.addVertex(x + width, y + height - radius);
 
-			addVertex(x + width - radius, y + height - radius);
-			addVertex(x + radius, y + height - radius);
+			TurokGL.addVertex(x + width - radius, y + height - radius);
+			TurokGL.addVertex(x + radius, y + height - radius);
 
-			addVertex(x + width - radius, y + height);
-			addVertex(x + width - radius, y + height);
+			TurokGL.addVertex(x + width - radius, y + height);
+			TurokGL.addVertex(x + width - radius, y + height);
 
-			addVertex(x + radius, y + height - radius);
-			addVertex(x + radius, y + height);
+			TurokGL.addVertex(x + radius, y + height - radius);
+			TurokGL.addVertex(x + radius, y + height);
 		}
 
-		release();
+		TurokGL.release();
 
-		disableAlphaBlend();
-
-		popMatrix();
+		TurokGL.disable(GL11.GL_BLEND);
+		TurokGL.popMatrix();
 	}
 
 	public static void drawRoundedRect(TurokRect rect, float size) {
@@ -363,24 +251,25 @@ public class TurokRenderGL {
 	}
 
 	public static void drawSolidRect(float x, float y, float width, float height) {
-		pushMatrix();
+		TurokGL.pushMatrix();
 
-		enableAlphaBlend();
+		TurokGL.enable(GL11.GL_BLEND);
+		TurokGL.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		prepare(GL11.GL_POLYGON);
+		TurokGL.prepare(GL11.GL_POLYGON);
 		{
-			addVertex(x, y);
-			addVertex(x,y + height);
+			TurokGL.addVertex(x, y);
+			TurokGL.addVertex(x,y + height);
 
-			addVertex(x + width - 0.5f, y + height);
-			addVertex(x + width - 0.5f, y);
+			TurokGL.addVertex(x + width - 0.5f, y + height);
+			TurokGL.addVertex(x + width - 0.5f, y);
 		}
 
-		release();
+		TurokGL.release();
 
-		disableAlphaBlend();
+		TurokGL.disable(GL11.GL_BLEND);
 
-		popMatrix();
+		TurokGL.popMatrix();
 	}
 
 	public static void drawSolidRect(int x, int y, int width, int height) {
@@ -392,23 +281,23 @@ public class TurokRenderGL {
 	}
 
 	public static void drawLine(int x, int y, int x1, int xy, float line) {
-		pushMatrix();
+		TurokGL.pushMatrix();
 
-		enableAlphaBlend();
+		TurokGL.enable(GL11.GL_BLEND);
+		TurokGL.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		lineSize(line);
+		TurokGL.lineSize(line);
 
-		prepare(GL11.GL_LINE_SMOOTH);
+		TurokGL.prepare(GL11.GL_LINE_SMOOTH);
 		{
-			addVertex(x, y);
-			addVertex(x1, xy);
+			TurokGL.addVertex(x, y);
+			TurokGL.addVertex(x1, xy);
 		}
 
-		release();
+		TurokGL.release();
 
-		disableAlphaBlend();
-
-		popMatrix();
+		TurokGL.disable(GL11.GL_BLEND);
+		TurokGL.popMatrix();
 	}
 
 	public static void drawLine3D(double x, double y, double z, double x1, double y1, double z1, int r, int g, int b, int a, float line) {
@@ -419,13 +308,13 @@ public class TurokRenderGL {
 		GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 		GlStateManager.shadeModel(GL11.GL_SMOOTH);
 
-		lineSize(line);
-		enable(GL11.GL_LINE_SMOOTH);
-		hint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
+		TurokGL.lineSize(line);
+		TurokGL.enable(GL11.GL_LINE_SMOOTH);
+		TurokGL.hint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
 
 		GlStateManager.disableDepth();
 
-		enable(GL32.GL_DEPTH_CLAMP);
+		TurokGL.enable(GL32.GL_DEPTH_CLAMP);
 
 		final Tessellator tessellator = Tessellator.getInstance();
 		final BufferBuilder bufferBuilder = tessellator.getBuffer();
@@ -438,234 +327,28 @@ public class TurokRenderGL {
 
 		GlStateManager.shadeModel(GL11.GL_FLAT);
 
-		disable(GL11.GL_LINE_SMOOTH);
+		TurokGL.disable(GL11.GL_LINE_SMOOTH);
 
 		GlStateManager.enableDepth();
 
-		disable(GL32.GL_DEPTH_CLAMP);
-		disableAlphaBlend();
+		TurokGL.disable(GL32.GL_DEPTH_CLAMP);
+		TurokGL.disable(GL11.GL_BLEND);
 
 		GlStateManager.enableAlpha();
 		GlStateManager.enableTexture2D();
 		GlStateManager.popMatrix();
 	}
 
-	public static void autoScale() {
-		/*
-		 * We need fix the screen size for works great all renders.
-		 */
-		pushMatrix();
-		translate(INSTANCE.display.getScaledWidth(), INSTANCE.display.getScaledHeight());
-		scale(0.5f, 0.5f, 0.5f);
-		popMatrix();
-	}
-
-	public static void color(float r, float g, float b, float a) {
-		GL11.glColor4f((float) r / 255, (float) g / 255, (float) b / 255, (float) a / 255);
-	}
-
-	public static void color(double r, double g, double b, double a) {
-		GL11.glColor4f((float) r / 255, (float) g / 255, (float) b / 255, (float) a / 255);
-	}
-
-	public static void color(int r, int g, int b, int a) {
-		GL11.glColor4f((float) r / 255, (float) g / 255, (float) b / 255, (float) a / 255);
-	}
-
-	public static void color(float r, float g, float b) {
-		GL11.glColor3f((float) r / 255, (float) g / 255, (float) b / 255);
-	}
-
-	public static void color(double r, double g, double b) {
-		GL11.glColor3f((float) r / 255, (float) g / 255, (float) b / 255);
-	}
-
-	public static void color(int r, int g, int b) {
-		GL11.glColor3f((float) r / 255, (float) g / 255, (float) b / 255);
-	}
-
-	public static void prepare(int mode) {
-		GL11.glBegin(mode);
-	}
-
-	public static void release() {
-		GL11.glEnd();
-	}
-
-	public static void sewTexture(float s, float t, float r) {
-		GL11.glTexCoord3f(s, t, r);
-	}
-
-	public static void sewTexture(float s, float t) {
-		GL11.glTexCoord2f(s, t);
-	}
-
-	public static void sewTexture(float s) {
-		GL11.glTexCoord1f(s);
-	}
-
-	public static void sewTexture(double s, double t, double r) {
-		sewTexture((float) s, (float) t, (float) r);
-	}
-
-	public static void sewTexture(double s, double t) {
-		sewTexture((float) s, (float) t);
-	}
-
-	public static void sewTexture(double s) {
-		sewTexture((float) s);
-	}
-
-	public static void sewTexture(int s, int t, int r) {
-		sewTexture((float) s, (float) t, (float) r);
-	}
-
-	public static void sewTexture(int s, int t) {
-		sewTexture((float) s, (float) t);
-	}
-
-	public static void sewTexture(int s) {
-		sewTexture((float) s);
-	}
-
-	public static void addVertex(float x, float y, float z) {
-		sewTexture(x, y, z);
-	}
-
-	public static void addVertex(float x, float y) {
-		GL11.glVertex2f(x, y);
-	}
-
-	public static void addVertex(double x, double y, double z) {
-		addVertex((float) x, (float) y, (float) z);
-	}
-
-	public static void addVertex(double x, double y) {
-		addVertex((float) x, (float) y);
-	}
-
-	public static void addVertex(int x, int y, int z) {
-		addVertex((float) x, (float) y, (float) z);
-	}
-
-	public static void addVertex(int x, int y) {
-		addVertex((float) x, (float) y);
-	}
-
-	public static void hint(int target, int target1) {
-		GL11.glHint(target, target1);
-	}
-
-	public static void translate(float x, float y, float z) {
-		GL11.glTranslated(x, y, z);
-	}
-
-	public static void translate(double x, double y, double z) {
-		GL11.glTranslated(x, y, z);
-	}
-
-	public static void translate(int x, int y, int z) {
-		GL11.glTranslated(x, y, z);
-	}
-
-	public static void translate(float x, float y) {
-		GL11.glTranslated(x, y, 0);
-	}
-
-	public static void translate(double x, double y) {
-		GL11.glTranslated(x, y, 0);
-	}
-
-	public static void translate(int x, int y) {
-		GL11.glTranslated(x, y, 0);
-	}
-
-	public static void rotate(float angle, float x, float y, float z) {
-		GL11.glRotatef(angle, x, y, z);
-	}
-
-	public static void rotate(double angle, double x, double y, double z) {
-		GL11.glRotated(angle, x, y, z);
-	}
-
-	public static void rotate(int angle, int x, int y, int z) {
-		GL11.glRotated(angle, x, y, z);
-	}
-
-	public static void scale(float scaledPosX, float scaledPosY, float scaledPosZ) {
-		GL11.glScaled(scaledPosX, scaledPosY, scaledPosZ);
-	}
-
-	public static void scale(double scaledPosX, double scaledPosY, double scaledPosZ) {
-		GL11.glScaled(scaledPosX, scaledPosY, scaledPosZ);
-	}
-
-	public static void scale(int scaledPosX, int scaledPosY, int scaledPosZ) {
-		GL11.glScaled(scaledPosX, scaledPosY, scaledPosZ);
-	}
-
-	public static void lineSize(float width) {
-		GL11.glLineWidth(width);
-	}
-
-	public static void pushMatrix() {
-		GL11.glPushMatrix();
-	}
-
-	public static void popMatrix() {
-		GL11.glPopMatrix();
-	}
-
-	public static void enable(int glState) {
-		GL11.glEnable(glState);
-	}
-
-	public static void disable(int glState) {
-		GL11.glDisable(glState);
-	}
-
-	public static void blendFunc(int glState, int glState1) {
-		GL11.glBlendFunc(glState, glState1);
-	}
-
-	public static void polygonOffset(float factor, float units) {
-		GL11.glPolygonOffset(factor, units);
-	}
-
-	public static void polygonOffset(double factor, double units) {
-		GL11.glPolygonOffset((float) factor, (float) units);
-	}
-
-	public static void polygonOffset(int factor, int units) {
-		GL11.glPolygonOffset(factor, units);
-	}
-
-	public static void polygonMode(int face, int mode) {
-		GL11.glPolygonMode(face, mode);
-	}
-
-	public static void shaderMode(int mode) {
-		GL11.glShadeModel(mode);
-	}
-
-	public static void enableAlphaBlend() {
-		enable(GL11.GL_BLEND);
-		blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-	}
-
-	public static void disableAlphaBlend() {
-		disable(GL11.GL_BLEND);
-	}
-
 	public static void prepareOverlay() {
-		pushMatrix();
+		TurokGL.pushMatrix();
 
-		enable(GL11.GL_TEXTURE_2D);
-		enable(GL11.GL_BLEND);
+		TurokGL.enable(GL11.GL_TEXTURE_2D);
+		TurokGL.enable(GL11.GL_BLEND);
 
-		enableAlphaBlend();
+		TurokGL.enable(GL11.GL_BLEND);
+		TurokGL.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		popMatrix();
+		TurokGL.popMatrix();
 	}
 
 	public static void releaseOverlay() {
@@ -677,7 +360,7 @@ public class TurokRenderGL {
 	}
 
 	public static void prepare3D(float size) {
-		blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		TurokGL.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 		GlStateManager.glLineWidth(size);

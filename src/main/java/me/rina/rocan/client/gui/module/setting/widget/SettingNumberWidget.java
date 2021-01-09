@@ -37,8 +37,8 @@ public class SettingNumberWidget extends Widget {
     private float offsetWidth;
     private float offsetHeight;
 
-    private float alphaEffectHighlightSlider;
-    private float alphaEffectHighlightRect;
+    private int alphaEffectHighlightSlider;
+    private int alphaEffectHighlightRect;
 
     /**
      * We use doubles to set the current value, minimum & maximum.
@@ -167,7 +167,7 @@ public class SettingNumberWidget extends Widget {
 
         float clampedSliderRectWidth = this.rect.getWidth() - (offsetWidthSliderRect * 2);
 
-        this.offsetWidth = ((int) ((clampedSliderRectWidth) * (this._value - this.minimum) / (this.maximum - this.minimum)));
+        this.offsetWidth = (float) ((clampedSliderRectWidth) * (this._value - this.minimum) / (this.maximum - this.minimum));
 
         this.rectSlider.setWidth(clampedSliderRectWidth);
         this.rectSlider.setHeight(6);

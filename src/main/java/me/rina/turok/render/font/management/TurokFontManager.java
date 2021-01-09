@@ -1,6 +1,7 @@
 package me.rina.turok.render.font.management;
 
 import me.rina.turok.render.font.TurokFont;
+import me.rina.turok.render.opengl.TurokGL;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL11;
@@ -13,10 +14,14 @@ import java.awt.*;
  */
 public class TurokFontManager {
 	public static void render(TurokFont fontRenderer, String string, float x, float y, boolean shadow, Color color) {
-		TurokRenderGL.enable(GL11.GL_TEXTURE_2D);
-		TurokRenderGL.enableAlphaBlend();
+		TurokGL.pushMatrix();
 
-		TurokRenderGL.color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
+		TurokGL.enable(GL11.GL_TEXTURE_2D);
+
+		TurokGL.enable(GL11.GL_BLEND);
+		TurokGL.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+		TurokGL.color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 
 		if (shadow) {
 			if (fontRenderer.isRenderingCustomFont()) {
@@ -32,7 +37,10 @@ public class TurokFontManager {
 			}
 		}
 
-		TurokRenderGL.disable(GL11.GL_TEXTURE_2D);
+		TurokGL.disable(GL11.GL_BLEND);
+		TurokGL.disable(GL11.GL_TEXTURE_2D);
+
+		TurokGL.popMatrix();
 	}
 
 	public static int getStringWidth(TurokFont fontRenderer, String string) {

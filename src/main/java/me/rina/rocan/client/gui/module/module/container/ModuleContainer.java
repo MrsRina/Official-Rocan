@@ -13,6 +13,7 @@ import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.turok.render.opengl.TurokRenderGL;
+import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
 import org.lwjgl.opengl.GL11;
@@ -230,10 +231,10 @@ public class ModuleContainer extends Container {
 
         if (this.flagMouse == Flag.MouseOver && this.master.getMouse().hasWheel() && isScrollLimit) {
             this.offsetY -= this.master.getMouse().getScroll();
+        }
 
-            if (this.offsetY <= minimumScroll) {
-                this.offsetY = minimumScroll;
-            }
+        if (this.offsetY <= minimumScroll) {
+            this.offsetY = minimumScroll;
         }
 
         if (this.offsetY >= maximumScroll) {
@@ -247,13 +248,13 @@ public class ModuleContainer extends Container {
 
         float offsetFixOutline = 1;
 
-        TurokRenderGL.enable(GL11.GL_SCISSOR_TEST);
-        TurokRenderGL.drawScissor(this.rect.getX() - offsetFixOutline, this.rect.getY(), this.rect.getWidth() + (offsetFixOutline * 2), this.rect.getHeight());
+        TurokShaderGL.pushScissorMatrix();
+        TurokShaderGL.drawScissor(this.rect.getX() - offsetFixOutline, this.rect.getY(), this.rect.getWidth() + (offsetFixOutline * 2), this.rect.getHeight());
 
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onCustomRender();
         }
 
-        TurokRenderGL.disable(GL11.GL_SCISSOR_TEST);
+        TurokShaderGL.popScissorMatrix();
     }
 }

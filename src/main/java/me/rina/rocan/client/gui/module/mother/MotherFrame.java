@@ -83,15 +83,20 @@ public class MotherFrame extends Frame {
         }
     }
 
-    public void setNewScaleWidth(int size) {
-    }
-
     public void setRectWidgetSelected(TurokRect rectWidgetSelected) {
         this.rectWidgetSelected = rectWidgetSelected;
     }
 
     public TurokRect getRectWidgetSelected() {
         return rectWidgetSelected;
+    }
+
+    public void setRectResize(TurokRect rectResize) {
+        this.rectResize = rectResize;
+    }
+
+    public TurokRect getRectResize() {
+        return rectResize;
     }
 
     public void resetWidget() {
@@ -149,6 +154,9 @@ public class MotherFrame extends Frame {
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onClose();
         }
+
+        this.isMouseClickedLeft = false;
+        this.isMouseClickedMiddle = false;
     }
 
     @Override
@@ -245,7 +253,7 @@ public class MotherFrame extends Frame {
         this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
         this.flagMouseResize = this.rectResize.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
 
-        this.scaleWidth = (int) TurokMath.lerp(this.scaleWidth, (TurokMath.clamp(this.size, (76) * this.loadedWidgetList.size(), (150 + this.loadedWidgetList.size() + 1) * this.loadedWidgetList.size())), this.master.getPartialTicks());
+        this.scaleWidth = TurokMath.lerp(this.scaleWidth, (TurokMath.clamp(this.size, (76) * this.loadedWidgetList.size(), (151) * this.loadedWidgetList.size())), this.master.getPartialTicks());
 
         TurokRenderGL.color(Rocan.getWrapperGUI().colorFrameBackground[0], Rocan.getWrapperGUI().colorFrameBackground[1], Rocan.getWrapperGUI().colorFrameBackground[2], Rocan.getWrapperGUI().colorFrameBackground[3]);
         TurokRenderGL.drawSolidRect(this.rect);
