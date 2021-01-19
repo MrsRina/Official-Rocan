@@ -4,6 +4,7 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rina.rocan.api.command.Command;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.management.ModuleManager;
+import me.rina.rocan.api.setting.Setting;
 import me.rina.rocan.api.util.chat.ChatUtil;
 
 /**
@@ -44,7 +45,9 @@ public class CommandToggle extends Command {
 
         module.toggle();
 
-        if (!(boolean) module.get("ToggleMessage").getValue()) {
+        Setting<Boolean> toggleMessage = (Setting<Boolean>) module.get("ToggleMessage");
+
+        if (toggleMessage.getValue() == false) {
             ChatUtil.print("Module has been update to " + Boolean.toString(module.isEnabled()) + ".");
         }
     }

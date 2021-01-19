@@ -91,7 +91,7 @@ public class SettingContainer extends Container {
 
         for (Setting<?> settings : this.widgetModule.getModule().getSettingList()) {
             if (settings.getValue() instanceof Boolean) {
-                SettingBooleanWidget settingBooleanWidget = new SettingBooleanWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, settings);
+                SettingBooleanWidget settingBooleanWidget = new SettingBooleanWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, (Setting<Boolean>) settings);
 
                 settingBooleanWidget.setOffsetY(this.scrollRect.getHeight());
 
@@ -101,7 +101,7 @@ public class SettingContainer extends Container {
             }
 
             if (settings.getValue() instanceof Number) {
-                SettingNumberWidget settingNumberWidget = new SettingNumberWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, settings);
+                SettingNumberWidget settingNumberWidget = new SettingNumberWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, (Setting<Number>) settings);
 
                 settingNumberWidget.setOffsetY(this.scrollRect.getHeight());
 
@@ -111,7 +111,7 @@ public class SettingContainer extends Container {
             }
 
             if (settings.getValue() instanceof Enum<?>) {
-                SettingEnumWidget settingEnumWidget = new SettingEnumWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, settings);
+                SettingEnumWidget settingEnumWidget = new SettingEnumWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, (Setting<Enum>) settings);
 
                 settingEnumWidget.setOffsetY(this.scrollRect.getHeight());
 

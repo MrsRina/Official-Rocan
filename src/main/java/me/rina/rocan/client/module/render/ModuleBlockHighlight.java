@@ -32,7 +32,7 @@ public class ModuleBlockHighlight extends Module {
         Enabled, Disabled;
     }
 
-    public static Setting<Integer> renderOutlineLineSize  = new Setting("Outline Line Size", "OutlineLineSize", "Line size.", 1.0f, 0.1f, 3.0f);
+    public static Setting<Float> renderOutlineLineSize    = new Setting("Outline Line Size", "OutlineLineSize", "Line size.", 1.0f, 0.1f, 3.0f);
     public static Setting<Boolean> renderOutlineRGB       = new Setting("Outline RGB", "OutlineRGB", "360 color range.", false);
     public static Setting<Integer> renderOutlineRed       = new Setting("Outline Red", "OutlineRed", "Color line range red.", 255, 0, 255);
     public static Setting<Integer> renderOutlineGreen     = new Setting("Outline Green", "OutlineGreen", "Color line range green.", 0, 0, 255);
@@ -67,12 +67,12 @@ public class ModuleBlockHighlight extends Module {
 
     @Override
     public void onRender3D() {
-        if (mc.player == null || mc.world == null) {
+        if (mc.world == null) {
             return;
         }
 
-        Color color = new Color(renderRed.getValue(), renderGreen.getValue(), renderBlue.getValue(), renderAlpha.getValue());
-        Color colorOutline = new Color(renderOutlineRed.getValue(), renderOutlineGreen.getValue(), renderOutlineBlue.getValue(), renderOutlineAlpha.getValue());
+        Color color = new Color(255, 255, 255, 255);
+        Color colorOutline = new Color(255, 255, 255, 255);
 
         RayTraceResult splitResult = mc.objectMouseOver;
 
@@ -85,7 +85,7 @@ public class ModuleBlockHighlight extends Module {
                 Render3DUtil.render3DSolid(camera, blockPosition, color);
 
                 if (renderOutline.getValue() == RenderOutline.Enabled) {
-                    float line = (float) renderOutlineLineSize.getValue();
+                    float line = renderOutlineLineSize.getValue();
 
                     Render3DUtil.render3DOutline(camera, blockPosition, line, colorOutline);
                 }
