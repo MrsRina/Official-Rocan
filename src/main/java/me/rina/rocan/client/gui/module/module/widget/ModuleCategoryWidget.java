@@ -122,9 +122,6 @@ public class ModuleCategoryWidget extends Widget {
         if (this.flagMouse == Flag.MouseOver && this.isMouseClickedLeft) {
             this.frame.resetWidget();
 
-            // For some reason we need reload the current container, isn't loading at constructor.
-            this.container.init();
-
             this.isSelected = true;
             this.isMouseClickedLeft = false;
         }

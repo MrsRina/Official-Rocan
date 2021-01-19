@@ -5,20 +5,24 @@ import me.rina.rocan.api.gui.container.Container;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.setting.Setting;
+import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.rocan.client.gui.module.setting.widget.SettingBooleanWidget;
+import me.rina.rocan.client.gui.module.setting.widget.SettingEnumWidget;
 import me.rina.rocan.client.gui.module.setting.widget.SettingNumberWidget;
 import me.rina.rocan.client.gui.module.visual.LabelWidget;
+import me.rina.turok.render.font.management.TurokFontManager;
 import me.rina.turok.render.opengl.TurokGL;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -85,7 +89,7 @@ public class SettingContainer extends Container {
         this.scrollRect.setHeight(0);
         this.offsetY = 3;
 
-        for (Setting settings : this.widgetModule.getModule().getSettingList()) {
+        for (Setting<?> settings : this.widgetModule.getModule().getSettingList()) {
             if (settings.getValue() instanceof Boolean) {
                 SettingBooleanWidget settingBooleanWidget = new SettingBooleanWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, settings);
 
@@ -105,6 +109,16 @@ public class SettingContainer extends Container {
 
                 this.scrollRect.height += settingNumberWidget.getRect().getHeight() + 1;
             }
+
+            if (settings.getValue() instanceof Enum<?>) {
+                SettingEnumWidget settingEnumWidget = new SettingEnumWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, settings);
+
+                settingEnumWidget.setOffsetY(this.scrollRect.getHeight());
+
+                this.loadedWidgetList.add(settingEnumWidget);
+
+                this.scrollRect.height += settingEnumWidget.getRect().getHeight() + 1;
+            }
         }
     }
 
@@ -113,16 +127,34 @@ public class SettingContainer extends Container {
      */
     public void onRefreshWidget() {
         // Set 0 the start up height value.
-        this.scrollRect.setHeight(1);
+        this.scrollRect.setHeight(0);
+        this.widgetModule.getModule().onSetting();
 
         for (Widget widgets : this.loadedWidgetList) {
             if (widgets instanceof SettingBooleanWidget) {
                 SettingBooleanWidget settingBooleanWidget = (SettingBooleanWidget) widgets;
+                settingBooleanWidget.setOffsetY(this.scrollRect.getHeight());
 
                 if (settingBooleanWidget.getSetting().isEnabled()) {
-                    settingBooleanWidget.setOffsetY(this.scrollRect.getHeight());
-
                     this.scrollRect.height += settingBooleanWidget.getRect().getHeight() + 1;
+                }
+            }
+
+            if (widgets instanceof SettingNumberWidget) {
+                SettingNumberWidget settingNumberWidget = (SettingNumberWidget) widgets;
+                settingNumberWidget.setOffsetY(this.scrollRect.getHeight());
+
+                if (settingNumberWidget.getSetting().isEnabled()) {
+                    this.scrollRect.height += settingNumberWidget.getRect().getHeight() + 1;
+                }
+            }
+
+            if (widgets instanceof SettingEnumWidget) {
+                SettingEnumWidget settingEnumWidget = (SettingEnumWidget) widgets;
+                settingEnumWidget.setOffsetY(this.scrollRect.getHeight());
+
+                if (settingEnumWidget.getSetting().isEnabled()) {
+                    this.scrollRect.height += settingEnumWidget.getRect().getHeight() + 1;
                 }
             }
         }
@@ -223,6 +255,14 @@ public class SettingContainer extends Container {
                     widgets.onKeyboard(character, key);
                 }
             }
+
+            if (widgets instanceof SettingEnumWidget) {
+                SettingEnumWidget settingEnumWidget = (SettingEnumWidget) widgets;
+
+                if (settingEnumWidget.getSetting().isEnabled()) {
+                    widgets.onKeyboard(character, key);
+                }
+            }
         }
     }
 
@@ -244,6 +284,14 @@ public class SettingContainer extends Container {
                     widgets.onCustomKeyboard(character, key);
                 }
             }
+
+            if (widgets instanceof SettingEnumWidget) {
+                SettingEnumWidget settingEnumWidget = (SettingEnumWidget) widgets;
+
+                if (settingEnumWidget.getSetting().isEnabled()) {
+                    widgets.onCustomKeyboard(character, key);
+                }
+            }
         }
     }
 
@@ -262,6 +310,14 @@ public class SettingContainer extends Container {
                 SettingNumberWidget settingNumberWidget = (SettingNumberWidget) widgets;
 
                 if (settingNumberWidget.getSetting().isEnabled()) {
+                    widgets.onMouseReleased(button);
+                }
+            }
+
+            if (widgets instanceof SettingEnumWidget) {
+                SettingEnumWidget settingEnumWidget = (SettingEnumWidget) widgets;
+
+                if (settingEnumWidget.getSetting().isEnabled()) {
                     widgets.onMouseReleased(button);
                 }
             }
@@ -287,6 +343,14 @@ public class SettingContainer extends Container {
                         widgets.onCustomMouseReleased(button);
                     }
                 }
+
+                if (widgets instanceof SettingEnumWidget) {
+                    SettingEnumWidget settingEnumWidget = (SettingEnumWidget) widgets;
+
+                    if (settingEnumWidget.getSetting().isEnabled()) {
+                        widgets.onCustomMouseReleased(button);
+                    }
+                }
             }
         }
     }
@@ -306,6 +370,14 @@ public class SettingContainer extends Container {
                 SettingNumberWidget settingNumberWidget = (SettingNumberWidget) widgets;
 
                 if (settingNumberWidget.getSetting().isEnabled()) {
+                    widgets.onMouseClicked(button);
+                }
+            }
+
+            if (widgets instanceof SettingEnumWidget) {
+                SettingEnumWidget settingEnumWidget = (SettingEnumWidget) widgets;
+
+                if (settingEnumWidget.getSetting().isEnabled()) {
                     widgets.onMouseClicked(button);
                 }
             }
@@ -331,6 +403,14 @@ public class SettingContainer extends Container {
                         widgets.onCustomMouseClicked(button);
                     }
                 }
+
+                if (widgets instanceof SettingEnumWidget) {
+                    SettingEnumWidget settingEnumWidget = (SettingEnumWidget) widgets;
+
+                    if (settingEnumWidget.getSetting().isEnabled()) {
+                        widgets.onCustomMouseClicked(button);
+                    }
+                }
             }
         }
     }
@@ -346,7 +426,7 @@ public class SettingContainer extends Container {
         this.rect.setY(positionYScaled);
 
         this.scrollRect.setX(this.rect.getX());
-        this.scrollRect.setY((int) TurokMath.lerp(this.scrollRect.getY(), this.rect.getY() + realScrollHeight + this.offsetY, this.master.getPartialTicks()));
+        this.scrollRect.setY(TurokMath.lerp(this.scrollRect.getY(), this.rect.getY() + realScrollHeight + this.offsetY, this.master.getPartialTicks()));
 
         this.realRect.setX(this.rect.getX());
         this.realRect.setY(this.rect.getY() + realScrollHeight);
@@ -405,6 +485,14 @@ public class SettingContainer extends Container {
                         widgets.onRender();
                     }
                 }
+
+                if (widgets instanceof SettingEnumWidget) {
+                    SettingEnumWidget settingEnumWidget = (SettingEnumWidget) widgets;
+
+                    if (settingEnumWidget.getSetting().isEnabled()) {
+                        widgets.onRender();
+                    }
+                }
             }
 
             TurokShaderGL.popScissorMatrix();
@@ -434,6 +522,14 @@ public class SettingContainer extends Container {
                 SettingNumberWidget settingNumberWidget = (SettingNumberWidget) widgets;
 
                 if (settingNumberWidget.getSetting().isEnabled()) {
+                    widgets.onCustomRender();
+                }
+            }
+
+            if (widgets instanceof SettingEnumWidget) {
+                SettingEnumWidget settingEnumWidget = (SettingEnumWidget) widgets;
+
+                if (settingEnumWidget.getSetting().isEnabled()) {
                     widgets.onCustomRender();
                 }
             }

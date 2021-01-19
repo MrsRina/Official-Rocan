@@ -12,16 +12,18 @@ import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.rocan.client.gui.module.setting.container.SettingContainer;
 import me.rina.turok.render.font.management.TurokFontManager;
 import me.rina.turok.render.opengl.TurokRenderGL;
+import me.rina.turok.util.TurokClass;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * @author SrRina
- * @since 2020-22-16 at 12:44
+ * @since 2021-01-10 at 11:44
  **/
-public class SettingBooleanWidget extends Widget {
+public class SettingEnumWidget extends Widget {
     private ModuleClickGUI master;
     private MotherFrame frame;
 
@@ -37,19 +39,19 @@ public class SettingBooleanWidget extends Widget {
     private float offsetWidth;
     private float offsetHeight;
 
-    private int alphaEffectPressed;
-    private int alphaEffectHighlightCheckbox;
     private int alphaEffectHighlightRect;
 
+    private boolean isStarted;
     private boolean isMouseClickedLeft;
 
-    private TurokRect rectCheckbox = new TurokRect("CheckBox", 0, 0);
+    private int index;
+    private ArrayList<Enum<?>> enumValueList;
 
-    private Setting<Boolean> setting;
+    private Setting<Enum> setting;
 
     public Flag flagMouse = Flag.MouseNotOver;
 
-    public SettingBooleanWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer moduleContainer, ModuleWidget widgetModule, SettingContainer settingContainer, Setting<Boolean> setting) {
+    public SettingEnumWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer moduleContainer, ModuleWidget widgetModule, SettingContainer settingContainer, Setting<Enum> setting) {
         super(setting.getName());
 
         this.master = master;
@@ -65,21 +67,23 @@ public class SettingBooleanWidget extends Widget {
 
         this.rect.setWidth(this.settingContainer.getRect().getWidth());
         this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
+
+        this.init();
     }
 
-    public void setRectCheckbox(TurokRect rectCheckbox) {
-        this.rectCheckbox = rectCheckbox;
+    public void init() {
+        this.enumValueList = new ArrayList<>();
+
+        for (Enum<?> enums : ((Enum<?>) this.setting.getValue()).getClass().getEnumConstants()) {
+            this.enumValueList.add(enums);
+        }
     }
 
-    public TurokRect getRectCheckbox() {
-        return rectCheckbox;
-    }
-
-    public void setSetting(Setting<Boolean> setting) {
+    public void setSetting(Setting<Enum> setting) {
         this.setting = setting;
     }
 
-    public Setting<Boolean> getSetting() {
+    public Setting<Enum> getSetting() {
         return setting;
     }
 
@@ -127,7 +131,11 @@ public class SettingBooleanWidget extends Widget {
     public void onCustomMouseReleased(int button) {
         if (this.flagMouse == Flag.MouseOver) {
             if (this.isMouseClickedLeft) {
-                this.setting.setValue(!(boolean) this.setting.getValue());
+                if (this.index >= this.enumValueList.size() - 1) {
+                    this.index = 0;
+                } else {
+                    this.index++;
+                }
 
                 this.isMouseClickedLeft = false;
             }
@@ -151,44 +159,40 @@ public class SettingBooleanWidget extends Widget {
         this.rect.setX(this.settingContainer.getScrollRect().getX() + this.offsetX);
         this.rect.setY(this.settingContainer.getScrollRect().getY() + this.offsetY);
 
-        this.rectCheckbox.setWidth(10);
-        this.rectCheckbox.setHeight(10);
-
         if (this.settingContainer.flagMouseRealRect == Flag.MouseOver) {
             this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
         } else {
             this.flagMouse = Flag.MouseNotOver;
         }
 
-        // We need set the check box rect on the end of main rect.
-        this.rectCheckbox.setX(this.rect.getX() + 2);
-        this.rectCheckbox.setY(this.rect.getY() + this.rect.getHeight() - (this.rectCheckbox.getHeight() + 5));
-
         // Where the smooth animation works.
-        this.alphaEffectHighlightCheckbox = this.flagMouse == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightCheckbox, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightCheckbox, 0, this.master.getPartialTicks());
         this.alphaEffectHighlightRect = this.flagMouse == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
-        this.alphaEffectPressed = (boolean) this.setting.getValue() ? (int) TurokMath.lerp(this.alphaEffectPressed, Rocan.getWrapperGUI().colorWidgetPressed[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectPressed, 0, this.master.getPartialTicks());
 
-        TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag(), this.rectCheckbox.getX() + this.rectCheckbox.getWidth() + 2, this.rect.getY() + 5, true, new Color(255, 255, 255));
+        String name = this.rect.getTag() + ": " + ((Enum<?>) this.setting.getValue()).name();
+
+        TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, name, this.rect.getX() + 2, this.rect.getY() + 5, true, new Color(255, 255, 255));
 
         // Outline on rect render.
         TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetHighlight[0], Rocan.getWrapperGUI().colorWidgetHighlight[1], Rocan.getWrapperGUI().colorWidgetHighlight[2], this.alphaEffectHighlightRect);
         TurokRenderGL.drawOutlineRect(this.rect);
 
-        // The check box outline highlight.
-        TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetHighlight[0], Rocan.getWrapperGUI().colorWidgetHighlight[1], Rocan.getWrapperGUI().colorWidgetHighlight[2], this.alphaEffectHighlightCheckbox);
-        TurokRenderGL.drawOutlineRect(this.rectCheckbox);
+        // We verify the current enum value at mode when we load the client.
+        // Loop.
+        if (this.isStarted) {
+            if (this.enumValueList.get(this.index) != (Enum<?>) this.setting.getValue()) {
+                this.setting.setValue(this.enumValueList.get(this.index));
 
-        // The check box outline unpressed.
-        TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetPressed[0], Rocan.getWrapperGUI().colorWidgetPressed[1], Rocan.getWrapperGUI().colorWidgetPressed[2], Rocan.getWrapperGUI().colorWidgetPressed[3]);
-        TurokRenderGL.drawOutlineRect(this.rectCheckbox);
+                // We need refresh later set the value.
+                this.settingContainer.onRefreshWidget();
+            }
+        // Init.
+        } else {
+            this.index = TurokClass.getEnumByName((Enum<?>) this.setting.getValue(), ((Enum<?>) this.setting.getValue()).name()) != null ? this.enumValueList.indexOf(TurokClass.getEnumByName((Enum<?>) this.setting.getValue(), ((Enum<?>) this.setting.getValue()).name())) : 0;
 
-        float checkBoxPressedOffsetX = 0.5f;
-        float checkBoxPressedOffsetY = 1f;
+            this.setting.setValue(this.enumValueList.get(this.index));
 
-        // The solid pressed checkbox.
-        TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetPressed[0], Rocan.getWrapperGUI().colorWidgetPressed[1], Rocan.getWrapperGUI().colorWidgetPressed[2], this.alphaEffectPressed);
-        TurokRenderGL.drawSolidRect(this.rectCheckbox.getX() + checkBoxPressedOffsetX, this.rectCheckbox.getY() + checkBoxPressedOffsetY, this.rectCheckbox.getWidth() - (checkBoxPressedOffsetX * 2), this.rectCheckbox.getHeight() - (checkBoxPressedOffsetY * 2));
+            this.isStarted = true;
+        }
 
         if (this.flagMouse == Flag.MouseOver) {
             this.settingContainer.getDescriptionLabel().setText(this.setting.getDescription());

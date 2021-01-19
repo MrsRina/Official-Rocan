@@ -4,6 +4,7 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rina.rocan.Rocan;
 import me.rina.rocan.api.command.Command;
 import me.rina.rocan.api.command.management.CommandManager;
+import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.rocan.client.event.render.Render2DEvent;
@@ -28,7 +29,7 @@ public class EventManager {
     private float currentRender2DPartialTicks;
     private float currentRender3DPartialTicks;
 
-    private Color currentRGBColor;
+    private int[] currentRGBColor;
 
     protected void setCurrentRender2DPartialTicks(float currentRender2DPartialTicks) {
         this.currentRender2DPartialTicks = currentRender2DPartialTicks;
@@ -46,11 +47,11 @@ public class EventManager {
         return currentRender3DPartialTicks;
     }
 
-    private void setCurrentRGBColor(Color currentRGBColor) {
+    private void setCurrentRGBColor(int[] currentRGBColor) {
         this.currentRGBColor = currentRGBColor;
     }
 
-    public Color getCurrentRGBColor() {
+    public int[] getCurrentRGBColor() {
         return currentRGBColor;
     }
 
@@ -76,33 +77,41 @@ public class EventManager {
 
         this.setCurrentRender2DPartialTicks(event.getPartialTicks());
 
-        Rocan.EVENT_BUS.dispatch(new Render2DEvent(event.getPartialTicks()));
+        for (Module modules : Rocan.getModuleManager().getModuleList()) {
+            modules.onRender2D();
+        }
     }
 
     @SubscribeEvent
     public void onWorldRender(RenderWorldLastEvent event) {
-        if (Rocan.MC.player == null) {
+        if (event.isCanceled()) {
             return;
         }
 
-        float[] currentSystemCycle = new float[] {
-                (System.currentTimeMillis() % (360f / 32f) * (360f / 32f))
+        float[] currentSystemCycle = {
+                (System.currentTimeMillis() % (360f * 32f)) / (360f * 32f)
         };
 
         int currentColorCycle = Color.HSBtoRGB(currentSystemCycle[0], 1, 1);
 
-        this.currentRGBColor = new Color(((currentColorCycle >> 16) & 0xFF), ((currentColorCycle >> 8) & 0xFF), (currentColorCycle & 0xFF));
+        this.currentRGBColor = new int[] {
+                ((currentColorCycle >> 16) & 0xFF),
+                ((currentColorCycle >> 8) & 0xFF),
+                (currentColorCycle & 0xFF)
+        };
 
         this.setCurrentRender3DPartialTicks(event.getPartialTicks());
 
-        Rocan.EVENT_BUS.dispatch(new Render3DEvent(event.getPartialTicks()));
-
-        /*
+        /**
          * Basically the ticks are more smooth in event RenderWorldLastEvent;
          * This make any color update as the color fully smooth.
          * And we update the colors of the GUI too.
          */
         Rocan.getWrapperGUI().onUpdateColor();
+
+        for (Module modules : Rocan.getModuleManager().getModuleList()) {
+            modules.onRender3D();
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH, receiveCanceled = true)
@@ -115,7 +124,6 @@ public class EventManager {
     @SubscribeEvent(priority = EventPriority.NORMAL)
     public void onChat(ClientChatEvent event) {
         String message = event.getMessage();
-
         String currentPrefix = CommandManager.getCommandPrefix().getPrefix();
 
         if (message.startsWith(currentPrefix)) {

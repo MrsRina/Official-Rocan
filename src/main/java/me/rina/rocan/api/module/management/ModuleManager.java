@@ -31,7 +31,7 @@ public class ModuleManager implements ISavableLoadable {
                         fields.setAccessible(true);
                     }
 
-                    final Setting settingDeclared = (Setting) fields.get(module);
+                    final Setting<?> settingDeclared = (Setting<?>) fields.get(module);
 
                     module.registry(settingDeclared);
                 }

@@ -1,13 +1,11 @@
 package me.rina.rocan.client.module.render;
 
-import cat.yoink.eventmanager.Listener;
 import me.rina.rocan.Rocan;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.setting.Setting;
 import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.api.util.render.Render3DUtil;
-import me.rina.rocan.client.event.render.Render3DEvent;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -19,58 +17,62 @@ import java.awt.*;
  * @since 06/12/20 at 03:48pm
  */
 public class ModuleBlockHighlight extends Module {
-    public static Setting renderRGB    = new Setting("RGB", "RGB", "360 color range.", false);
-    public static Setting renderRed    = new Setting("Red", "Red", "Color line range red.", 255, 0, 255);
-    public static Setting renderGreen  = new Setting("Green", "Green", "Color line range green.", 0, 0, 255);
-    public static Setting renderBlue   = new Setting("Blue", "Blue", "Color line range blue.", 255, 0, 255);
-    public static Setting renderAlpha  = new Setting("Alpha", "Alpha", "Color line range alpha.", 255, 0, 255);
+    public static Setting<Boolean> renderRGB    = new Setting("RGB", "RGB", "360 color range.", false);
+    public static Setting<Integer> renderRed    = new Setting("Red", "Red", "Color line range red.", 255, 0, 255);
+    public static Setting<Integer> renderGreen  = new Setting("Green", "Green", "Color line range green.", 0, 0, 255);
+    public static Setting<Integer> renderBlue   = new Setting("Blue", "Blue", "Color line range blue.", 255, 0, 255);
+    public static Setting<Integer> renderAlpha  = new Setting("Alpha", "Alpha", "Color line range alpha.", 255, 0, 255);
 
     /*
      * Outline config;
      */
-    public static Setting renderOutline = new Setting("Outline", "Outline", "Outline effect on block render.", RenderOutline.Enabled);
+    public static Setting<RenderOutline> renderOutline = new Setting("Outline", "Outline", "Outline effect on block render.", RenderOutline.Enabled);
 
     public enum RenderOutline {
         Enabled, Disabled;
     }
 
-    public static Setting renderOutlineLineSize  = new Setting("Outline Line Size", "OutlineLineSize", "Line size.", 1.0f, 0.1f, 3.0f);
-    public static Setting renderOutlineRGB       = new Setting("Outline RGB", "OutlineRGB", "360 color range.", false);
-    public static Setting renderOutlineRed       = new Setting("Outline Red", "OutlineRed", "Color line range red.", 255, 0, 255);
-    public static Setting renderOutlineGreen     = new Setting("Outline Green", "OutlineGreen", "Color line range green.", 0, 0, 255);
-    public static Setting renderOutlineBlue      = new Setting("Outline Blue", "OutlineBlue", "Color line range blue.", 255, 0, 255);
-    public static Setting renderOutlineAlpha     = new Setting("Outline Alpha", "OutlineAlpha", "Color line range alpha.", 255, 0, 255);
+    public static Setting<Integer> renderOutlineLineSize  = new Setting("Outline Line Size", "OutlineLineSize", "Line size.", 1.0f, 0.1f, 3.0f);
+    public static Setting<Boolean> renderOutlineRGB       = new Setting("Outline RGB", "OutlineRGB", "360 color range.", false);
+    public static Setting<Integer> renderOutlineRed       = new Setting("Outline Red", "OutlineRed", "Color line range red.", 255, 0, 255);
+    public static Setting<Integer> renderOutlineGreen     = new Setting("Outline Green", "OutlineGreen", "Color line range green.", 0, 0, 255);
+    public static Setting<Integer> renderOutlineBlue      = new Setting("Outline Blue", "OutlineBlue", "Color line range blue.", 255, 0, 255);
+    public static Setting<Integer> renderOutlineAlpha     = new Setting("Outline Alpha", "OutlineAlpha", "Color line range alpha.", 255, 0, 255);
 
     public ModuleBlockHighlight() {
         super("Block Highlight", "BlockHighlight", "Render block over split mouse.", ModuleCategory.Render);
     }
 
-    @Listener
-    public void onRender3D(Render3DEvent event) {
-        if (mc.player == null || mc.world == null) {
-            return;
-        }
-
+    @Override
+    public void onSetting() {
         renderOutlineLineSize.setEnabled(renderOutline.getValue() == RenderOutline.Enabled);
         renderOutlineRed.setEnabled(renderOutline.getValue() == RenderOutline.Enabled);
         renderOutlineGreen.setEnabled(renderOutline.getValue() == RenderOutline.Enabled);
         renderOutlineBlue.setEnabled(renderOutline.getValue() == RenderOutline.Enabled);
         renderOutlineAlpha.setEnabled(renderOutline.getValue() == RenderOutline.Enabled);
+        renderOutlineRGB.setEnabled(renderOutline.getValue() == RenderOutline.Enabled);
 
-        if ((boolean) renderRGB.getValue()) {
-            renderRed.setValue(Rocan.getClientEventManager().getCurrentRGBColor().getRed());
-            renderGreen.setValue(Rocan.getClientEventManager().getCurrentRGBColor().getGreen());
-            renderBlue.setValue(Rocan.getClientEventManager().getCurrentRGBColor().getBlue());
+        if (renderRGB.getValue()) {
+            renderRed.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[0]);
+            renderGreen.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[1]);
+            renderBlue.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[2]);
         }
 
-        if ((boolean) renderOutlineRGB.getValue()) {
-            renderRed.setValue(Rocan.getClientEventManager().getCurrentRGBColor().getRed());
-            renderGreen.setValue(Rocan.getClientEventManager().getCurrentRGBColor().getGreen());
-            renderBlue.setValue(Rocan.getClientEventManager().getCurrentRGBColor().getBlue());
+        if (renderOutlineRGB.getValue()) {
+            renderOutlineRed.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[0]);
+            renderOutlineGreen.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[1]);
+            renderOutlineBlue.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[2]);
+        }
+    }
+
+    @Override
+    public void onRender3D() {
+        if (mc.player == null || mc.world == null) {
+            return;
         }
 
-        Color color = new Color((int) renderRed.getValue(), (int) renderGreen.getValue(), (int) renderBlue.getValue(), (int) renderAlpha.getValue());
-        Color colorOutline = new Color((int) renderOutlineRed.getValue(), (int) renderOutlineGreen.getValue(), (int) renderOutlineBlue.getValue(), (int) renderOutlineAlpha.getValue());
+        Color color = new Color(renderRed.getValue(), renderGreen.getValue(), renderBlue.getValue(), renderAlpha.getValue());
+        Color colorOutline = new Color(renderOutlineRed.getValue(), renderOutlineGreen.getValue(), renderOutlineBlue.getValue(), renderOutlineAlpha.getValue());
 
         RayTraceResult splitResult = mc.objectMouseOver;
 

@@ -9,7 +9,6 @@ import me.rina.rocan.api.util.chat.ChatUtil;
  */
 public class Command {
     private String[] alias;
-
     private String description;
 
     public Command(String[] alias, String description) {

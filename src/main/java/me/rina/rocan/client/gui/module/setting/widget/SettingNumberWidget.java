@@ -50,12 +50,12 @@ public class SettingNumberWidget extends Widget {
 
     private TurokRect rectSlider = new TurokRect("CheckBox", 0, 0);
 
-    private Setting setting;
+    private Setting<Number> setting;
 
     public Flag flagMouseSlider = Flag.MouseNotOver;
     public Flag flagMouse = Flag.MouseNotOver;
 
-    public SettingNumberWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer moduleContainer, ModuleWidget widgetModule, SettingContainer settingContainer, Setting setting) {
+    public SettingNumberWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer moduleContainer, ModuleWidget widgetModule, SettingContainer settingContainer, Setting<Number> setting) {
         super(setting.getName());
 
         this.master = master;
@@ -81,11 +81,11 @@ public class SettingNumberWidget extends Widget {
         return rectSlider;
     }
 
-    public void setSetting(Setting setting) {
+    public void setSetting(Setting<Number> setting) {
         this.setting = setting;
     }
 
-    public Setting getSetting() {
+    public Setting<Number> getSetting() {
         return setting;
     }
 
@@ -144,7 +144,9 @@ public class SettingNumberWidget extends Widget {
     @Override
     public void onCustomMouseClicked(int button) {
         if (this.flagMouseSlider == Flag.MouseOver && this.settingContainer.flagMouseRealRect == Flag.MouseOver) {
-            this.isMouseClickedLeft = button == 0;
+            if (button == 0) {
+                this.isMouseClickedLeft = true;
+            }
         }
     }
 

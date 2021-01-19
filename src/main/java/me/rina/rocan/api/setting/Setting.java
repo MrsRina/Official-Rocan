@@ -4,13 +4,13 @@ package me.rina.rocan.api.setting;
  * @author SrRina
  * @since 15/11/20 at 4:51pm
  */
-public class Setting {
+public class Setting <S> {
     private String name, tag, description;
 
-    private Object value;
+    private S value;
 
-    private Object minimum;
-    private Object maximum;
+    private S minimum;
+    private S maximum;
 
     /*
      * So it is basically the render for GUI,
@@ -19,7 +19,7 @@ public class Setting {
      */
     private boolean enabled = true;
 
-    public Setting(String name, String tag, String description, Object value) {
+    public Setting(String name, String tag, String description, S value) {
         this.name = name;
         this.tag = tag;
 
@@ -28,7 +28,7 @@ public class Setting {
         this.value = value;
     }
 
-    public Setting(String name, String tag, String description, Object value, Object minimum, Object maximum) {
+    public Setting(String name, String tag, String description, S value, S minimum, S maximum) {
         this.name = name;
         this.tag = tag;
 
@@ -64,27 +64,27 @@ public class Setting {
         return description;
     }
 
-    public void setValue(Object value) {
+    public void setValue(S value) {
         this.value = value;
     }
 
-    public Object getValue() {
+    public S getValue() {
         return value;
     }
 
-    public void setMinimum(Object minimum) {
+    public void setMinimum(S minimum) {
         this.minimum = minimum;
     }
 
-    public Object getMinimum() {
+    public S getMinimum() {
         return minimum;
     }
 
-    public void setMaximum(Object maximum) {
+    public void setMaximum(S maximum) {
         this.maximum = maximum;
     }
 
-    public Object getMaximum() {
+    public S getMaximum() {
         return maximum;
     }
 

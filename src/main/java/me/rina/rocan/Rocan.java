@@ -60,8 +60,11 @@ public enum Rocan {
      * Method non-static to init the client.
      */
     public void onInitClient() {
-        this.moduleClickGUI.init();
         this.moduleManager.onLoad();
+
+        // We start here the GUI, cause, all settings and modules are loaded.
+        this.moduleClickGUI = new ModuleClickGUI();
+        this.moduleClickGUI.init();
     }
 
     /**
@@ -77,8 +80,6 @@ public enum Rocan {
         this.commandManager = new CommandManager();
 
         this.wrapperGUI = new GUI();
-
-        this.moduleClickGUI = new ModuleClickGUI();
 
         MinecraftForge.EVENT_BUS.register(this.clientEventManager);
         MinecraftForge.EVENT_BUS.register(this.commandManager);

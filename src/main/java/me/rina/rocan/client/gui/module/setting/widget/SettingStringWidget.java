@@ -19,9 +19,9 @@ import java.awt.*;
 
 /**
  * @author SrRina
- * @since 2020-22-16 at 12:44
+ * @since 2021-01-10 at 11:44
  **/
-public class SettingBooleanWidget extends Widget {
+public class SettingStringWidget extends Widget {
     private ModuleClickGUI master;
     private MotherFrame frame;
 
@@ -45,11 +45,11 @@ public class SettingBooleanWidget extends Widget {
 
     private TurokRect rectCheckbox = new TurokRect("CheckBox", 0, 0);
 
-    private Setting<Boolean> setting;
+    private Setting setting;
 
     public Flag flagMouse = Flag.MouseNotOver;
 
-    public SettingBooleanWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer moduleContainer, ModuleWidget widgetModule, SettingContainer settingContainer, Setting<Boolean> setting) {
+    public SettingStringWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer moduleContainer, ModuleWidget widgetModule, SettingContainer settingContainer, Setting setting) {
         super(setting.getName());
 
         this.master = master;
@@ -75,11 +75,11 @@ public class SettingBooleanWidget extends Widget {
         return rectCheckbox;
     }
 
-    public void setSetting(Setting<Boolean> setting) {
+    public void setSetting(Setting setting) {
         this.setting = setting;
     }
 
-    public Setting<Boolean> getSetting() {
+    public Setting getSetting() {
         return setting;
     }
 

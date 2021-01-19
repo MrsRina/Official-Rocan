@@ -16,6 +16,7 @@ import me.rina.turok.util.TurokRect;
 import java.util.ArrayList;
 
 import me.rina.turok.util.TurokRect.Dock;
+import org.lwjgl.input.Keyboard;
 
 /**
  * @author SrRina
@@ -54,8 +55,9 @@ public class MotherFrame extends Frame {
     private TurokRect rectResize = new TurokRect("Goo", 0, 0);
 
     private boolean isStarted = true;
-    private boolean isMouseClickedMiddle = false;
-    private boolean isMouseClickedLeft = false;
+    private boolean isMouseClickedMiddle;
+    private boolean isMouseClickedLeft;
+    private boolean isReturnCenterPressed;
 
     public Flag flagMouse = Flag.MouseNotOver;
     public Flag flagMouseResize = Flag.MouseNotOver;
@@ -168,6 +170,11 @@ public class MotherFrame extends Frame {
 
     @Override
     public void onKeyboard(char character, int key) {
+        // Its reset the current position of screen to center, its help if GUI glitch.
+        if (key == Keyboard.KEY_F1 && (this.isMouseClickedLeft == false && this.isMouseClickedMiddle == false) && this.master.isOpened()) {
+            this.isReturnCenterPressed = true;
+        }
+
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onKeyboard(character, key);
         }
@@ -237,7 +244,7 @@ public class MotherFrame extends Frame {
     @Override
     public void onRender() {
         this.rect.setWidth(this.scaleWidth);
-        this.rect.setHeight(TurokMath.min(this.scaleHeight, 200));
+        this.rect.setHeight(TurokMath.clamp(this.scaleHeight, 200, 1080));
 
         // Set the x, y and size of rect resize, to we resize the main scale variables.
         this.rectResize.setWidth(8);
@@ -253,7 +260,25 @@ public class MotherFrame extends Frame {
         this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
         this.flagMouseResize = this.rectResize.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
 
-        this.scaleWidth = TurokMath.lerp(this.scaleWidth, (TurokMath.clamp(this.size, (76) * this.loadedWidgetList.size(), (151) * this.loadedWidgetList.size())), this.master.getPartialTicks());
+        /*
+         * Its the width of widget category, if you:
+         * min  = 75;
+         * off  = 1;
+         * size = 7;
+         * x = ?;
+         *
+         * *
+         * x + off = min * size;       (x = 75 + 1 * 7);
+         *       x = min + off * size; (x = 532);
+         * *
+         *
+         * The return is of x is 532, so, the minimum width is 532;
+         *
+         */
+        int minimumWidth = 75;
+        int maximumWidth = 270;
+
+        this.scaleWidth = TurokMath.lerp(this.scaleWidth, (TurokMath.clamp(this.size, (minimumWidth + 1) * this.loadedWidgetList.size(), (maximumWidth + 1) * this.loadedWidgetList.size())), this.master.getPartialTicks());
 
         TurokRenderGL.color(Rocan.getWrapperGUI().colorFrameBackground[0], Rocan.getWrapperGUI().colorFrameBackground[1], Rocan.getWrapperGUI().colorFrameBackground[2], Rocan.getWrapperGUI().colorFrameBackground[3]);
         TurokRenderGL.drawSolidRect(this.rect);
@@ -265,7 +290,7 @@ public class MotherFrame extends Frame {
             if (widgets instanceof ModuleCategoryWidget) {
                 ModuleCategoryWidget moduleCategoryWidget = (ModuleCategoryWidget) widgets;
 
-                moduleCategoryWidget.getRect().setWidth(TurokMath.clamp((this.size - this.loadedWidgetList.size()) / this.loadedWidgetList.size(), 75, 150));
+                moduleCategoryWidget.getRect().setWidth(TurokMath.clamp((this.size - this.loadedWidgetList.size()) / this.loadedWidgetList.size(), minimumWidth, maximumWidth));
                 moduleCategoryWidget.setOffsetX((moduleCategoryWidget.getRect().getWidth() + 1) * this.loadedWidgetList.indexOf(widgets));
             }
         }
@@ -278,8 +303,8 @@ public class MotherFrame extends Frame {
             float y = this.master.getMouse().getY() - this.dragY;
 
             // We set the drag position to rect smooooth.
-            this.rect.setX((int) TurokMath.lerp(this.rect.getX(), x, this.master.getPartialTicks()));
-            this.rect.setY((int) TurokMath.lerp(this.rect.getY(), y, this.master.getPartialTicks()));
+            this.rect.setX(TurokMath.lerp(this.rect.getX(), x, this.master.getPartialTicks()));
+            this.rect.setY(TurokMath.lerp(this.rect.getY(), y, this.master.getPartialTicks()));
         }
 
         if (this.isMouseClickedLeft) {
@@ -288,7 +313,7 @@ public class MotherFrame extends Frame {
 
             // The current scale have minimum 75 and maximum 160, but I add for fix the minimum problem.
             this.size = x;
-            this.scaleHeight = (int) TurokMath.lerp(this.scaleHeight, y, this.master.getPartialTicks());
+            this.scaleHeight = TurokMath.lerp(this.scaleHeight, y, this.master.getPartialTicks());
         }
 
         if (this.isStarted) {
@@ -298,6 +323,24 @@ public class MotherFrame extends Frame {
             if (widget instanceof ModuleCategoryWidget) ((ModuleCategoryWidget) widget).setSelected(true);
 
             this.isStarted = false;
+        }
+
+        /**
+         * We need make the GUI return backs, so we need get distance and bypass the interpolation delay.
+         */
+        if (this.isReturnCenterPressed) {
+            float x = this.master.getDisplay().getScaledWidth() / 2 - (this.rect.getWidth() / 2);
+            float y = this.master.getDisplay().getScaledHeight() / 2 - (this.rect.getHeight() / 2);
+
+            this.rect.setX(TurokMath.lerp(this.rect.getX(), x, this.master.getPartialTicks()));
+            this.rect.setY(TurokMath.lerp(this.rect.getY(), y, this.master.getPartialTicks()));
+
+            if (this.rect.getDistance(new TurokRect(x, y, 10, 10)) <= 100) {
+                this.isReturnCenterPressed = false;
+            } else {
+                this.isMouseClickedLeft = false;
+                this.isMouseClickedMiddle = false;
+            }
         }
     }
 }

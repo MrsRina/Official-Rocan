@@ -31,10 +31,10 @@ public class Module implements ISavableLoadable {
     private boolean isEnabled;
     private int keyCode;
 
-    private ArrayList<Setting> settingList;
+    private ArrayList<Setting<?>> settingList;
 
-    public static Setting showModuleEnableList = new Setting("Show Module Enabled List", "ShowModuleEnabledList", "Show in component Module Enabled List", true);
-    public static Setting toggleMessage = new Setting("Toggle Message", "ToggleMessage", "Send a message when enable or disable.", true);
+    public static Setting<Boolean> showModuleEnableList = new Setting("Show Module Enabled List", "ShowModuleEnabledList", "Show in component Module Enabled List", true);
+    public static Setting<Boolean> toggleMessage = new Setting("Toggle Message", "ToggleMessage", "Send a message when enable or disable.", true);
 
     /*
      * Frustum camera for render in 3D space.
@@ -53,6 +53,7 @@ public class Module implements ISavableLoadable {
         this.isEnabled = false;
         this.keyCode = -1;
 
+        // We need registry the currents two settings at own Module.
         this.registry(showModuleEnableList);
         this.registry(toggleMessage);
     }
@@ -125,16 +126,16 @@ public class Module implements ISavableLoadable {
         this.settingList.add(setting);
     }
 
-    public void setSettingList(ArrayList<Setting> settingList) {
+    public void setSettingList(ArrayList<Setting<?>> settingList) {
         this.settingList = settingList;
     }
 
-    public ArrayList<Setting> getSettingList() {
+    public ArrayList<Setting<?>> getSettingList() {
         return settingList;
     }
 
-    public Setting get(Class clazz) {
-        for (Setting settings : this.settingList) {
+    public Setting<?> get(Class clazz) {
+        for (Setting<?> settings : this.settingList) {
             if (settings.getClass() == clazz) {
                 return settings;
             }
@@ -143,8 +144,8 @@ public class Module implements ISavableLoadable {
         return null;
     }
 
-    public Setting get(String tag) {
-        for (Setting settings : this.settingList) {
+    public Setting<?> get(String tag) {
+        for (Setting<?> settings : this.settingList) {
             if (settings.getTag().equalsIgnoreCase(tag)) {
                 return settings;
             }
@@ -168,7 +169,7 @@ public class Module implements ISavableLoadable {
     public void setEnabled() {
         this.isEnabled = true;
 
-        if ((boolean) toggleMessage.getValue()) {
+        if (toggleMessage.getValue()) {
             ChatUtil.print(this.tag + " enabled.");
         }
 
@@ -180,7 +181,7 @@ public class Module implements ISavableLoadable {
     public void setDisabled() {
         this.isEnabled = false;
 
-        if ((boolean) toggleMessage.getValue()) {
+        if (toggleMessage.getValue()) {
             ChatUtil.print(this.tag + " disabled.");
         }
 
@@ -192,6 +193,14 @@ public class Module implements ISavableLoadable {
     protected void onEnable() {}
     protected void onDisable() {}
 
+    public void onRender2D() {}
+    public void onRender3D() {}
+
+    /**
+     * The current context of setting enums.
+     */
+    public void onSetting() {}
+
     @Override
     public void onSave() {
         try {
@@ -200,15 +209,15 @@ public class Module implements ISavableLoadable {
 
             Gson gsonBuilder = new GsonBuilder().setPrettyPrinting().create();
 
-            if (!Files.exists(Paths.get(pathFolder))) {
+            if (Files.exists(Paths.get(pathFolder)) == false) {
                 Files.createDirectories(Paths.get(pathFolder));
             }
 
-            if (!Files.exists(Paths.get(pathFile))) {
-                Files.createFile(Paths.get(pathFile));
-            } else {
+            if (Files.exists(Paths.get(pathFile))) {
                 java.io.File file = new java.io.File(pathFile);
                 file.delete();
+            } else {
+                Files.createFile(Paths.get(pathFile));
             }
 
             JsonObject mainJson = new JsonObject();
@@ -250,7 +259,7 @@ public class Module implements ISavableLoadable {
             String pathFolder = Rocan.PATH_CONFIG + "/module/" + this.category.name().toLowerCase() + "/";
             String pathFile = pathFolder + this.tag + ".json";
 
-            if (!Files.exists(Paths.get(pathFile))) {
+            if (Files.exists(Paths.get(pathFile)) == false) {
                 return;
             }
 
@@ -258,7 +267,9 @@ public class Module implements ISavableLoadable {
 
             JsonObject mainJson = new JsonParser().parse(new InputStreamReader(file)).getAsJsonObject();
 
-            if (mainJson.get("enabled") != null) this.setEnabled(mainJson.get("enabled").getAsBoolean());
+            if (mainJson.get("enabled") != null) {
+                this.setEnabled(mainJson.get("enabled").getAsBoolean());
+            }
 
             if (mainJson.get("settings") != null) {
                 JsonObject jsonSettingList = mainJson.get("settings").getAsJsonObject();

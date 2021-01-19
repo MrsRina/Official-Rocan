@@ -111,10 +111,6 @@ public class ModuleClickGUI extends TurokGUI {
         // Make the current animation and smooth close.
         if (this.isOpened) {
             if (this.isPositionBack) {
-                if (this.motherFrame.getRect().getX() + this.motherFrame.getRect().getWidth() <= 0) {
-                    this.motherFrame.getRect().setX(calculatedScaledX);
-                }
-
                 // We need save the current position.
                 this.motherFrame.setSaveX(this.motherFrame.getRect().getX());
                 this.motherFrame.setSaveY(this.motherFrame.getRect().getY());

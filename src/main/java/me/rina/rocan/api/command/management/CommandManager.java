@@ -13,14 +13,12 @@ public class CommandManager {
     public static CommandManager INSTANCE;
 
     private ArrayList<Command> commandList;
-
     private CommandPrefix commandPrefix;
 
     public CommandManager() {
         INSTANCE = this;
 
         this.commandList = new ArrayList<>();
-
         this.commandPrefix = new CommandPrefix(".");
     }
 
