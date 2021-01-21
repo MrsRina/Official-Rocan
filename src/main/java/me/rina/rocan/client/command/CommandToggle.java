@@ -5,6 +5,7 @@ import me.rina.rocan.api.command.Command;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.management.ModuleManager;
 import me.rina.rocan.api.setting.Setting;
+import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.util.chat.ChatUtil;
 
 /**
@@ -45,7 +46,7 @@ public class CommandToggle extends Command {
 
         module.toggle();
 
-        Setting<Boolean> toggleMessage = (Setting<Boolean>) module.get("ToggleMessage");
+        ValueBoolean toggleMessage = (ValueBoolean) module.get("ToggleMessage");
 
         if (toggleMessage.getValue() == false) {
             ChatUtil.print("Module has been update to " + Boolean.toString(module.isEnabled()) + ".");

@@ -4,6 +4,7 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.setting.Setting;
+import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
@@ -45,11 +46,11 @@ public class SettingBooleanWidget extends Widget {
 
     private TurokRect rectCheckbox = new TurokRect("CheckBox", 0, 0);
 
-    private Setting<Boolean> setting;
+    private ValueBoolean setting;
 
     public Flag flagMouse = Flag.MouseNotOver;
 
-    public SettingBooleanWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer moduleContainer, ModuleWidget widgetModule, SettingContainer settingContainer, Setting<Boolean> setting) {
+    public SettingBooleanWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer moduleContainer, ModuleWidget widgetModule, SettingContainer settingContainer, ValueBoolean setting) {
         super(setting.getName());
 
         this.master = master;
@@ -75,11 +76,11 @@ public class SettingBooleanWidget extends Widget {
         return rectCheckbox;
     }
 
-    public void setSetting(Setting<Boolean> setting) {
+    public void setSetting(ValueBoolean setting) {
         this.setting = setting;
     }
 
-    public Setting<Boolean> getSetting() {
+    public ValueBoolean getSetting() {
         return setting;
     }
 

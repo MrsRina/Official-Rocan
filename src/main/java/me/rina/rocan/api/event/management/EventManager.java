@@ -89,7 +89,7 @@ public class EventManager {
         }
 
         float[] currentSystemCycle = {
-                (System.currentTimeMillis() % (360f * 32f)) / (360f * 32f)
+                (System.currentTimeMillis() % (360 * 32)) / (360f * 32f)
         };
 
         int currentColorCycle = Color.HSBtoRGB(currentSystemCycle[0], 1, 1);
@@ -110,7 +110,11 @@ public class EventManager {
         Rocan.getWrapperGUI().onUpdateColor();
 
         for (Module modules : Rocan.getModuleManager().getModuleList()) {
-            modules.onRender3D();
+            if (modules.isEnabled()) {
+                modules.onRender3D();
+            }
+
+            modules.onSetting();
         }
     }
 

@@ -4,6 +4,7 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.setting.Setting;
+import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
@@ -50,12 +51,12 @@ public class SettingNumberWidget extends Widget {
 
     private TurokRect rectSlider = new TurokRect("CheckBox", 0, 0);
 
-    private Setting<Number> setting;
+    private ValueNumber setting;
 
     public Flag flagMouseSlider = Flag.MouseNotOver;
     public Flag flagMouse = Flag.MouseNotOver;
 
-    public SettingNumberWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer moduleContainer, ModuleWidget widgetModule, SettingContainer settingContainer, Setting<Number> setting) {
+    public SettingNumberWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer moduleContainer, ModuleWidget widgetModule, SettingContainer settingContainer, ValueNumber setting) {
         super(setting.getName());
 
         this.master = master;
@@ -81,11 +82,11 @@ public class SettingNumberWidget extends Widget {
         return rectSlider;
     }
 
-    public void setSetting(Setting<Number> setting) {
+    public void setSetting(ValueNumber setting) {
         this.setting = setting;
     }
 
-    public Setting<Number> getSetting() {
+    public ValueNumber getSetting() {
         return setting;
     }
 

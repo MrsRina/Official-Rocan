@@ -5,6 +5,9 @@ import me.rina.rocan.api.gui.container.Container;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.setting.Setting;
+import me.rina.rocan.api.setting.value.ValueBoolean;
+import me.rina.rocan.api.setting.value.ValueEnum;
+import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
@@ -89,9 +92,9 @@ public class SettingContainer extends Container {
         this.scrollRect.setHeight(0);
         this.offsetY = 3;
 
-        for (Setting<?> settings : this.widgetModule.getModule().getSettingList()) {
-            if (settings.getValue() instanceof Boolean) {
-                SettingBooleanWidget settingBooleanWidget = new SettingBooleanWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, (Setting<Boolean>) settings);
+        for (Setting settings : this.widgetModule.getModule().getSettingList()) {
+            if (settings instanceof ValueBoolean) {
+                SettingBooleanWidget settingBooleanWidget = new SettingBooleanWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, (ValueBoolean) settings);
 
                 settingBooleanWidget.setOffsetY(this.scrollRect.getHeight());
 
@@ -100,8 +103,8 @@ public class SettingContainer extends Container {
                 this.scrollRect.height += settingBooleanWidget.getRect().getHeight() + 1;
             }
 
-            if (settings.getValue() instanceof Number) {
-                SettingNumberWidget settingNumberWidget = new SettingNumberWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, (Setting<Number>) settings);
+            if (settings instanceof ValueNumber) {
+                SettingNumberWidget settingNumberWidget = new SettingNumberWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, (ValueNumber) settings);
 
                 settingNumberWidget.setOffsetY(this.scrollRect.getHeight());
 
@@ -110,8 +113,8 @@ public class SettingContainer extends Container {
                 this.scrollRect.height += settingNumberWidget.getRect().getHeight() + 1;
             }
 
-            if (settings.getValue() instanceof Enum<?>) {
-                SettingEnumWidget settingEnumWidget = new SettingEnumWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, (Setting<Enum>) settings);
+            if (settings instanceof ValueEnum) {
+                SettingEnumWidget settingEnumWidget = new SettingEnumWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, (ValueEnum) settings);
 
                 settingEnumWidget.setOffsetY(this.scrollRect.getHeight());
 

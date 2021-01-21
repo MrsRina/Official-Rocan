@@ -212,9 +212,6 @@ public class ModuleWidget extends Widget {
 
     @Override
     public void onCustomRender() {
-        // We need update on GUI, cause we will not do a command setting.
-        this.module.onSetting();
-
         this.rect.setX(this.container.getScrollRect().getX() + this.offsetX);
         this.rect.setY(this.container.getScrollRect().getY() + this.offsetY);
 

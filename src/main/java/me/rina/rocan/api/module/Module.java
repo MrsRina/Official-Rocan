@@ -1,10 +1,15 @@
 package me.rina.rocan.api.module;
 
 import com.google.gson.*;
+import com.google.gson.internal.LazilyParsedNumber;
 import me.rina.rocan.Rocan;
 import me.rina.rocan.api.ISavableLoadable;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.setting.Setting;
+import me.rina.rocan.api.setting.value.ValueBoolean;
+import me.rina.rocan.api.setting.value.ValueEnum;
+import me.rina.rocan.api.setting.value.ValueNumber;
+import me.rina.rocan.api.setting.value.ValueString;
 import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.turok.util.TurokClass;
 import net.minecraft.client.Minecraft;
@@ -31,10 +36,10 @@ public class Module implements ISavableLoadable {
     private boolean isEnabled;
     private int keyCode;
 
-    private ArrayList<Setting<?>> settingList;
+    private ArrayList<Setting> settingList;
 
-    public static Setting<Boolean> showModuleEnableList = new Setting("Show Module Enabled List", "ShowModuleEnabledList", "Show in component Module Enabled List", true);
-    public static Setting<Boolean> toggleMessage = new Setting("Toggle Message", "ToggleMessage", "Send a message when enable or disable.", true);
+    public static ValueBoolean showModuleEnableList = new ValueBoolean("Show Module Enabled List", "ShowModuleEnabledList", "Show in component Module Enabled List", true);
+    public static ValueBoolean toggleMessage = new ValueBoolean("Toggle Message", "ToggleMessage", "Send a message when enable or disable.", true);
 
     /*
      * Frustum camera for render in 3D space.
@@ -126,16 +131,16 @@ public class Module implements ISavableLoadable {
         this.settingList.add(setting);
     }
 
-    public void setSettingList(ArrayList<Setting<?>> settingList) {
+    public void setSettingList(ArrayList<Setting> settingList) {
         this.settingList = settingList;
     }
 
-    public ArrayList<Setting<?>> getSettingList() {
+    public ArrayList<Setting> getSettingList() {
         return settingList;
     }
 
-    public Setting<?> get(Class clazz) {
-        for (Setting<?> settings : this.settingList) {
+    public Setting get(Class clazz) {
+        for (Setting settings : this.settingList) {
             if (settings.getClass() == clazz) {
                 return settings;
             }
@@ -144,8 +149,8 @@ public class Module implements ISavableLoadable {
         return null;
     }
 
-    public Setting<?> get(String tag) {
-        for (Setting<?> settings : this.settingList) {
+    public Setting get(String tag) {
+        for (Setting settings : this.settingList) {
             if (settings.getTag().equalsIgnoreCase(tag)) {
                 return settings;
             }
@@ -227,16 +232,29 @@ public class Module implements ISavableLoadable {
             JsonObject jsonSettingList = new JsonObject();
 
             for (Setting settings : this.settingList) {
-                if (settings.getValue() instanceof Boolean) {
-                    jsonSettingList.add(settings.getTag(), new JsonPrimitive((Boolean) settings.getValue()));
+                if (settings instanceof ValueBoolean) {
+                    ValueBoolean settingValueBoolean = (ValueBoolean) settings;
+
+                    jsonSettingList.add(settingValueBoolean.getTag(), new JsonPrimitive(settingValueBoolean.getValue()));
                 }
 
-                if (settings.getValue() instanceof Number) {
-                    jsonSettingList.add(settings.getTag(), new JsonPrimitive((Number) settings.getValue()));
+                if (settings instanceof ValueNumber) {
+                    ValueNumber settingValueNumber = (ValueNumber) settings;
+
+                    jsonSettingList.add(settingValueNumber.getTag(), new JsonPrimitive(settingValueNumber.getValue()));
                 }
 
-                if (settings.getValue() instanceof Enum<?>) {
-                    jsonSettingList.add(settings.getTag(), new JsonPrimitive(((Enum<?>) settings.getValue()).name()));
+                if (settings instanceof ValueEnum) {
+                    ValueEnum settingValueEnum = (ValueEnum) settings;
+
+                    jsonSettingList.add(settingValueEnum.getTag(), new JsonPrimitive(settingValueEnum.getValue().name()));
+                }
+
+                if (settings instanceof ValueString) {
+                    ValueString settingValueString = (ValueString) settings;
+
+                    jsonSettingList.add(settingValueString.getTag(), new JsonPrimitive(settingValueString.getValue()));
+
                 }
             }
 
@@ -279,16 +297,32 @@ public class Module implements ISavableLoadable {
                         continue;
                     }
 
-                    if (settings.getValue() instanceof Boolean) {
-                        settings.setValue(jsonSettingList.get(settings.getTag()).getAsBoolean());
+                    if (settings instanceof ValueBoolean) {
+                        ValueBoolean settingValueBoolean = (ValueBoolean) settings;
+
+                        settingValueBoolean.setValue(jsonSettingList.get(settings.getTag()).getAsBoolean());
                     }
 
-                    if (settings.getValue() instanceof Number) {
-                        settings.setValue(jsonSettingList.get(settings.getTag()).getAsNumber());
+                    if (settings instanceof ValueNumber) {
+                        ValueNumber settingValueNumber = (ValueNumber) settings;
+
+                        if (jsonSettingList.get(settings.getTag()).getAsNumber() instanceof Float) {
+                            settingValueNumber.setValue(jsonSettingList.get(settings.getTag()).getAsFloat());
+                        }
+
+                        if (jsonSettingList.get(settings.getTag()).getAsNumber() instanceof Double) {
+                            settingValueNumber.setValue(jsonSettingList.get(settings.getTag()).getAsDouble());
+                        }
+
+                        if (jsonSettingList.get(settings.getTag()).getAsNumber() instanceof Integer) {
+                            settingValueNumber.setValue(jsonSettingList.get(settings.getTag()).getAsInt());
+                        }
                     }
 
-                    if (settings.getValue() instanceof Enum<?>) {
-                        settings.setValue(TurokClass.getEnumByName((Enum<?>) settings.getValue(), jsonSettingList.get(settings.getTag()).getAsString()));
+                    if (settings instanceof ValueEnum) {
+                        ValueEnum settingValueEnum = (ValueEnum) settings;
+
+                        settingValueEnum.setValue(TurokClass.getEnumByName(settingValueEnum.getValue(), jsonSettingList.get(settings.getTag()).getAsString()));
                     }
                 }
             }

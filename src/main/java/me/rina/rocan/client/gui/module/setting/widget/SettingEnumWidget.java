@@ -4,6 +4,7 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.setting.Setting;
+import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
@@ -47,11 +48,11 @@ public class SettingEnumWidget extends Widget {
     private int index;
     private ArrayList<Enum<?>> enumValueList;
 
-    private Setting<Enum> setting;
+    private ValueEnum setting;
 
     public Flag flagMouse = Flag.MouseNotOver;
 
-    public SettingEnumWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer moduleContainer, ModuleWidget widgetModule, SettingContainer settingContainer, Setting<Enum> setting) {
+    public SettingEnumWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer moduleContainer, ModuleWidget widgetModule, SettingContainer settingContainer, ValueEnum setting) {
         super(setting.getName());
 
         this.master = master;
@@ -79,11 +80,11 @@ public class SettingEnumWidget extends Widget {
         }
     }
 
-    public void setSetting(Setting<Enum> setting) {
+    public void setSetting(ValueEnum setting) {
         this.setting = setting;
     }
 
-    public Setting<Enum> getSetting() {
+    public ValueEnum getSetting() {
         return setting;
     }
 

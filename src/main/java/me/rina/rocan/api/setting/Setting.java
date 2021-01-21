@@ -1,97 +1,64 @@
 package me.rina.rocan.api.setting;
 
+import me.rina.rocan.api.setting.impl.SettingStructure;
+
 /**
  * @author SrRina
  * @since 15/11/20 at 4:51pm
  */
-public class Setting <T> {
-    private String name, tag, description;
+public class Setting implements SettingStructure {
+    private String name;
+    private String tag;
+    private String description;
 
-    private T value;
-
-    private T minimum;
-    private T maximum;
-
-    /*
-     * So it is basically the render for GUI,
-     * when false won't render the setting,
-     * this make the client very pretty and organized.
+    /**
+     * Set if render or no the setting, when its faLse the setting won't be manageable,
+     * to works you need refresh at GUI later changed.
      */
     private boolean enabled = true;
 
-    public Setting(String name, String tag, String description, T value) {
+    public Setting(String name, String tag, String description) {
         this.name = name;
         this.tag = tag;
-
         this.description = description;
-
-        this.value = value;
     }
 
-    public Setting(String name, String tag, String description, T value, T minimum, T maximum) {
-        this.name = name;
-        this.tag = tag;
-
-        this.description = description;
-
-        this.value = value;
-
-        this.minimum = minimum;
-        this.maximum = maximum;
-    }
-
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public void setTag(String tag) {
         this.tag = tag;
     }
 
+    @Override
     public String getTag() {
         return tag;
     }
 
+    @Override
     public void setDescription(String description) {
         this.description = description;
     }
 
+    @Override
     public String getDescription() {
         return description;
     }
 
-    public void setValue(T value) {
-        this.value = value;
-    }
-
-    public T getValue() {
-        return value;
-    }
-
-    public void setMinimum(T minimum) {
-        this.minimum = minimum;
-    }
-
-    public T getMinimum() {
-        return minimum;
-    }
-
-    public void setMaximum(T maximum) {
-        this.maximum = maximum;
-    }
-
-    public T getMaximum() {
-        return maximum;
-    }
-
+    @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
