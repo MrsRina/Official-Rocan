@@ -193,9 +193,23 @@ public class ModuleContainer extends Container {
     }
 
     @Override
+    public void onMouseReleased(int button) {
+        for (Widget widgets : this.loadedWidgetList) {
+            widgets.onMouseReleased(button);
+        }
+    }
+
+    @Override
     public void onCustomMouseReleased(int button) {
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onCustomMouseReleased(button);
+        }
+    }
+
+    @Override
+    public void onMouseClicked(int button) {
+        for (Widget widgets : this.loadedWidgetList) {
+            widgets.onMouseClicked(button);
         }
     }
 

@@ -158,6 +158,11 @@ public class ModuleWidget extends Widget {
     }
 
     @Override
+    public void onMouseReleased(int button) {
+        this.settingContainer.onMouseReleased(button);
+    }
+
+    @Override
     public void onCustomMouseReleased(int button) {
         if (this.isMouseClickedLeft) {
             if (this.flagMouse == Flag.MouseOver) {
@@ -168,6 +173,11 @@ public class ModuleWidget extends Widget {
         }
 
         this.settingContainer.onCustomMouseReleased(button);
+    }
+
+    @Override
+    public void onMouseClicked(int button) {
+        this.settingContainer.onMouseClicked(button);
     }
 
     @Override

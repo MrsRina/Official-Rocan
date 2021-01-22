@@ -121,6 +121,10 @@ public class TurokShaderGL {
         TurokGL.enable(GL11.GL_SCISSOR_TEST);
     }
 
+    public static void drawScissor(TurokRect rect) {
+        drawScissor(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight());
+    }
+
     public static void drawScissor(float x, float y, float w, float h) {
         float calculatedW = x + w;
         float calculatedH = y + h;

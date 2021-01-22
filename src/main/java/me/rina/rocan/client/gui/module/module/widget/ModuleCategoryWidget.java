@@ -120,11 +120,10 @@ public class ModuleCategoryWidget extends Widget {
     @Override
     public void onMouseReleased(int button) {
         if (this.flagMouse == Flag.MouseOver && this.isMouseClickedLeft) {
-            this.frame.resetWidget();
-
-            this.isSelected = true;
             this.isMouseClickedLeft = false;
         }
+
+        this.container.onMouseReleased(button);
     }
 
     @Override
@@ -136,9 +135,14 @@ public class ModuleCategoryWidget extends Widget {
     public void onMouseClicked(int button) {
         if (this.flagMouse == Flag.MouseOver) {
             if (button == 0) {
+                this.frame.resetWidget();
+
+                this.isSelected = true;
                 this.isMouseClickedLeft = true;
             }
         }
+
+        this.container.onMouseClicked(button);
     }
 
     @Override

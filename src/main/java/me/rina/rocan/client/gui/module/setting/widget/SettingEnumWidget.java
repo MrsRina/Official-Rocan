@@ -129,6 +129,14 @@ public class SettingEnumWidget extends Widget {
     }
 
     @Override
+    public void onKeyboard(char character, int key) {
+    }
+
+    @Override
+    public void onCustomKeyboard(char character, int key) {
+    }
+
+    @Override
     public void onCustomMouseReleased(int button) {
         if (this.flagMouse == Flag.MouseOver) {
             if (this.isMouseClickedLeft) {
