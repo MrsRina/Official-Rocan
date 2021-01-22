@@ -26,6 +26,12 @@ public class CommandManager {
         this.commandList.add(command);
     }
 
+    public void unregister(Command command) {
+        if (get(command.getClass()) != null) {
+            this.commandList.remove(command);
+        }
+    }
+
     public void setCommandList(ArrayList<Command> commandList) {
         this.commandList = commandList;
     }
@@ -38,7 +44,7 @@ public class CommandManager {
         return INSTANCE.commandPrefix;
     }
 
-    public static Command get(Class clazz) {
+    public static Command get(Class<?> clazz) {
         for (Command commands : INSTANCE.getCommandList()) {
             if (commands.getClass() == clazz) {
                 return commands;

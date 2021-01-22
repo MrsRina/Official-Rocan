@@ -71,7 +71,7 @@ public class SettingNumberWidget extends Widget {
         this.setting = setting;
 
         this.rect.setWidth(this.settingContainer.getRect().getWidth());
-        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
+        this.rect.setHeight(10 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 10);
     }
 
     public void setRectSlider(TurokRect rectSlider) {
@@ -164,19 +164,19 @@ public class SettingNumberWidget extends Widget {
         int offsetWidthSliderRect = 2;
 
         this.rect.setWidth(this.settingContainer.getRect().getWidth());
-        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
+        this.rect.setHeight(8 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 8);
 
         this.rect.setX(this.settingContainer.getScrollRect().getX() + this.offsetX);
         this.rect.setY(this.settingContainer.getScrollRect().getY() + this.offsetY);
 
         // The current value of setting, cast to Number and doubleValue();
-        this._value = ((Number) this.setting.getValue()).doubleValue();
+        this._value = this.setting.getValue().doubleValue();
 
         // The min and maximum of the setting, here he cast to Number and doubleValue(0;
-        this.minimum = ((Number) this.setting.getMinimum()).doubleValue();
-        this.maximum = ((Number) this.setting.getMaximum()).doubleValue();
+        this.minimum = this.setting.getMinimum().doubleValue();
+        this.maximum = this.setting.getMaximum().doubleValue();
 
-        float clampedSliderRectWidth = this.rect.getWidth() - (offsetWidthSliderRect * 2);
+        float clampedSliderRectWidth = this.rect.getWidth() - (offsetWidthSliderRect * 2) - 2;
 
         this.offsetWidth = (float) ((clampedSliderRectWidth) * (this._value - this.minimum) / (this.maximum - this.minimum));
 
@@ -191,17 +191,19 @@ public class SettingNumberWidget extends Widget {
             this.flagMouse = Flag.MouseNotOver;
         }
 
+        String currentSettingValue = this.setting.getValue().toString();
+
+        float fullHeight = TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag() + ": " + currentSettingValue) + 1 + this.rectSlider.getHeight();
+
         // We need set the slider rect on the end of main rect.
         this.rectSlider.setX(this.rect.getX() + offsetWidthSliderRect);
-        this.rectSlider.setY(this.rect.getY() + this.rect.getHeight() - (this.rectSlider.getHeight() + 2));
+        this.rectSlider.setY(this.rect.getY() + ((this.rect.getHeight() / 2) + 1.5f));
 
         // Where the smooth animation works.
         this.alphaEffectHighlightSlider = this.flagMouseSlider == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightSlider, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightSlider, 0, this.master.getPartialTicks());
         this.alphaEffectHighlightRect = this.flagMouse == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
 
-        String currentSettingValue = ((Number) this.setting.getValue()).toString();
-
-        TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag() + ": " + currentSettingValue, this.rect.getX() + 2, this.rect.getY() + 1, true, new Color(255, 255, 255));
+        TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag() + ": " + currentSettingValue, this.rect.getX() + 2, this.rectSlider.getY() - (TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag()) + 4), true, new Color(255, 255, 255));
 
         float checkBoxPressedOffsetX = 0.5f;
         float checkBoxPressedOffsetY = 1f;

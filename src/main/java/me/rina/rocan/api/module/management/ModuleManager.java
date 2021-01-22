@@ -43,6 +43,12 @@ public class ModuleManager implements ISavableLoadable {
         }
     }
 
+    public void unregister(Module module) {
+        if (get(module.getClass()) != null) {
+            this.moduleList.remove(module);
+        }
+    }
+
     public void setModuleList(ArrayList<Module> moduleList) {
         this.moduleList = moduleList;
     }
@@ -62,7 +68,7 @@ public class ModuleManager implements ISavableLoadable {
     /*
      * Tools.
      */
-    public static Module get(Class clazz) {
+    public static Module get(Class<?> clazz) {
         for (Module modules : ModuleManager.INSTANCE.getModuleList()) {
             if (modules.getClass() == clazz) {
                 return modules;

@@ -179,7 +179,7 @@ public class SettingEnumWidget extends Widget {
 
         String name = this.rect.getTag() + ": " + ((Enum<?>) this.setting.getValue()).name();
 
-        TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, name, this.rect.getX() + 2, this.rect.getY() + 5, true, new Color(255, 255, 255));
+        TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, name, this.rect.getX() + 2, this.rect.getY() + ((this.rect.getHeight() / 2) - (TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag()) / 2) - 1), true, new Color(255, 255, 255));
 
         // Outline on rect render.
         TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetHighlight[0], Rocan.getWrapperGUI().colorWidgetHighlight[1], Rocan.getWrapperGUI().colorWidgetHighlight[2], this.alphaEffectHighlightRect);

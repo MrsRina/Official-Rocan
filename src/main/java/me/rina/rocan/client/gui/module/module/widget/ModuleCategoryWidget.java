@@ -120,6 +120,9 @@ public class ModuleCategoryWidget extends Widget {
     @Override
     public void onMouseReleased(int button) {
         if (this.flagMouse == Flag.MouseOver && this.isMouseClickedLeft) {
+            this.frame.resetWidget();
+
+            this.isSelected = true;
             this.isMouseClickedLeft = false;
         }
 
@@ -135,9 +138,6 @@ public class ModuleCategoryWidget extends Widget {
     public void onMouseClicked(int button) {
         if (this.flagMouse == Flag.MouseOver) {
             if (button == 0) {
-                this.frame.resetWidget();
-
-                this.isSelected = true;
                 this.isMouseClickedLeft = true;
             }
         }
@@ -158,8 +158,7 @@ public class ModuleCategoryWidget extends Widget {
         this.rect.setHeight(6 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontBigWidget, this.rect.getTag()) + 6);
 
         this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
-
-        this.alphaEffect = (int) (this.flagMouse == Flag.MouseOver ? TurokMath.lerp(this.alphaEffect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : TurokMath.lerp(this.alphaEffect, 0, this.master.getPartialTicks()));
+        this.alphaEffect = this.flagMouse == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffect, 0, this.master.getPartialTicks());
 
         TurokFontManager.render(Rocan.getWrapperGUI().fontBigWidget, this.rect.getTag(), this.rect.getX() + (this.rect.getWidth() / 2 - (TurokFontManager.getStringWidth(Rocan.getWrapperGUI().fontBigWidget, this.rect.getTag()) / 2)), this.rect.getY() + 6, true, new Color(255, 255, 255));
 

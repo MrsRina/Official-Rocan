@@ -171,7 +171,7 @@ public class MotherFrame extends Frame {
     @Override
     public void onKeyboard(char character, int key) {
         // Its reset the current position of screen to center, its help if GUI glitch.
-        if (key == Keyboard.KEY_F1 && (this.isMouseClickedLeft == false && this.isMouseClickedMiddle == false) && this.master.isOpened()) {
+        if (key == Keyboard.KEY_F1 && (this.isMouseClickedLeft == false && this.isMouseClickedMiddle == false) && this.master.isPositionBack() && this.master.isOpened()) {
             this.isReturnCenterPressed = true;
         }
 
@@ -328,7 +328,7 @@ public class MotherFrame extends Frame {
         /**
          * We need make the GUI return backs, so we need get distance and bypass the interpolation delay.
          */
-        if (this.isReturnCenterPressed) {
+        if (this.isReturnCenterPressed && ((this.isMouseClickedLeft == false && this.isMouseClickedMiddle == false) && this.master.isPositionBack() && this.master.isOpened())) {
             float x = this.master.getDisplay().getScaledWidth() / 2 - (this.rect.getWidth() / 2);
             float y = this.master.getDisplay().getScaledHeight() / 2 - (this.rect.getHeight() / 2);
 

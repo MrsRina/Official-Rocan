@@ -160,8 +160,8 @@ public class SettingBooleanWidget extends Widget {
         this.rect.setX(this.settingContainer.getScrollRect().getX() + this.offsetX);
         this.rect.setY(this.settingContainer.getScrollRect().getY() + this.offsetY);
 
-        this.rectCheckbox.setWidth(10);
-        this.rectCheckbox.setHeight(10);
+        this.rectCheckbox.setWidth(6);
+        this.rectCheckbox.setHeight(6);
 
         if (this.settingContainer.flagMouseRealRect == Flag.MouseOver) {
             this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
@@ -170,15 +170,15 @@ public class SettingBooleanWidget extends Widget {
         }
 
         // We need set the check box rect on the end of main rect.
-        this.rectCheckbox.setX(this.rect.getX() + 2);
-        this.rectCheckbox.setY(this.rect.getY() + this.rect.getHeight() - (this.rectCheckbox.getHeight() + 5));
+        this.rectCheckbox.setX(this.rect.getX() + (this.rect.getWidth() - this.rectCheckbox.getWidth() - 4));
+        this.rectCheckbox.setY(this.rect.getY() + ((this.rect.getHeight() / 2) - (this.rectCheckbox.getHeight() / 2)));
 
         // Where the smooth animation works.
         this.alphaEffectHighlightCheckbox = this.flagMouse == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightCheckbox, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightCheckbox, 0, this.master.getPartialTicks());
         this.alphaEffectHighlightRect = this.flagMouse == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
-        this.alphaEffectPressed = (boolean) this.setting.getValue() ? (int) TurokMath.lerp(this.alphaEffectPressed, Rocan.getWrapperGUI().colorWidgetPressed[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectPressed, 0, this.master.getPartialTicks());
+        this.alphaEffectPressed = this.setting.getValue() ? (int) TurokMath.lerp(this.alphaEffectPressed, Rocan.getWrapperGUI().colorWidgetPressed[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectPressed, 0, this.master.getPartialTicks());
 
-        TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag(), this.rectCheckbox.getX() + this.rectCheckbox.getWidth() + 2, this.rect.getY() + 5, true, new Color(255, 255, 255));
+        TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag(), this.rect.getX() + 2, this.rectCheckbox.getY() + ((this.rectCheckbox.getHeight() / 2) - (TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag()) / 2)), true, new Color(255, 255, 255));
 
         // Outline on rect render.
         TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetHighlight[0], Rocan.getWrapperGUI().colorWidgetHighlight[1], Rocan.getWrapperGUI().colorWidgetHighlight[2], this.alphaEffectHighlightRect);
@@ -197,7 +197,7 @@ public class SettingBooleanWidget extends Widget {
 
         // The solid pressed checkbox.
         TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetPressed[0], Rocan.getWrapperGUI().colorWidgetPressed[1], Rocan.getWrapperGUI().colorWidgetPressed[2], this.alphaEffectPressed);
-        TurokRenderGL.drawSolidRect(this.rectCheckbox.getX() + checkBoxPressedOffsetX, this.rectCheckbox.getY() + checkBoxPressedOffsetY, this.rectCheckbox.getWidth() - (checkBoxPressedOffsetX * 2), this.rectCheckbox.getHeight() - (checkBoxPressedOffsetY * 2));
+        TurokRenderGL.drawSolidRect(this.rectCheckbox);
 
         if (this.flagMouse == Flag.MouseOver) {
             this.settingContainer.getDescriptionLabel().setText(this.setting.getDescription());

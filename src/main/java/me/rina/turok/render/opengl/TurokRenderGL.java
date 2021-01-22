@@ -140,50 +140,24 @@ public class TurokRenderGL {
 	public static void drawOutlineRect(float x, float y, float width, float height) {
 		TurokGL.pushMatrix();
 
-		TurokGL.enable(GL11.GL_BLEND);
+		TurokGL.enable(GL11.GL_SRC_ALPHA);
 		TurokGL.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		TurokGL.lineSize(1);
-
-		TurokGL.prepare(GL11.GL_LINES);
+		TurokGL.prepare(GL11.GL_LINE_STRIP);
 		{
 			TurokGL.addVertex(x, y);
 			TurokGL.addVertex(x,y + height);
-		}
 
-		TurokGL.release();
-
-		TurokGL.lineSize(1);
-
-		TurokGL.prepare(GL11.GL_LINES);
-		{
-			TurokGL.addVertex(x, y + height - 0.5f);
-			TurokGL.addVertex(x + width - 0.5f, y + height - 0.5f);
-		}
-
-		TurokGL.release();
-
-		TurokGL.lineSize(1);
-
-		TurokGL.prepare(GL11.GL_LINES);
-		{
 			TurokGL.addVertex(x + width, y + height);
-			TurokGL.addVertex(x + width, y + 0.5f);
-		}
-
-		TurokGL.release();
-
-		TurokGL.lineSize(1);
-
-		TurokGL.prepare(GL11.GL_LINES);
-		{
 			TurokGL.addVertex(x + width, y);
+
+			TurokGL.addVertex(x, y);
 			TurokGL.addVertex(x, y);
 		}
 
 		TurokGL.release();
-
 		TurokGL.disable(GL11.GL_BLEND);
+
 		TurokGL.popMatrix();
 	}
 
@@ -259,10 +233,12 @@ public class TurokRenderGL {
 		TurokGL.prepare(GL11.GL_POLYGON);
 		{
 			TurokGL.addVertex(x, y);
+
+			TurokGL.addVertex(x, y);
 			TurokGL.addVertex(x,y + height);
 
-			TurokGL.addVertex(x + width - 0.5f, y + height);
-			TurokGL.addVertex(x + width - 0.5f, y);
+			TurokGL.addVertex(x + width, y + height);
+			TurokGL.addVertex(x + width, y);
 		}
 
 		TurokGL.release();

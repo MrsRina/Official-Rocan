@@ -19,6 +19,8 @@ import org.lwjgl.opengl.GL11;
 public class ModuleClickGUI extends TurokGUI {
     private MotherFrame motherFrame;
 
+    private int effectAlphaBackground;
+
     private boolean isOpened;
     private boolean isPositionBack;
     private boolean isCanceledCloseGUI;
@@ -57,6 +59,14 @@ public class ModuleClickGUI extends TurokGUI {
         return isOpened;
     }
 
+    public void setPositionBack(boolean positionBack) {
+        isPositionBack = positionBack;
+    }
+
+    public boolean isPositionBack() {
+        return isPositionBack;
+    }
+
     @Override
     public void onOpen() {
         this.isOpened = true;
@@ -82,7 +92,13 @@ public class ModuleClickGUI extends TurokGUI {
             this.motherFrame.onCustomKeyboard(character, key);
         } else {
             if (key == Keyboard.KEY_ESCAPE) {
-                this.isOpened = false;
+                if (me.rina.rocan.client.module.client.ModuleClickGUI.closeAnimation.getValue()) {
+                    this.isOpened = false;
+                } else {
+                    this.isOpened = false;
+
+                    this.closeGUI();
+                }
             }
         }
     }
@@ -99,8 +115,10 @@ public class ModuleClickGUI extends TurokGUI {
 
     @Override
     public void onRender() {
+        this.effectAlphaBackground = (int) TurokMath.lerp(this.effectAlphaBackground, me.rina.rocan.client.module.client.ModuleClickGUI.drawDefaultMinecraftBackground.getValue() ? 190 : 0, this.partialTicks);
+
         // Draw the default background of Minecraft.
-        TurokRenderGL.color(20, 20, 20, 190);
+        TurokRenderGL.color(20, 20, 20, this.effectAlphaBackground);
         TurokRenderGL.drawSolidRect(0, 0, this.display.getWidth(), this.display.getHeight());
 
         // Update onRender of mother frame.
@@ -129,7 +147,7 @@ public class ModuleClickGUI extends TurokGUI {
         } else {
             float frameWidthScaled = this.motherFrame.getRect().getWidth() + 1;
 
-            this.motherFrame.getRect().setX((int) TurokMath.lerp(this.motherFrame.getRect().getX(), TurokMath.negative(frameWidthScaled) - 10, partialTicks));
+            this.motherFrame.getRect().setX((int) TurokMath.lerp(this.motherFrame.getRect().getX(), TurokMath.negative(frameWidthScaled) - 50, partialTicks));
 
             if (this.motherFrame.getRect().getX() <= TurokMath.negative(frameWidthScaled)) {
                 this.mouse.setCursorPos(this.display.getScaledWidth() / 2, this.display.getScaledHeight() / 2);

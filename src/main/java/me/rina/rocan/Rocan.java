@@ -4,6 +4,7 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rina.rocan.api.command.management.CommandManager;
 import me.rina.rocan.api.event.management.EventManager;
 import me.rina.rocan.api.module.management.ModuleManager;
+import me.rina.rocan.api.social.management.SocialManager;
 import me.rina.rocan.client.command.CommandPrefix;
 import me.rina.rocan.client.command.CommandToggle;
 import me.rina.rocan.client.gui.GUI;
@@ -39,6 +40,7 @@ public enum Rocan {
     private ModuleManager moduleManager;
     private EventManager clientEventManager;
     private CommandManager commandManager;
+    private SocialManager socialManager;
 
     private ModuleClickGUI moduleClickGUI;
     private GUI wrapperGUI;
@@ -61,6 +63,7 @@ public enum Rocan {
      */
     public void onInitClient() {
         this.moduleManager.onLoad();
+        this.socialManager.onLoad();
 
         // We start here the GUI, cause, all settings and modules are loaded.
         this.moduleClickGUI = new ModuleClickGUI();
@@ -72,12 +75,14 @@ public enum Rocan {
      */
     public static void onEndClient() {
         INSTANCE.moduleManager.onSave();
+        INSTANCE.socialManager.onSave();
     }
 
     public void onClientStarted(FMLInitializationEvent event) {
         this.moduleManager = new ModuleManager();
         this.clientEventManager = new EventManager();
         this.commandManager = new CommandManager();
+        this.socialManager = new SocialManager();
 
         this.wrapperGUI = new GUI();
 

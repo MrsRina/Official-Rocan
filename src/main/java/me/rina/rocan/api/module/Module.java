@@ -131,6 +131,16 @@ public class Module implements ISavableLoadable {
         this.settingList.add(setting);
     }
 
+    public void unregister(Setting setting) {
+        if (this.settingList == null) {
+            this.settingList = new ArrayList<>();
+        } else {
+            if (this.get(setting.getClass()) != null) {
+                this.settingList.remove(setting);
+            }
+        }
+    }
+
     public void setSettingList(ArrayList<Setting> settingList) {
         this.settingList = settingList;
     }
@@ -139,7 +149,7 @@ public class Module implements ISavableLoadable {
         return settingList;
     }
 
-    public Setting get(Class clazz) {
+    public Setting get(Class<?> clazz) {
         for (Setting settings : this.settingList) {
             if (settings.getClass() == clazz) {
                 return settings;
