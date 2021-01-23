@@ -18,6 +18,8 @@ public class ModuleClickGUI extends Module {
     public static ValueBoolean closeAnimation = new ValueBoolean("Close Animation", "CloseAnimation", "Cool smooth effect when close GUI", true);
     public static ValueBoolean drawDefaultMinecraftBackground = new ValueBoolean("Draw Default Minecraft Background", "DrawDefaultMinecraftBackground", "Draw the default Minecraft background at GUI.", true);
 
+    public static ValueString typeBox = new ValueString("Type Box", "TypeBox", "Black.", "SCrim").addFormat("fuck just type");
+
     public ModuleClickGUI() {
         super("Module Click GUI", "ModuleClickGUI", "Open GUI to manage module, settings...", ModuleCategory.Client);
     }
