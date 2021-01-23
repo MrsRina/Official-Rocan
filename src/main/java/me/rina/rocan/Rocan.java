@@ -4,6 +4,7 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rina.rocan.api.command.management.CommandManager;
 import me.rina.rocan.api.event.management.EventManager;
 import me.rina.rocan.api.module.management.ModuleManager;
+import me.rina.rocan.api.preset.Preset;
 import me.rina.rocan.api.social.management.SocialManager;
 import me.rina.rocan.client.command.CommandPrefix;
 import me.rina.rocan.client.command.CommandToggle;
@@ -107,6 +108,10 @@ public enum Rocan {
 
     public static ModuleClickGUI getModuleClickGUI() {
         return INSTANCE.moduleClickGUI;
+    }
+
+    public static SocialManager getSocialManager() {
+        return INSTANCE.socialManager;
     }
 
     public static GUI getWrapperGUI() {

@@ -62,7 +62,7 @@ public class SocialManager implements ISavableLoadable {
 
     public static Social get(String name) {
         for (Social socials : INSTANCE.getSocialList()) {
-            if (socials.getName() == name) {
+            if (socials.getName().equalsIgnoreCase(name)) {
                 return socials;
             }
         }

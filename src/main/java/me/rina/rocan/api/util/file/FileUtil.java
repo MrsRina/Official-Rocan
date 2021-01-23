@@ -3,7 +3,11 @@ package me.rina.rocan.api.util.file;
 import org.apache.commons.io.IOUtils;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Enumeration;
+import java.util.stream.Stream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
@@ -13,7 +17,7 @@ import java.util.zip.ZipOutputStream;
  * @since 22/01/2021 at 23:29
  **/
 public class FileUtil {
-    public final static int BUFFER = 2048;
+    public static final int BUFFER = 4096;
 
     /**
      * Simple extract zip to manage zip files.
@@ -63,22 +67,24 @@ public class FileUtil {
         }
     }
 
-    public void compressFolder(File folder, ZipOutputStream zip, String baseName) throws IOException {
-        File[] fileArray = folder.listFiles();
+    public static void compactZipFolder(String sourceDirPath, String zipFilePath) throws IOException {
+        Path path1 = Files.createFile(Paths.get(zipFilePath));
+        Path path2 = Paths.get(sourceDirPath);
 
-        for (File files : fileArray) {
-            if (files.isDirectory()) {
-                compressFolder(files, zip, baseName);
-            } else {
-                String name = files.getAbsolutePath().substring(baseName.length());
+        try (ZipOutputStream zip = new ZipOutputStream(Files.newOutputStream(path1))) {
+            Stream<Path> paths = Files.walk(path2);
 
-                ZipEntry zipEntry = new ZipEntry(name);
-                zip.putNextEntry(zipEntry);
+            paths.filter(path -> Files.isDirectory(path) == false).forEach(path -> {
+                ZipEntry zipEntry = new ZipEntry(path2.relativize(path).toString());
 
-                IOUtils.copy(new FileInputStream(files), zip);
-
-                zip.closeEntry();
-            }
+                try {
+                    zip.putNextEntry(zipEntry);
+                    Files.copy(path, zip);
+                    zip.close();
+                } catch (IOException exc) {
+                    exc.printStackTrace();
+                }
+            });
         }
     }
 }
