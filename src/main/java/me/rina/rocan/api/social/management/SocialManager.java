@@ -2,14 +2,9 @@ package me.rina.rocan.api.social.management;
 
 import com.google.gson.*;
 import me.rina.rocan.Rocan;
-import me.rina.rocan.api.ISavableLoadable;
-import me.rina.rocan.api.setting.Setting;
-import me.rina.rocan.api.setting.value.ValueBoolean;
-import me.rina.rocan.api.setting.value.ValueEnum;
-import me.rina.rocan.api.setting.value.ValueNumber;
+import me.rina.rocan.api.ISLClass;
 import me.rina.rocan.api.social.Social;
 import me.rina.rocan.api.social.type.SocialType;
-import me.rina.turok.Turok;
 import me.rina.turok.util.TurokClass;
 
 import java.io.*;
@@ -21,7 +16,7 @@ import java.util.ArrayList;
  * @author SrRina
  * @since 22/01/2021 at 17:13
  **/
-public class SocialManager implements ISavableLoadable {
+public class SocialManager implements ISLClass {
     public static SocialManager INSTANCE;
 
     private ArrayList<Social> socialList;

@@ -108,7 +108,10 @@ public class LabelWidget extends Widget {
 
     @Override
     public void onRender() {
-        this.rect.setWidth(this.settingContainer.getRect().getWidth());
+        if (this.settingContainer == null) {
+            this.rect.setWidth(this.settingContainer.getRect().getWidth());
+        }
+
         this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
 
         float onTopPositionY = this.isScroll ? this.settingContainer.getScrollRect().getY() : this.settingContainer.getRect().getY();

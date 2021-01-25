@@ -49,6 +49,14 @@ public class ModuleCategoryWidget extends Widget {
         this.container.init();
     }
 
+    public void setContainer(ModuleContainer container) {
+        this.container = container;
+    }
+
+    public ModuleContainer getContainer() {
+        return container;
+    }
+
     public void setSelected(boolean selected) {
         isSelected = selected;
     }

@@ -29,7 +29,6 @@ public class ModuleContainer extends Container {
     private MotherFrame frame;
 
     private ModuleCategoryWidget widget;
-
     private ModuleCategory category;
 
     private float offsetX;
@@ -39,8 +38,9 @@ public class ModuleContainer extends Container {
     private float offsetHeight;
 
     private ArrayList<Widget> loadedWidgetList;
-
     private TurokRect scrollRect = new TurokRect("Scroll", 0, 0);
+
+    private boolean isModuleOpen;
 
     public Flag flagMouse = Flag.MouseNotOver;
 
@@ -97,14 +97,31 @@ public class ModuleContainer extends Container {
 
                 moduleWidget.setSelected(false);
                 moduleWidget.setLocked(false);
+
+                this.isModuleOpen = false;
             }
         }
     }
 
-    public void resetWidget(Class clazz) {
+    public void resetWidget(boolean lock) {
         for (Widget widgets : this.loadedWidgetList) {
             if (widgets instanceof ModuleWidget) {
                 ModuleWidget moduleWidget = (ModuleWidget) widgets;
+
+                moduleWidget.setSelected(false);
+                moduleWidget.setLocked(lock);
+
+                this.isModuleOpen = false;
+            }
+        }
+    }
+
+    public void resetWidget(Class<?> clazz) {
+        for (Widget widgets : this.loadedWidgetList) {
+            if (widgets instanceof ModuleWidget) {
+                ModuleWidget moduleWidget = (ModuleWidget) widgets;
+
+                this.isModuleOpen = true;
 
                 if (moduleWidget.getClass() != clazz) {
                     moduleWidget.setLocked(false);
@@ -162,6 +179,14 @@ public class ModuleContainer extends Container {
 
     public float getOffsetHeight() {
         return offsetHeight;
+    }
+
+    public void setModuleOpen(boolean moduleOpen) {
+        isModuleOpen = moduleOpen;
+    }
+
+    public boolean isModuleOpen() {
+        return isModuleOpen;
     }
 
     @Override

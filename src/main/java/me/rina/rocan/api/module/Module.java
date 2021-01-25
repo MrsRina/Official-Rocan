@@ -1,9 +1,8 @@
 package me.rina.rocan.api.module;
 
 import com.google.gson.*;
-import com.google.gson.internal.LazilyParsedNumber;
 import me.rina.rocan.Rocan;
-import me.rina.rocan.api.ISavableLoadable;
+import me.rina.rocan.api.ISLClass;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.setting.Setting;
 import me.rina.rocan.api.setting.value.ValueBoolean;
@@ -25,7 +24,7 @@ import java.util.ArrayList;
  * @author SrRina
  * @since 15/11/20 at 4:51pm
  */
-public class Module implements ISavableLoadable {
+public class Module implements ISLClass {
     public Minecraft mc = Rocan.MC;
 
     private String name, tag, description;

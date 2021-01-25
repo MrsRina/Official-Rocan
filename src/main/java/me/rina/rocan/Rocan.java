@@ -5,6 +5,7 @@ import me.rina.rocan.api.command.management.CommandManager;
 import me.rina.rocan.api.event.management.EventManager;
 import me.rina.rocan.api.module.management.ModuleManager;
 import me.rina.rocan.api.preset.Preset;
+import me.rina.rocan.api.preset.management.PresetManager;
 import me.rina.rocan.api.social.management.SocialManager;
 import me.rina.rocan.client.command.CommandPrefix;
 import me.rina.rocan.client.command.CommandToggle;
@@ -42,6 +43,7 @@ public enum Rocan {
     private EventManager clientEventManager;
     private CommandManager commandManager;
     private SocialManager socialManager;
+    private PresetManager presetManager;
 
     private ModuleClickGUI moduleClickGUI;
     private GUI wrapperGUI;
@@ -63,20 +65,22 @@ public enum Rocan {
      * Method non-static to init the client.
      */
     public void onInitClient() {
-        this.moduleManager.onLoad();
-        this.socialManager.onLoad();
+        this.presetManager.onLoad();
 
         // We start here the GUI, cause, all settings and modules are loaded.
         this.moduleClickGUI = new ModuleClickGUI();
         this.moduleClickGUI.init();
+
+        // Reload the current preset or nothing.
+        PresetManager.reload();
     }
 
     /**
      * Method static to end client, save or disable something.
      */
     public static void onEndClient() {
-        INSTANCE.moduleManager.onSave();
-        INSTANCE.socialManager.onSave();
+        // Finish the preset saving all.
+        PresetManager.finish();
     }
 
     public void onClientStarted(FMLInitializationEvent event) {
@@ -84,6 +88,7 @@ public enum Rocan {
         this.clientEventManager = new EventManager();
         this.commandManager = new CommandManager();
         this.socialManager = new SocialManager();
+        this.presetManager = new PresetManager();
 
         this.wrapperGUI = new GUI();
 

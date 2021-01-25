@@ -258,7 +258,13 @@ public class ModuleWidget extends Widget {
         } else {
             // The fun animation is here, so set the selected when mouse over with flag.
             // OBS: this make mixed the settings sometimes but is pretty cool!
-            this.isSelected = this.flagMouse == Flag.MouseOver;
+            if (this.flagMouse == Flag.MouseOver) {
+                this.container.resetWidget(false);
+
+                this.isSelected = true;
+            } else {
+                this.isSelected = false;
+            }
         }
 
         TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetSelected[0], Rocan.getWrapperGUI().colorWidgetSelected[1], Rocan.getWrapperGUI().colorWidgetSelected[2], this.alphaEffectSelected);

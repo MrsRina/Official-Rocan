@@ -2,13 +2,13 @@ package me.rina.rocan.api.preset.management;
 
 import com.google.gson.*;
 import me.rina.rocan.Rocan;
-import me.rina.rocan.api.ISavableLoadable;
+import me.rina.rocan.api.ISLClass;
 import me.rina.rocan.api.preset.Preset;
 import me.rina.rocan.api.social.Social;
+import me.rina.rocan.api.social.type.SocialType;
+import me.rina.turok.util.TurokClass;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -17,7 +17,7 @@ import java.util.ArrayList;
  * @author SrRina
  * @since 23/01/2021 at 14:00
  **/
-public class PresetManager implements ISavableLoadable {
+public class PresetManager implements ISLClass {
     public static PresetManager INSTANCE;
 
     private ArrayList<Preset> presetList;
@@ -75,8 +75,21 @@ public class PresetManager implements ISavableLoadable {
         return null;
     }
 
+    public static void finish() {
+        Rocan.getModuleManager().onLoad();
+        Rocan.getSocialManager().onLoad();
+
+        INSTANCE.onSave();
+    }
+
     public static void reload() {
-        INSTANCE.currentPreset.onLoad();
+        if (INSTANCE.currentPreset == null) {
+            Rocan.getModuleManager().onLoad();
+        } else {
+            INSTANCE.currentPreset.onLoad();
+        }
+
+        Rocan.getSocialManager().onLoad();
     }
 
     @Override
@@ -125,6 +138,52 @@ public class PresetManager implements ISavableLoadable {
 
     @Override
     public void onLoad() {
+        try {
+            String pathFolder = Rocan.PATH_CONFIG + "/";
+            String pathFile = pathFolder + "Preset" + ".json";
 
+            if (Files.exists(Paths.get(pathFile)) == false) {
+                return;
+            }
+
+            InputStream file = Files.newInputStream(Paths.get(pathFile));
+
+            JsonObject mainJson = new JsonParser().parse(new InputStreamReader(file)).getAsJsonObject();
+            JsonArray mainJsonArray = new JsonParser().parse(new InputStreamReader(file)).getAsJsonArray();
+
+            String currentPresetName = "";
+
+            if (mainJson.get("current") == null) {
+                currentPresetName = mainJson.get("current").getAsString();
+            }
+
+            for (JsonElement element : mainJsonArray) {
+                JsonObject presetJson = element.getAsJsonObject();
+
+                if (presetJson.get("name") == null) {
+                    continue;
+                }
+
+                Preset preset = new Preset(presetJson.get("name").getAsString(), "");
+
+                if (presetJson.get("data") != null) {
+                    preset.setData(presetJson.get("data").getAsString());
+                }
+
+                if (presetJson.get("path") != null) {
+                    preset.setPath(presetJson.get("path").getAsString());
+                }
+
+                if (preset.getName().equalsIgnoreCase(currentPresetName)) {
+                    this.currentPreset = preset;
+                }
+
+                this.registry(preset);
+            }
+
+            file.close();
+        } catch (IOException exc) {
+            exc.printStackTrace();
+        }
     }
 }

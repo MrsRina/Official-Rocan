@@ -7,6 +7,7 @@ import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
+import me.rina.rocan.client.gui.module.client.container.ClientContainer;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.turok.hardware.mouse.TurokMouse;
 import me.rina.turok.render.opengl.TurokRenderGL;
@@ -37,8 +38,6 @@ public class MotherFrame extends Frame {
     protected float scaleWidth;
     protected float scaleHeight;
 
-    private float currentScaleWidth;
-
     private float dragX;
     private float dragY;
 
@@ -48,6 +47,8 @@ public class MotherFrame extends Frame {
     private float size;
 
     private ArrayList<Widget> loadedWidgetList;
+
+    private ClientContainer clientContainer;
 
     private float widgetHeight;
 
@@ -72,6 +73,7 @@ public class MotherFrame extends Frame {
 
     public void init() {
         this.loadedWidgetList = new ArrayList<>();
+        this.clientContainer = new ClientContainer(this.master, this);
 
         for (ModuleCategory category : ModuleCategory.values()) {
             ModuleCategoryWidget moduleCategoryWidget = new ModuleCategoryWidget(this.master, this, category);
@@ -260,6 +262,8 @@ public class MotherFrame extends Frame {
         this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
         this.flagMouseResize = this.rectResize.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
 
+        this.clientContainer.onRender();
+
         /*
          * Its the width of widget category, if you:
          * min  = 75;
@@ -280,6 +284,7 @@ public class MotherFrame extends Frame {
 
         this.scaleWidth = TurokMath.lerp(this.scaleWidth, (TurokMath.clamp(this.size, (minimumWidth + 1) * this.loadedWidgetList.size(), (maximumWidth + 1) * this.loadedWidgetList.size())), this.master.getPartialTicks());
 
+        // The background of frame.
         TurokRenderGL.color(Rocan.getWrapperGUI().colorFrameBackground[0], Rocan.getWrapperGUI().colorFrameBackground[1], Rocan.getWrapperGUI().colorFrameBackground[2], Rocan.getWrapperGUI().colorFrameBackground[3]);
         TurokRenderGL.drawSolidRect(this.rect);
 
@@ -292,9 +297,14 @@ public class MotherFrame extends Frame {
 
                 moduleCategoryWidget.getRect().setWidth(TurokMath.clamp((this.size - this.loadedWidgetList.size()) / this.loadedWidgetList.size(), minimumWidth, maximumWidth));
                 moduleCategoryWidget.setOffsetX((moduleCategoryWidget.getRect().getWidth() + 1) * this.loadedWidgetList.indexOf(widgets));
+
+                if (moduleCategoryWidget.isSelected()) {
+                    this.clientContainer.setModuleContainer(moduleCategoryWidget.getContainer());
+                }
             }
         }
 
+        // Selected category effect.
         TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetSelected[0], Rocan.getWrapperGUI().colorWidgetSelected[1], Rocan.getWrapperGUI().colorWidgetSelected[2], Rocan.getWrapperGUI().colorWidgetSelected[3]);
         TurokRenderGL.drawOutlineRect(this.rectWidgetSelected);
 
