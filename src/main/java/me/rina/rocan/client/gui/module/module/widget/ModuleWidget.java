@@ -255,15 +255,23 @@ public class ModuleWidget extends Widget {
 
         if (this.isLocked) { // I need verify if is locked to set selected, actually this works great with animation.
             this.isSelected = true;
+
+            // We need set as open to client container do not glitch.
+            this.container.setModuleOpen(true);
         } else {
             // The fun animation is here, so set the selected when mouse over with flag.
             // OBS: this make mixed the settings sometimes but is pretty cool!
             if (this.flagMouse == Flag.MouseOver) {
+                // We need get one current list when mouse is over, to make readable if one module is open.
+                // So we can set the isModuleOpen in container, to do not glitch with container client.
                 this.container.resetWidget(false);
 
                 this.isSelected = true;
             } else {
                 this.isSelected = false;
+
+                // Disable to enable container client.
+                this.container.setModuleOpen(false);
             }
         }
 

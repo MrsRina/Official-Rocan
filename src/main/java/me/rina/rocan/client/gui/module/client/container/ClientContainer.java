@@ -142,13 +142,13 @@ public class ClientContainer extends Container {
 
             this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
 
-            if (this.moduleContainer.isModuleOpen()) {
+            // Background of container.
+            TurokRenderGL.color(Rocan.getWrapperGUI().colorContainerBackground[0], Rocan.getWrapperGUI().colorContainerBackground[1], Rocan.getWrapperGUI().colorContainerBackground[2], Rocan.getWrapperGUI().colorContainerBackground[3]);
+            TurokRenderGL.drawSolidRect(this.rect);
+
+            if (this.moduleContainer.isModuleOpen() == false) {
                 this.rect.setWidth(this.getWidthScale());
                 this.rect.setHeight(this.moduleContainer.getRect().getHeight());
-
-                // The fully background rect.
-                TurokRenderGL.color(Rocan.getWrapperGUI().colorContainerBackground[0], Rocan.getWrapperGUI().colorContainerBackground[1], Rocan.getWrapperGUI().colorContainerBackground[2], Rocan.getWrapperGUI().colorContainerBackground[3]);
-                TurokRenderGL.drawSolidRect(this.rect);
             } else {
                 this.rect.setWidth(0);
                 this.rect.setHeight(0);

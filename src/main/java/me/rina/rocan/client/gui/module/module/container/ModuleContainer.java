@@ -108,10 +108,10 @@ public class ModuleContainer extends Container {
             if (widgets instanceof ModuleWidget) {
                 ModuleWidget moduleWidget = (ModuleWidget) widgets;
 
+                this.isModuleOpen = true;
+
                 moduleWidget.setSelected(false);
                 moduleWidget.setLocked(lock);
-
-                this.isModuleOpen = false;
             }
         }
     }
@@ -282,6 +282,7 @@ public class ModuleContainer extends Container {
 
         this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
 
+        // Background of container.
         TurokRenderGL.color(Rocan.getWrapperGUI().colorContainerBackground[0], Rocan.getWrapperGUI().colorContainerBackground[1], Rocan.getWrapperGUI().colorContainerBackground[2], Rocan.getWrapperGUI().colorContainerBackground[3]);
         TurokRenderGL.drawSolidRect(this.rect);
 
