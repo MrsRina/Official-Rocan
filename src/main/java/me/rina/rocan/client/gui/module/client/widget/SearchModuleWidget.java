@@ -1,4 +1,4 @@
-package me.rina.rocan.client.gui.module.setting.widget;
+package me.rina.rocan.client.gui.module.client.widget;
 
 import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.flag.Flag;
@@ -6,6 +6,7 @@ import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.setting.value.ValueString;
 import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
+import me.rina.rocan.client.gui.module.client.container.ClientContainer;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
@@ -31,9 +32,9 @@ import java.io.IOException;
 
 /**
  * @author SrRina
- * @since 21/01/2021 at 14:07
+ * @since 25/01/2021 at 19:36
  **/
-public class SettingStringWidget extends Widget {
+public class SearchModuleWidget extends Widget {
     private ModuleClickGUI master;
     private MotherFrame frame;
 
@@ -41,7 +42,7 @@ public class SettingStringWidget extends Widget {
     private ModuleContainer moduleContainer;
 
     private ModuleWidget widgetModule;
-    private SettingContainer settingContainer;
+    private ClientContainer clientContainer;
 
     private float offsetX;
     private float offsetY;
@@ -63,32 +64,25 @@ public class SettingStringWidget extends Widget {
     private boolean isFocused;
 
     private char lastTypedCharacter;
+
     private String split;
 
     private TurokGeneric<String> cacheType = new TurokGeneric<String>("");
     private TurokRect rectEntryBox = new TurokRect("EntryBox", 0, 0);
     private TurokTick tickAnimationSplit = new TurokTick();
 
-    private ValueString setting;
-
     public Flag flagMouse = Flag.MouseNotOver;
     public Flag flagMouseEntry = Flag.MouseNotOver;
 
-    public SettingStringWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer moduleContainer, ModuleWidget widgetModule, SettingContainer settingContainer, ValueString setting) {
-        super(setting.getName());
+    public SearchModuleWidget(ModuleClickGUI master, MotherFrame frame, ClientContainer clientContainer) {
+        super("");
 
         this.master = master;
         this.frame = frame;
 
-        this.widgetCategory = widgetCategory;
-        this.moduleContainer = moduleContainer;
+        this.clientContainer = clientContainer;
 
-        this.widgetModule = widgetModule;
-        this.settingContainer = settingContainer;
-
-        this.setting = setting;
-
-        this.rect.setWidth(this.settingContainer.getRect().getWidth());
+        this.rect.setWidth(this.clientContainer.getRect().getWidth());
         this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
     }
 
@@ -99,11 +93,19 @@ public class SettingStringWidget extends Widget {
     }
 
     public void cancel() {
+        if (this.moduleContainer != null && !(this.cacheType.getValue().isEmpty() || this.rect.getTag().isEmpty())) {
+            this.moduleContainer.refreshWidget();
+        }
+
         this.isFocused = false;
     }
 
     public void cancelSet() {
-        this.setting.setValue(this.cacheType.getValue());
+        if (this.moduleContainer != null && !(this.cacheType.getValue().isEmpty() || this.rect.getTag().isEmpty())) {
+            this.moduleContainer.refreshWidget();
+        }
+
+        this.rect.setTag(this.cacheType.getValue());
 
         this.isFocused = false;
     }
@@ -116,12 +118,28 @@ public class SettingStringWidget extends Widget {
         return rectEntryBox;
     }
 
-    public void setSetting(ValueString setting) {
-        this.setting = setting;
+    public void setWidgetModule(ModuleWidget widgetModule) {
+        this.widgetModule = widgetModule;
     }
 
-    public ValueString getSetting() {
-        return setting;
+    public ModuleCategoryWidget getWidgetCategory() {
+        return widgetCategory;
+    }
+
+    public void setModuleContainer(ModuleContainer moduleContainer) {
+        this.moduleContainer = moduleContainer;
+    }
+
+    public ModuleContainer getModuleContainer() {
+        return moduleContainer;
+    }
+
+    public void setWidgetCategory(ModuleCategoryWidget widgetCategory) {
+        this.widgetCategory = widgetCategory;
+    }
+
+    public ModuleWidget getWidgetModule() {
+        return widgetModule;
     }
 
     public void setOffsetX(float offsetX) {
@@ -209,6 +227,10 @@ public class SettingStringWidget extends Widget {
 
                     case Keyboard.KEY_BACK: {
                         this.cacheType.setValue(this.removeLastChar(this.cacheType.getValue()));
+
+                        if (this.moduleContainer != null) {
+                            this.moduleContainer.refreshSearchWidget(this.cacheType.getValue());
+                        }
                     }
 
                     default: {
@@ -217,6 +239,10 @@ public class SettingStringWidget extends Widget {
                             this.lastTypedCharacter = character;
 
                             this.cacheType.setValue(this.cacheType.getValue() + this.lastTypedCharacter);
+
+                            if (this.moduleContainer != null) {
+                                this.moduleContainer.refreshSearchWidget(this.cacheType.getValue());
+                            }
 
                             boolean isScrollLimit = TurokFontManager.getStringWidth(Rocan.getWrapperGUI().fontSmallWidget, this.cacheType.getValue()) + 1f >= this.rectEntryBox.getWidth();
 
@@ -231,10 +257,6 @@ public class SettingStringWidget extends Widget {
     }
 
     @Override
-    public void onMouseReleased(int button) {
-    }
-
-    @Override
     public void onCustomMouseReleased(int button) {
         if (this.flagMouseEntry == Flag.MouseOver) {
             if (this.isMouseClickedLeft) {
@@ -243,6 +265,10 @@ public class SettingStringWidget extends Widget {
         } else {
             this.isMouseClickedLeft = false;
         }
+    }
+
+    @Override
+    public void onMouseReleased(int button) {
     }
 
     @Override
@@ -274,11 +300,11 @@ public class SettingStringWidget extends Widget {
 
     @Override
     public void onRender() {
-        this.rect.setWidth(this.settingContainer.getRect().getWidth());
+        this.rect.setWidth(this.clientContainer.getRect().getWidth());
         this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
 
-        this.rect.setX(this.settingContainer.getScrollRect().getX() + this.offsetX);
-        this.rect.setY(this.settingContainer.getScrollRect().getY() + this.offsetY);
+        this.rect.setX(this.clientContainer.getScrollRect().getX() + this.offsetX);
+        this.rect.setY(this.clientContainer.getScrollRect().getY() + this.offsetY);
 
         float offsetEntryBox = 2f;
 
@@ -293,7 +319,7 @@ public class SettingStringWidget extends Widget {
 
         float offsetSpace = 1.0f;
 
-        if (this.settingContainer.flagMouseRealRect == Flag.MouseOver) {
+        if (this.clientContainer.flagMouse == Flag.MouseOver) {
             this.flagMouseEntry = this.rectEntryBox.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
             this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
         } else {
@@ -335,15 +361,21 @@ public class SettingStringWidget extends Widget {
                 this.tickAnimationSplit.reset();
             }
 
+
+
             TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.cacheType.getValue() + this.split, this.stringPositionX, this.stringPositionY, true, new Color(255, 255, 255));
         } else {
             this.master.setCanceledCloseGUI(false);
-            this.cacheType.setValue(this.setting.getValue());
+            this.cacheType.setValue(this.rect.getTag());
+
+            if (this.clientContainer.flagMouse == Flag.MouseNotOver) {
+                this.rect.setTag("");
+            }
 
             if (this.flagMouseEntry == Flag.MouseOver) {
-                TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.setting.getValue(), this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255));
+                TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag(), this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255));
             } else {
-                TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.setting.getFormat() + " - " + this.rect.getTag(), this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255, 100));
+                TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, "Search " + this.rect.getTag(), this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255, 100));
             }
         }
 
@@ -366,12 +398,6 @@ public class SettingStringWidget extends Widget {
 
         if (this.offsetPositionTextX >= maximumPositionText) {
             this.offsetPositionTextX = maximumPositionText;
-        }
-
-        if (this.flagMouse == Flag.MouseOver) {
-            this.settingContainer.getDescriptionLabel().setText(this.setting.getDescription());
-
-            this.settingContainer.flagDescription = Flag.MouseOver;
         }
 
         TurokShaderGL.popScissorMatrix();

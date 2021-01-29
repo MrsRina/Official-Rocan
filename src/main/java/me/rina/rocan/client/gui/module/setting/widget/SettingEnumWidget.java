@@ -188,7 +188,7 @@ public class SettingEnumWidget extends Widget {
         // We verify the current enum value at mode when we load the client.
         // Loop.
         if (this.isStarted) {
-            if (this.enumValueList.get(this.index) != (Enum<?>) this.setting.getValue()) {
+            if (this.enumValueList.get(this.index) != this.setting.getValue()) {
                 this.setting.setValue(this.enumValueList.get(this.index));
 
                 // We need refresh later set the value.

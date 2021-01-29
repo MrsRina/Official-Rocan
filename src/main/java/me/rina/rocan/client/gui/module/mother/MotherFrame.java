@@ -10,10 +10,12 @@ import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.client.container.ClientContainer;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.turok.hardware.mouse.TurokMouse;
+import me.rina.turok.render.font.management.TurokFontManager;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 import me.rina.turok.util.TurokRect.Dock;
@@ -87,6 +89,16 @@ public class MotherFrame extends Frame {
         }
     }
 
+    public void resetWidget() {
+        for (Widget widgets : this.loadedWidgetList) {
+            if (widgets instanceof ModuleCategoryWidget) {
+                ModuleCategoryWidget moduleCategoryWidget = (ModuleCategoryWidget) widgets;
+
+                moduleCategoryWidget.setSelected(false);
+            }
+        }
+    }
+
     public void setRectWidgetSelected(TurokRect rectWidgetSelected) {
         this.rectWidgetSelected = rectWidgetSelected;
     }
@@ -103,14 +115,12 @@ public class MotherFrame extends Frame {
         return rectResize;
     }
 
-    public void resetWidget() {
-        for (Widget widgets : this.loadedWidgetList) {
-            if (widgets instanceof ModuleCategoryWidget) {
-                ModuleCategoryWidget moduleCategoryWidget = (ModuleCategoryWidget) widgets;
+    public void setClientContainer(ClientContainer clientContainer) {
+        this.clientContainer = clientContainer;
+    }
 
-                moduleCategoryWidget.setSelected(false);
-            }
-        }
+    public ClientContainer getClientContainer() {
+        return clientContainer;
     }
 
     public void setScale(int scale) {
@@ -161,6 +171,8 @@ public class MotherFrame extends Frame {
 
         this.isMouseClickedLeft = false;
         this.isMouseClickedMiddle = false;
+
+        this.clientContainer.onClose();
     }
 
     @Override
@@ -168,6 +180,8 @@ public class MotherFrame extends Frame {
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onOpen();
         }
+
+        this.clientContainer.onOpen();
     }
 
     @Override
@@ -180,6 +194,8 @@ public class MotherFrame extends Frame {
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onKeyboard(character, key);
         }
+
+        this.clientContainer.onKeyboard(character, key);
     }
 
     @Override
@@ -191,6 +207,8 @@ public class MotherFrame extends Frame {
                 if (moduleCategoryWidget.isSelected()) moduleCategoryWidget.onCustomKeyboard(character, key);
             }
         }
+
+        this.clientContainer.onCustomKeyboard(character, key);
     }
 
     @Override
@@ -212,6 +230,9 @@ public class MotherFrame extends Frame {
                 if (moduleCategoryWidget.isSelected()) moduleCategoryWidget.onCustomMouseReleased(button);
             }
         }
+
+        this.clientContainer.onMouseReleased(button);
+        this.clientContainer.onCustomMouseReleased(button);
     }
 
     @Override
@@ -241,6 +262,9 @@ public class MotherFrame extends Frame {
                 if (moduleCategoryWidget.isSelected()) moduleCategoryWidget.onCustomMouseClicked(button);
             }
         }
+
+        this.clientContainer.onMouseClicked(button);
+        this.clientContainer.onCustomMouseClicked(button);
     }
 
     @Override
@@ -261,8 +285,6 @@ public class MotherFrame extends Frame {
 
         this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
         this.flagMouseResize = this.rectResize.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
-
-        this.clientContainer.onRender();
 
         /*
          * Its the width of widget category, if you:
@@ -288,6 +310,12 @@ public class MotherFrame extends Frame {
         TurokRenderGL.color(Rocan.getWrapperGUI().colorFrameBackground[0], Rocan.getWrapperGUI().colorFrameBackground[1], Rocan.getWrapperGUI().colorFrameBackground[2], Rocan.getWrapperGUI().colorFrameBackground[3]);
         TurokRenderGL.drawSolidRect(this.rect);
 
+        /*
+         * We need render the normal render and custom, cause yes.
+         */
+        this.clientContainer.onRender();
+        this.clientContainer.onCustomRender();
+
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onRender();
             widgets.onCustomRender();
@@ -297,10 +325,6 @@ public class MotherFrame extends Frame {
 
                 moduleCategoryWidget.getRect().setWidth(TurokMath.clamp((this.size - this.loadedWidgetList.size()) / this.loadedWidgetList.size(), minimumWidth, maximumWidth));
                 moduleCategoryWidget.setOffsetX((moduleCategoryWidget.getRect().getWidth() + 1) * this.loadedWidgetList.indexOf(widgets));
-
-                if (moduleCategoryWidget.isSelected()) {
-                    this.clientContainer.setModuleContainer(moduleCategoryWidget.getContainer());
-                }
             }
         }
 

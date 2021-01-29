@@ -20,7 +20,7 @@ import java.awt.*;
  * @since 06/12/20 at 03:48pm
  */
 public class ModuleBlockHighlight extends Module {
-    public static ValueBoolean renderRGB = new ValueBoolean("RGB", "RGB", "360 color range.", false);
+    public static ValueBoolean renderRGB = new ValueBoolean("RGB", "RGB", "RGB effect.", false);
 
     public static ValueNumber renderRed = new ValueNumber("Red", "Red", "Color line range red.", 255, 0, 255);
     public static ValueNumber renderGreen = new ValueNumber("Green", "Green", "Color line range green.", 0, 0, 255);
@@ -30,7 +30,7 @@ public class ModuleBlockHighlight extends Module {
     /*
      * Outline config;
      */
-    public static ValueEnum renderOutline = new ValueEnum("Outline", "Outline", "Outline effect on block render.", RenderOutline.Enabled);
+    public static ValueEnum renderOutline = new ValueEnum("Outline", "Outline", "Outline effect.", RenderOutline.Enabled);
 
     enum RenderOutline {
         Enabled, Disabled;
@@ -45,7 +45,7 @@ public class ModuleBlockHighlight extends Module {
     public static ValueNumber renderOutlineAlpha = new ValueNumber("Outline Alpha", "OutlineAlpha", "Color line range alpha.", 255, 0, 255);
 
     public ModuleBlockHighlight() {
-        super("Block Highlight", "BlockHighlight", "Render block over split mouse.", ModuleCategory.Render);
+        super("Block Highlight", "BlockHighlight", "Draw over the block of mouse object.", ModuleCategory.Render);
     }
 
     @Override
@@ -82,15 +82,15 @@ public class ModuleBlockHighlight extends Module {
         RayTraceResult splitResult = mc.objectMouseOver;
 
         if (splitResult != null && splitResult.typeOfHit == RayTraceResult.Type.BLOCK) {
-            BlockPos blockPosition = splitResult.getBlockPos();
+            BlockPos block = splitResult.getBlockPos();
 
-            if (mc.world.getBlockState(blockPosition).getBlock() != Blocks.AIR) {
-                Render3DUtil.render3DSolid(camera, blockPosition, color);
+            if (mc.world.getBlockState(block).getBlock() != Blocks.AIR) {
+                Render3DUtil.render3DSolid(camera, block, color);
 
                 if (renderOutline.getValue() == RenderOutline.Enabled) {
                     float line = (float) renderOutlineLineSize.getValue();
 
-                    Render3DUtil.render3DOutline(camera, blockPosition, line, colorOutline);
+                    Render3DUtil.render3DOutline(camera, block, line, colorOutline);
                 }
             }
         }

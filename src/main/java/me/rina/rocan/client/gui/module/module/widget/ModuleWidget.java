@@ -182,7 +182,7 @@ public class ModuleWidget extends Widget {
 
     @Override
     public void onCustomMouseClicked(int button) {
-        if (this.settingContainer.flagMouse == Flag.MouseNotOver && this.flagMouse == Flag.MouseNotOver && this.frame.flagMouseResize == Flag.MouseNotOver) {
+        if (this.settingContainer.flagMouse == Flag.MouseNotOver && this.flagMouse == Flag.MouseNotOver && this.frame.flagMouseResize == Flag.MouseNotOver && this.container.isModuleOpen() && this.isLocked && this.frame.getClientContainer().flagMouseModule == Flag.MouseNotOver) {
             this.container.resetWidget();
         }
 
@@ -195,8 +195,8 @@ public class ModuleWidget extends Widget {
                     this.doubleClickTick.reset();
                 }
 
-                // Reset the main container of modules using this class.
-                this.container.resetWidget(this.getClass());
+                // Reset the main container of modules using this name.
+                this.container.resetWidget(this.module.getName());
 
                 // Lock the container setting to render.
                 this.isLocked = true;
@@ -204,7 +204,7 @@ public class ModuleWidget extends Widget {
 
             // Here works as main button but do not enable module.
             if (button == 1) {
-                this.container.resetWidget(this.getClass());
+                this.container.resetWidget(this.module.getName());
 
                 this.isLocked = true;
             }
@@ -261,17 +261,17 @@ public class ModuleWidget extends Widget {
         } else {
             // The fun animation is here, so set the selected when mouse over with flag.
             // OBS: this make mixed the settings sometimes but is pretty cool!
-            if (this.flagMouse == Flag.MouseOver) {
+            if (this.flagMouse == Flag.MouseOver && this.container.isModuleOpen() == false) {
                 // We need get one current list when mouse is over, to make readable if one module is open.
                 // So we can set the isModuleOpen in container, to do not glitch with container client.
                 this.container.resetWidget(false);
 
+                // Set over.
+                this.frame.getClientContainer().flagMouseModule = Flag.MouseOver;
+
                 this.isSelected = true;
             } else {
                 this.isSelected = false;
-
-                // Disable to enable container client.
-                this.container.setModuleOpen(false);
             }
         }
 

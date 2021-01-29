@@ -130,6 +130,8 @@ public class ModuleCategoryWidget extends Widget {
         if (this.flagMouse == Flag.MouseOver && this.isMouseClickedLeft) {
             this.frame.resetWidget();
 
+            this.frame.getClientContainer().setModuleContainer(this.container);
+
             this.isSelected = true;
             this.isMouseClickedLeft = false;
         }

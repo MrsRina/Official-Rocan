@@ -12,12 +12,14 @@ import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
+import me.rina.turok.render.font.management.TurokFontManager;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -74,7 +76,6 @@ public class ModuleContainer extends Container {
 
         for (Module modules : ModuleManager.get(this.category)) {
             ModuleWidget moduleWidget = new ModuleWidget(this.master, this.frame, this.widget, this, modules);
-
             moduleWidget.setOffsetY(this.scrollRect.getHeight());
 
             this.loadedWidgetList.add(moduleWidget);
@@ -90,15 +91,50 @@ public class ModuleContainer extends Container {
         this.rect.setY(this.frame.getRect().getY() + this.widget.getRect().getHeight() + scale);
     }
 
+    public void refreshWidget() {
+        this.scrollRect.setHeight(0);
+
+        for (Widget widgets : this.loadedWidgetList) {
+            if (widgets instanceof ModuleWidget) {
+                ModuleWidget moduleWidget = (ModuleWidget) widgets;
+                moduleWidget.setOffsetY(this.scrollRect.getHeight());
+
+                this.scrollRect.height += moduleWidget.getRect().getHeight() + 1;
+            }
+        }
+    }
+
+    public void refreshSearchWidget(String currentSearch) {
+        if (currentSearch.isEmpty()) {
+            return;
+        }
+
+        this.scrollRect.setHeight(0);
+
+        for (Widget widgets : this.loadedWidgetList) {
+            if (widgets instanceof ModuleWidget) {
+                ModuleWidget moduleWidget = (ModuleWidget) widgets;
+
+                if (moduleWidget.getModule().getName().contains(currentSearch)) {
+                    moduleWidget.setOffsetY(this.scrollRect.getHeight());
+
+                    this.scrollRect.height += moduleWidget.getRect().getHeight() + 1;
+                } else {
+                    moduleWidget.setOffsetY(-1000.0f);
+                }
+            }
+        }
+    }
+
     public void resetWidget() {
         for (Widget widgets : this.loadedWidgetList) {
             if (widgets instanceof ModuleWidget) {
                 ModuleWidget moduleWidget = (ModuleWidget) widgets;
 
+                this.isModuleOpen = false;
+
                 moduleWidget.setSelected(false);
                 moduleWidget.setLocked(false);
-
-                this.isModuleOpen = false;
             }
         }
     }
@@ -108,7 +144,7 @@ public class ModuleContainer extends Container {
             if (widgets instanceof ModuleWidget) {
                 ModuleWidget moduleWidget = (ModuleWidget) widgets;
 
-                this.isModuleOpen = true;
+                this.isModuleOpen = lock;
 
                 moduleWidget.setSelected(false);
                 moduleWidget.setLocked(lock);
@@ -116,14 +152,14 @@ public class ModuleContainer extends Container {
         }
     }
 
-    public void resetWidget(Class<?> clazz) {
+    public void resetWidget(String name) {
         for (Widget widgets : this.loadedWidgetList) {
             if (widgets instanceof ModuleWidget) {
                 ModuleWidget moduleWidget = (ModuleWidget) widgets;
 
                 this.isModuleOpen = true;
 
-                if (moduleWidget.getClass() != clazz) {
+                if (moduleWidget.getModule().getName().equalsIgnoreCase(name)) {
                     moduleWidget.setLocked(false);
                     moduleWidget.setSelected(false);
                 }
@@ -296,5 +332,11 @@ public class ModuleContainer extends Container {
         }
 
         TurokShaderGL.popScissorMatrix();
+
+        if (this.widget.isSelected()) {
+            String string = "ModuleOpen: " + this.isModuleOpen + " Client Container Flag: " + this.frame.getClientContainer().flagMouseModule.toString();
+
+            TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, string, 10, 10, true, new Color(255, 255, 255));
+        }
     }
 }

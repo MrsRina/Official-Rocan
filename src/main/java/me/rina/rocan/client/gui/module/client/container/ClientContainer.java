@@ -4,9 +4,12 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.container.Container;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
+import me.rina.rocan.client.gui.module.client.widget.SearchModuleWidget;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.turok.render.opengl.TurokRenderGL;
+import me.rina.turok.util.TurokMath;
+import me.rina.turok.util.TurokRect;
 
 /**
  * @author SrRina
@@ -27,16 +30,43 @@ public class ClientContainer extends Container {
     private boolean isUnselected;
     private boolean isLocked;
 
+    private TurokRect scrollRect = new TurokRect("Scroll", 0, 0);
+    private TurokRect realRect = new TurokRect("Real Rect", 0, 0);
+
+    private SearchModuleWidget searchModuleWidget;
+
     public Flag flagMouse = Flag.MouseNotOver;
+    public Flag flagMouseModule = Flag.MouseNotOver;
+    public Flag flagMouseReal = Flag.MouseNotOver;
 
     public ClientContainer(ModuleClickGUI master, MotherFrame frame) {
         super("client-container-user");
 
         this.master = master;
         this.frame = frame;
+
+        this.init();
     }
 
     public void init() {
+        this.searchModuleWidget = new SearchModuleWidget(this.master, this.frame, this);
+        this.searchModuleWidget.setOffsetY(1);
+    }
+
+    public void setScrollRect(TurokRect scrollRect) {
+        this.scrollRect = scrollRect;
+    }
+
+    public TurokRect getScrollRect() {
+        return scrollRect;
+    }
+
+    public void setRealRect(TurokRect realRect) {
+        this.realRect = realRect;
+    }
+
+    public TurokRect getRealRect() {
+        return realRect;
     }
 
     public void setModuleContainer(ModuleContainer moduleContainer) {
@@ -104,34 +134,42 @@ public class ClientContainer extends Container {
 
     @Override
     public void onClose() {
+        this.searchModuleWidget.onClose();
     }
 
     @Override
     public void onOpen() {
+        this.searchModuleWidget.onOpen();
     }
 
     @Override
     public void onKeyboard(char character, int key) {
+        this.searchModuleWidget.onKeyboard(character, key);
     }
 
     @Override
     public void onCustomKeyboard(char character, int key) {
+        this.searchModuleWidget.onCustomKeyboard(character, key);
     }
 
     @Override
     public void onMouseReleased(int button) {
+        this.searchModuleWidget.onMouseReleased(button);
     }
 
     @Override
     public void onCustomMouseReleased(int button) {
+        this.searchModuleWidget.onCustomMouseReleased(button);
     }
 
     @Override
     public void onMouseClicked(int button) {
+        this.searchModuleWidget.onMouseClicked(button);
     }
 
     @Override
     public void onCustomMouseClicked(int button) {
+        this.searchModuleWidget.onCustomMouseClicked(button);
     }
 
     @Override
@@ -140,23 +178,42 @@ public class ClientContainer extends Container {
             this.rect.setX((this.moduleContainer.getRect().getX() + this.moduleContainer.getRect().getWidth()) + (2 * this.frame.getScale()));
             this.rect.setY(this.moduleContainer.getRect().getY());
 
+            this.scrollRect.setX(this.rect.getX());
+            this.scrollRect.setY(TurokMath.lerp(this.scrollRect.getY(), this.rect.getY() + this.offsetY, this.master.getPartialTicks()));
+
+            float realScrollHeight = this.searchModuleWidget.getRect().getHeight() + 1;
+
+            this.realRect.setX(this.rect.getX());
+            this.realRect.setY(this.rect.getY() + realScrollHeight);
+
+            this.realRect.setWidth(this.rect.getWidth());
+            this.realRect.setHeight(this.rect.getHeight() - realScrollHeight);
+
             this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+            this.flagMouseReal = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
 
             // Background of container.
             TurokRenderGL.color(Rocan.getWrapperGUI().colorContainerBackground[0], Rocan.getWrapperGUI().colorContainerBackground[1], Rocan.getWrapperGUI().colorContainerBackground[2], Rocan.getWrapperGUI().colorContainerBackground[3]);
             TurokRenderGL.drawSolidRect(this.rect);
 
-            if (this.moduleContainer.isModuleOpen() == false) {
+            // Render the search widget of course.
+            this.searchModuleWidget.onRender();
+
+            if ((this.moduleContainer != null && this.moduleContainer.isModuleOpen() == false) || this.flagMouseModule == Flag.MouseNotOver) {
                 this.rect.setWidth(this.getWidthScale());
                 this.rect.setHeight(this.moduleContainer.getRect().getHeight());
             } else {
                 this.rect.setWidth(0);
                 this.rect.setHeight(0);
             }
+
+            this.frame.getClientContainer().flagMouseModule = Flag.MouseNotOver;
         }
     }
 
     @Override
     public void onCustomRender() {
+        // We need render here, cause there is a backend time.
+        this.searchModuleWidget.onCustomRender();
     }
 }

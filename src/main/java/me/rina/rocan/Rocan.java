@@ -12,6 +12,7 @@ import me.rina.rocan.client.command.CommandToggle;
 import me.rina.rocan.client.gui.GUI;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.module.render.ModuleBlockHighlight;
+import me.rina.rocan.client.module.render.ModuleHoleESP;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -55,6 +56,7 @@ public enum Rocan {
         // Modules.
         this.moduleManager.registry(new me.rina.rocan.client.module.client.ModuleClickGUI());
         this.moduleManager.registry(new ModuleBlockHighlight());
+        this.moduleManager.registry(new ModuleHoleESP());
 
         // Commands.
         this.commandManager.registry(new CommandPrefix());
