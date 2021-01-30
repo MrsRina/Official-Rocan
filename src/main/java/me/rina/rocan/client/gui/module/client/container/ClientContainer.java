@@ -199,7 +199,7 @@ public class ClientContainer extends Container {
             // Render the search widget of course.
             this.searchModuleWidget.onRender();
 
-            if ((this.moduleContainer != null && this.moduleContainer.isModuleOpen() == false) || this.flagMouseModule == Flag.MouseNotOver) {
+            if (this.isUnselected) {
                 this.rect.setWidth(this.getWidthScale());
                 this.rect.setHeight(this.moduleContainer.getRect().getHeight());
             } else {
@@ -207,7 +207,17 @@ public class ClientContainer extends Container {
                 this.rect.setHeight(0);
             }
 
-            this.frame.getClientContainer().flagMouseModule = Flag.MouseNotOver;
+            if (this.moduleContainer.isModuleOpen() == false) {
+                if (this.flagMouseModule == Flag.MouseNotOver) {
+                    this.isUnselected = true;
+                } else {
+                    this.isUnselected = false;
+                }
+            } else {
+                this.isUnselected = false;
+            }
+
+            this.flagMouseModule = Flag.MouseNotOver;
         }
     }
 

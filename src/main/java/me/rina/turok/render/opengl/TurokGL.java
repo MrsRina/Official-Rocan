@@ -110,4 +110,12 @@ public class TurokGL {
     public static void shaderMode(int mode) {
         GL11.glShadeModel(mode);
     }
+
+    public static void pushAttrib(int mask) {
+        GL11.glPushAttrib(mask);
+    }
+
+    public static void popAttrib() {
+        GL11.glPopAttrib();
+    }
 }

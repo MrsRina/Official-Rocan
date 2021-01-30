@@ -9,7 +9,6 @@ import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.api.setting.value.ValueString;
-import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
@@ -20,14 +19,11 @@ import me.rina.rocan.client.gui.module.setting.widget.SettingEnumWidget;
 import me.rina.rocan.client.gui.module.setting.widget.SettingNumberWidget;
 import me.rina.rocan.client.gui.module.setting.widget.SettingStringWidget;
 import me.rina.rocan.client.gui.module.visual.LabelWidget;
-import me.rina.turok.render.font.management.TurokFontManager;
-import me.rina.turok.render.opengl.TurokGL;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -579,11 +575,11 @@ public class SettingContainer extends Container {
                     }
                 }
             }
-
-            TurokShaderGL.popScissorMatrix();
         } else {
             this.flagMouseRealRect = Flag.MouseNotOver;
         }
+
+        TurokShaderGL.popScissorMatrix();
 
         if (this.flagDescription == Flag.MouseNotOver) {
             this.descriptionLabel.setText(this.widgetModule.getModule().getDescription());

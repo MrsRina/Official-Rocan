@@ -3,7 +3,6 @@ package me.rina.rocan.client.gui.module.client.widget;
 import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
-import me.rina.rocan.api.setting.value.ValueString;
 import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.client.container.ClientContainer;
@@ -11,8 +10,8 @@ import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
-import me.rina.rocan.client.gui.module.setting.container.SettingContainer;
 import me.rina.turok.render.font.management.TurokFontManager;
+import me.rina.turok.render.opengl.TurokGL;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokGeneric;
@@ -361,8 +360,6 @@ public class SearchModuleWidget extends Widget {
                 this.tickAnimationSplit.reset();
             }
 
-
-
             TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.cacheType.getValue() + this.split, this.stringPositionX, this.stringPositionY, true, new Color(255, 255, 255));
         } else {
             this.master.setCanceledCloseGUI(false);
@@ -378,6 +375,8 @@ public class SearchModuleWidget extends Widget {
                 TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, "Search " + this.rect.getTag(), this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255, 100));
             }
         }
+
+        TurokShaderGL.popScissorMatrix();
 
         this.isTyping = false;
 
@@ -399,8 +398,6 @@ public class SearchModuleWidget extends Widget {
         if (this.offsetPositionTextX >= maximumPositionText) {
             this.offsetPositionTextX = maximumPositionText;
         }
-
-        TurokShaderGL.popScissorMatrix();
     }
 
     @Override

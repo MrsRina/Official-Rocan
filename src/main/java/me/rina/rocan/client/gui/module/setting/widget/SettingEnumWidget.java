@@ -196,7 +196,7 @@ public class SettingEnumWidget extends Widget {
             }
         // Init.
         } else {
-            this.index = TurokClass.getEnumByName((Enum<?>) this.setting.getValue(), ((Enum<?>) this.setting.getValue()).name()) != null ? this.enumValueList.indexOf(TurokClass.getEnumByName((Enum<?>) this.setting.getValue(), ((Enum<?>) this.setting.getValue()).name())) : 0;
+            this.index = TurokClass.getEnumByName(this.setting.getValue(), this.setting.getValue().name()) != null ? this.enumValueList.indexOf(TurokClass.getEnumByName(this.setting.getValue(), this.setting.getValue().name())) : 0;
 
             this.setting.setValue(this.enumValueList.get(this.index));
 

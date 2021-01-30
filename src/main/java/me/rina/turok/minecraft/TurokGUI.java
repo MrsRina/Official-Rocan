@@ -186,7 +186,6 @@ public class TurokGUI extends GuiScreen {
         TurokGL.scale(0.5f, 0.5f, 0.5f);
 
         TurokGL.popMatrix();
-
         TurokGL.disable(GL11.GL_TEXTURE_2D);
 
         this.onRender();

@@ -128,11 +128,6 @@ public class ModuleCategoryWidget extends Widget {
     @Override
     public void onMouseReleased(int button) {
         if (this.flagMouse == Flag.MouseOver && this.isMouseClickedLeft) {
-            this.frame.resetWidget();
-
-            this.frame.getClientContainer().setModuleContainer(this.container);
-
-            this.isSelected = true;
             this.isMouseClickedLeft = false;
         }
 
@@ -147,7 +142,14 @@ public class ModuleCategoryWidget extends Widget {
     @Override
     public void onMouseClicked(int button) {
         if (this.flagMouse == Flag.MouseOver) {
-            if (button == 0) {
+            if (button == 0 && this.isSelected == false) {
+                this.frame.resetWidget();
+                this.frame.getClientContainer().setModuleContainer(this.container);
+
+                this.container.refreshWidget();
+
+                this.isSelected = true;
+
                 this.isMouseClickedLeft = true;
             }
         }
@@ -181,31 +183,22 @@ public class ModuleCategoryWidget extends Widget {
          * to fix slow linear slow interpolation.
          */
         if (this.isSelected) {
-            this.container.getRect().setWidth((int) TurokMath.lerp(this.container.getRect().getWidth(), this.container.getWidthScale(), this.master.getPartialTicks()));
-
-            if (this.container.getRect().getWidth() >= this.container.getWidthScale() - 10) {
-                this.container.getRect().setWidth(this.container.getWidthScale());
-            }
-
-            this.container.getRect().setHeight((int) TurokMath.lerp(this.container.getRect().getHeight(), this.container.getHeightScale(), this.master.getPartialTicks()));
-
-            if (this.container.getRect().getHeight() >= this.container.getHeightScale() - 10) {
-                this.container.getRect().setHeight(this.container.getHeightScale());
-            }
+            this.container.getRect().setWidth(this.container.getWidthScale());
+            this.container.getRect().setHeight(this.container.getHeightScale());
 
             this.frame.getRectWidgetSelected().setX((int) TurokMath.lerp(this.frame.getRectWidgetSelected().getX(), this.rect.getX(), this.master.getPartialTicks()));
 
             if (this.frame.getRectWidgetSelected().getDistance(this.rect) <= 10) {
                 this.frame.getRectWidgetSelected().setX(this.rect.getX());
             }
+
+            this.container.onRender();
         } else {
-            this.container.getRect().setWidth((int) TurokMath.lerp(this.container.getRect().getWidth(), 0, this.master.getPartialTicks()));
-            this.container.getRect().setHeight((int) TurokMath.lerp(this.container.getRect().getHeight(), 0, this.master.getPartialTicks()));
+            this.container.getRect().setWidth(0);
+            this.container.getRect().setHeight(0);
         }
 
         this.frame.getRectWidgetSelected().setWidth(this.rect.getWidth());
-
-        this.container.onRender();
     }
 
     @Override

@@ -7,7 +7,6 @@ import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.module.management.ModuleManager;
-import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
@@ -17,7 +16,6 @@ import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -78,6 +76,9 @@ public class ModuleContainer extends Container {
             ModuleWidget moduleWidget = new ModuleWidget(this.master, this.frame, this.widget, this, modules);
             moduleWidget.setOffsetY(this.scrollRect.getHeight());
 
+            // We need save the current offsetY at animation y.
+            moduleWidget.setAnimationY(this.scrollRect.getHeight());
+
             this.loadedWidgetList.add(moduleWidget);
 
             this.scrollRect.height += moduleWidget.getRect().getHeight() + 1;
@@ -97,7 +98,9 @@ public class ModuleContainer extends Container {
         for (Widget widgets : this.loadedWidgetList) {
             if (widgets instanceof ModuleWidget) {
                 ModuleWidget moduleWidget = (ModuleWidget) widgets;
-                moduleWidget.setOffsetY(this.scrollRect.getHeight());
+
+                moduleWidget.setOffsetY(-1);
+                moduleWidget.setAnimationY(this.scrollRect.getHeight());
 
                 this.scrollRect.height += moduleWidget.getRect().getHeight() + 1;
             }
@@ -159,7 +162,7 @@ public class ModuleContainer extends Container {
 
                 this.isModuleOpen = true;
 
-                if (moduleWidget.getModule().getName().equalsIgnoreCase(name)) {
+                if (moduleWidget.getModule().getName().equalsIgnoreCase(name) == false) {
                     moduleWidget.setLocked(false);
                     moduleWidget.setSelected(false);
                 }
@@ -334,7 +337,7 @@ public class ModuleContainer extends Container {
         TurokShaderGL.popScissorMatrix();
 
         if (this.widget.isSelected()) {
-            String string = "ModuleOpen: " + this.isModuleOpen + " Client Container Flag: " + this.frame.getClientContainer().flagMouseModule.toString();
+            String string = "ModuleOpen: " + this.isModuleOpen + " Client Container Flag: " + this.frame.getClientContainer().flagMouseModule.toString() + " ClientContainerUnselected: " + this.frame.getClientContainer().isUnselected();
 
             TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, string, 10, 10, true, new Color(255, 255, 255));
         }

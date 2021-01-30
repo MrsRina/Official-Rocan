@@ -28,6 +28,9 @@ public class ModuleWidget extends Widget {
 
     private Module module;
 
+    private float animationY;
+    private float animationX;
+
     private float offsetX;
     private float offsetY;
 
@@ -103,6 +106,22 @@ public class ModuleWidget extends Widget {
 
     public boolean isLocked() {
         return isLocked;
+    }
+
+    public void setAnimationX(float animationX) {
+        this.animationX = animationX;
+    }
+
+    public float getAnimationX() {
+        return animationX;
+    }
+
+    public void setAnimationY(float animationY) {
+        this.animationY = animationY;
+    }
+
+    public float getAnimationY() {
+        return animationY;
     }
 
     public void setOffsetX(float offsetX) {
@@ -225,6 +244,9 @@ public class ModuleWidget extends Widget {
         this.rect.setX(this.container.getScrollRect().getX() + this.offsetX);
         this.rect.setY(this.container.getScrollRect().getY() + this.offsetY);
 
+        // The animation.
+        this.offsetY = TurokMath.lerp(this.offsetY, this.animationY, this.master.getPartialTicks());
+
         // Automatically set cool off
         this.offsetX = 2;
 
@@ -282,7 +304,7 @@ public class ModuleWidget extends Widget {
         if (this.isSelected) {
             this.alphaEffectSelected = (int) TurokMath.lerp(this.alphaEffectSelected, Rocan.getWrapperGUI().colorWidgetSelected[3], this.master.getPartialTicks());
 
-            this.settingContainer.getRect().setWidth((int) TurokMath.lerp(this.settingContainer.getRect().getWidth(), this.settingContainer.getWidthScale(), this.master.getPartialTicks()));
+            this.settingContainer.getRect().setWidth(TurokMath.lerp(this.settingContainer.getRect().getWidth(), this.settingContainer.getWidthScale(), this.master.getPartialTicks()));
 
             if (this.settingContainer.getRect().getWidth() >= this.settingContainer.getWidthScale() - 10) {
                 this.settingContainer.getRect().setWidth(this.settingContainer.getWidthScale());
@@ -296,8 +318,8 @@ public class ModuleWidget extends Widget {
         } else {
             this.alphaEffectSelected = (int) TurokMath.lerp(this.alphaEffectSelected, 0, this.master.getPartialTicks());
 
-            this.settingContainer.getRect().setWidth((int) TurokMath.lerp(this.settingContainer.getRect().getWidth(), 0, this.master.getPartialTicks()));
-            this.settingContainer.getRect().setHeight((int) TurokMath.lerp(this.settingContainer.getRect().getHeight(), 0, this.master.getPartialTicks()));
+            this.settingContainer.getRect().setWidth(TurokMath.lerp(this.settingContainer.getRect().getWidth(), 0, this.master.getPartialTicks()));
+            this.settingContainer.getRect().setHeight(TurokMath.lerp(this.settingContainer.getRect().getHeight(), 0, this.master.getPartialTicks()));
         }
 
         this.settingContainer.onCustomRender();
