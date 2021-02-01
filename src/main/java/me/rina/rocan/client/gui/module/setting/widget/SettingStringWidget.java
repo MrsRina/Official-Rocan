@@ -60,6 +60,7 @@ public class SettingStringWidget extends Widget {
 
     private boolean isMouseClickedLeft;
     private boolean isTyping;
+    private boolean isAllSelected;
     private boolean isFocused;
 
     private char lastTypedCharacter;
@@ -99,12 +100,14 @@ public class SettingStringWidget extends Widget {
     }
 
     public void cancel() {
+        this.isAllSelected = false;
         this.isFocused = false;
     }
 
     public void cancelSet() {
         this.setting.setValue(this.cacheType.getValue());
 
+        this.isAllSelected = false;
         this.isFocused = false;
     }
 
@@ -184,6 +187,12 @@ public class SettingStringWidget extends Widget {
 
                 if (content != null && content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                     try {
+                        if (this.isAllSelected) {
+                            this.cacheType.setValue("");
+
+                            this.isAllSelected = false;
+                        }
+
                         this.cacheType.setValue(this.cacheType.getValue() + content.getTransferData(DataFlavor.stringFlavor));
                     } catch (UnsupportedFlavorException | IOException exc) {
                         ChatUtil.print("Exception: " + exc);
@@ -197,6 +206,10 @@ public class SettingStringWidget extends Widget {
                         this.offsetPositionTextX = this.rectEntryBox.getWidth() - TurokFontManager.getStringWidth(Rocan.getWrapperGUI().fontSmallWidget, this.cacheType.getValue()) - 7;
                     }
                 }
+            } else if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_A)) {
+                if (this.cacheType.getValue().isEmpty() == false) {
+                    this.isAllSelected = true;
+                }
             } else {
                 switch (key) {
                     case Keyboard.KEY_ESCAPE: {
@@ -208,12 +221,22 @@ public class SettingStringWidget extends Widget {
                     }
 
                     case Keyboard.KEY_BACK: {
-                        this.cacheType.setValue(this.removeLastChar(this.cacheType.getValue()));
+                        this.cacheType.setValue(this.isAllSelected ? "" : this.removeLastChar(this.cacheType.getValue()));
+
+                        if (this.isAllSelected) {
+                            this.isAllSelected = false;
+                        }
                     }
 
                     default: {
                         // Some characters are not allowed at Minecraft.
                         if (ChatAllowedCharacters.isAllowedCharacter(character)) {
+                            if (this.isAllSelected) {
+                                this.cacheType.setValue("");
+
+                                this.isAllSelected = false;
+                            }
+
                             this.lastTypedCharacter = character;
 
                             this.cacheType.setValue(this.cacheType.getValue() + this.lastTypedCharacter);
@@ -259,8 +282,12 @@ public class SettingStringWidget extends Widget {
     @Override
     public void onCustomMouseClicked(int button) {
         if (this.flagMouseEntry == Flag.MouseOver) {
-            this.isFocused = button == 0;
-            this.isMouseClickedLeft = button == 0;
+            this.isAllSelected = false;
+
+            if (button == 0) {
+                this.isFocused = true;
+                this.isMouseClickedLeft = true;
+            }
         } else {
             if (this.isFocused) {
                 this.cancelSet();
@@ -310,11 +337,16 @@ public class SettingStringWidget extends Widget {
         TurokRenderGL.drawOutlineRect(this.rectEntryBox);
 
         // The typing solid effect.
-        TurokRenderGL.color(190, 190, 190, this.alphaEffectPressed);
+        TurokRenderGL.color(255, 255, 255, this.alphaEffectPressed);
         TurokRenderGL.drawSolidRect(this.rectEntryBox);
 
+        // We push the scissor.
         TurokShaderGL.pushScissorMatrix();
         TurokShaderGL.drawScissor(this.rectEntryBox.getX() + 0.5f, this.rectEntryBox.getY(), this.rectEntryBox.getWidth() - (0.5f), this.rectEntryBox.getHeight());
+
+        // The selected solid effect.
+        TurokRenderGL.color(0, 0, 255, this.isAllSelected ? this.alphaEffectPressed : 0);
+        TurokRenderGL.drawSolidRect(this.rectEntryBox.getX(), this.rectEntryBox.getY(), offsetSpace + TurokFontManager.getStringWidth(Rocan.getWrapperGUI().fontSmallWidget, this.cacheType.getValue()), this.rectEntryBox.getHeight());
 
         this.stringPositionX = TurokMath.lerp(this.stringPositionX, this.rectEntryBox.getX() + offsetSpace + this.offsetPositionTextX, this.master.getPartialTicks());
         this.stringPositionY = this.rectEntryBox.getY() + (this.rectEntryBox.getHeight() / 2 - (TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontSmallWidget, "AaBbCc") / 2));
@@ -335,17 +367,23 @@ public class SettingStringWidget extends Widget {
                 this.tickAnimationSplit.reset();
             }
 
-            TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.cacheType.getValue() + this.split, this.stringPositionX, this.stringPositionY, true, new Color(255, 255, 255));
+            TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.cacheType.getValue() + (this.isAllSelected ? "" : this.split), this.stringPositionX, this.stringPositionY, true, new Color(255, 255, 255));
         } else {
             this.master.setCanceledCloseGUI(false);
             this.cacheType.setValue(this.setting.getValue());
 
+            this.isAllSelected = false;
+
+            String currentFormat = this.setting.getValue().isEmpty() ? this.setting.getFormat() : this.setting.getValue();
+
             if (this.flagMouseEntry == Flag.MouseOver) {
                 TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.setting.getValue(), this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255));
             } else {
-                TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.setting.getFormat() + " - " + this.rect.getTag(), this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255, 100));
+                TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag() + " " + currentFormat, this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255, 100));
             }
         }
+
+        TurokShaderGL.popScissorMatrix();
 
         this.isTyping = false;
 
@@ -373,8 +411,6 @@ public class SettingStringWidget extends Widget {
 
             this.settingContainer.flagDescription = Flag.MouseOver;
         }
-
-        TurokShaderGL.popScissorMatrix();
     }
 
     @Override

@@ -214,7 +214,7 @@ public class ModuleWidget extends Widget {
                     this.doubleClickTick.reset();
                 }
 
-                // Reset the main container of modules using this name.
+                // Reset the main container of modules using the class.
                 this.container.resetWidget(this.module.getName());
 
                 // Lock the container setting to render.
@@ -247,16 +247,13 @@ public class ModuleWidget extends Widget {
         // The animation.
         this.offsetY = TurokMath.lerp(this.offsetY, this.animationY, this.master.getPartialTicks());
 
-        // Automatically set cool off
-        this.offsetX = 2;
-
         if (this.container.flagMouse == Flag.MouseOver) {
             this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
         } else {
             this.flagMouse = Flag.MouseNotOver;
         }
 
-        this.rect.setWidth(this.container.getRect().getWidth() - (this.offsetX * 2));
+        this.rect.setWidth(this.container.getRect().getWidth() - 4);
         this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
 
         this.alphaEffectHighlight = (int) (this.flagMouse == Flag.MouseOver ? TurokMath.lerp(this.alphaEffectHighlight, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : TurokMath.lerp(this.alphaEffectHighlight, 0, this.master.getPartialTicks()));

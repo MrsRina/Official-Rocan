@@ -19,6 +19,7 @@ import me.rina.turok.util.TurokRect;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * @author SrRina
@@ -99,6 +100,7 @@ public class ModuleContainer extends Container {
             if (widgets instanceof ModuleWidget) {
                 ModuleWidget moduleWidget = (ModuleWidget) widgets;
 
+                moduleWidget.setOffsetX(2);
                 moduleWidget.setOffsetY(-1);
                 moduleWidget.setAnimationY(this.scrollRect.getHeight());
 
@@ -108,22 +110,37 @@ public class ModuleContainer extends Container {
     }
 
     public void refreshSearchWidget(String currentSearch) {
+        this.scrollRect.setHeight(0);
+
         if (currentSearch.isEmpty()) {
+            for (Widget widgets : this.loadedWidgetList) {
+                if (widgets instanceof ModuleWidget) {
+                    ModuleWidget moduleWidget = (ModuleWidget) widgets;
+
+                    moduleWidget.setOffsetX(2);
+                    moduleWidget.setAnimationY(this.scrollRect.getHeight());
+
+                    this.scrollRect.height += moduleWidget.getRect().getHeight() + 1;
+                }
+            }
+
             return;
         }
-
-        this.scrollRect.setHeight(0);
 
         for (Widget widgets : this.loadedWidgetList) {
             if (widgets instanceof ModuleWidget) {
                 ModuleWidget moduleWidget = (ModuleWidget) widgets;
 
-                if (moduleWidget.getModule().getName().contains(currentSearch)) {
-                    moduleWidget.setOffsetY(this.scrollRect.getHeight());
+                String tagLowCase = moduleWidget.getModule().getTag().toLowerCase();
+                String searchLowCase = currentSearch.replaceAll(" ", "").toLowerCase();
+
+                if (tagLowCase.contains(searchLowCase)) {
+                    moduleWidget.setOffsetX(2);
+                    moduleWidget.setAnimationY(this.scrollRect.getHeight());
 
                     this.scrollRect.height += moduleWidget.getRect().getHeight() + 1;
                 } else {
-                    moduleWidget.setOffsetY(-1000.0f);
+                    moduleWidget.setOffsetX(-1000.0f);
                 }
             }
         }
@@ -335,11 +352,5 @@ public class ModuleContainer extends Container {
         }
 
         TurokShaderGL.popScissorMatrix();
-
-        if (this.widget.isSelected()) {
-            String string = "ModuleOpen: " + this.isModuleOpen + " Client Container Flag: " + this.frame.getClientContainer().flagMouseModule.toString() + " ClientContainerUnselected: " + this.frame.getClientContainer().isUnselected();
-
-            TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, string, 10, 10, true, new Color(255, 255, 255));
-        }
     }
 }

@@ -175,20 +175,6 @@ public class ClientContainer extends Container {
     @Override
     public void onRender() {
         if (this.moduleContainer != null) {
-            this.rect.setX((this.moduleContainer.getRect().getX() + this.moduleContainer.getRect().getWidth()) + (2 * this.frame.getScale()));
-            this.rect.setY(this.moduleContainer.getRect().getY());
-
-            this.scrollRect.setX(this.rect.getX());
-            this.scrollRect.setY(TurokMath.lerp(this.scrollRect.getY(), this.rect.getY() + this.offsetY, this.master.getPartialTicks()));
-
-            float realScrollHeight = this.searchModuleWidget.getRect().getHeight() + 1;
-
-            this.realRect.setX(this.rect.getX());
-            this.realRect.setY(this.rect.getY() + realScrollHeight);
-
-            this.realRect.setWidth(this.rect.getWidth());
-            this.realRect.setHeight(this.rect.getHeight() - realScrollHeight);
-
             this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
             this.flagMouseReal = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
 
@@ -200,6 +186,20 @@ public class ClientContainer extends Container {
             this.searchModuleWidget.onRender();
 
             if (this.isUnselected) {
+                this.rect.setX((this.moduleContainer.getRect().getX() + this.moduleContainer.getRect().getWidth()) + (2 * this.frame.getScale()));
+                this.rect.setY(this.moduleContainer.getRect().getY());
+
+                this.scrollRect.setX(this.rect.getX());
+                this.scrollRect.setY(TurokMath.lerp(this.scrollRect.getY(), this.rect.getY() + this.offsetY, this.master.getPartialTicks()));
+
+                float realScrollHeight = this.searchModuleWidget.getRect().getHeight() + 1;
+
+                this.realRect.setX(this.rect.getX());
+                this.realRect.setY(this.rect.getY() + realScrollHeight);
+
+                this.realRect.setWidth(this.rect.getWidth());
+                this.realRect.setHeight(this.rect.getHeight() - realScrollHeight);
+
                 this.rect.setWidth(this.getWidthScale());
                 this.rect.setHeight(this.moduleContainer.getRect().getHeight());
             } else {

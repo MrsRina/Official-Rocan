@@ -18,6 +18,7 @@ import me.rina.turok.util.TurokGeneric;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
 import me.rina.turok.util.TurokTick;
+import net.minecraft.client.gui.GuiChat;
 import net.minecraft.util.ChatAllowedCharacters;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
@@ -38,9 +39,8 @@ public class SearchModuleWidget extends Widget {
     private MotherFrame frame;
 
     private ModuleCategoryWidget widgetCategory;
-    private ModuleContainer moduleContainer;
-
     private ModuleWidget widgetModule;
+
     private ClientContainer clientContainer;
 
     private float offsetX;
@@ -60,6 +60,7 @@ public class SearchModuleWidget extends Widget {
 
     private boolean isMouseClickedLeft;
     private boolean isTyping;
+    private boolean isAllSelected;
     private boolean isFocused;
 
     private char lastTypedCharacter;
@@ -92,20 +93,22 @@ public class SearchModuleWidget extends Widget {
     }
 
     public void cancel() {
-        if (this.moduleContainer != null && !(this.cacheType.getValue().isEmpty() || this.rect.getTag().isEmpty())) {
-            this.moduleContainer.refreshWidget();
+        if (this.clientContainer.getModuleContainer() != null) {
+            this.clientContainer.getModuleContainer().refreshSearchWidget(this.rect.getTag());
         }
 
+        this.isAllSelected = false;
         this.isFocused = false;
     }
 
     public void cancelSet() {
-        if (this.moduleContainer != null && !(this.cacheType.getValue().isEmpty() || this.rect.getTag().isEmpty())) {
-            this.moduleContainer.refreshWidget();
+        if (this.clientContainer.getModuleContainer() != null) {
+            this.clientContainer.getModuleContainer().refreshSearchWidget(this.cacheType.getValue());
         }
 
         this.rect.setTag(this.cacheType.getValue());
 
+        this.isAllSelected = false;
         this.isFocused = false;
     }
 
@@ -123,14 +126,6 @@ public class SearchModuleWidget extends Widget {
 
     public ModuleCategoryWidget getWidgetCategory() {
         return widgetCategory;
-    }
-
-    public void setModuleContainer(ModuleContainer moduleContainer) {
-        this.moduleContainer = moduleContainer;
-    }
-
-    public ModuleContainer getModuleContainer() {
-        return moduleContainer;
     }
 
     public void setWidgetCategory(ModuleCategoryWidget widgetCategory) {
@@ -201,7 +196,17 @@ public class SearchModuleWidget extends Widget {
 
                 if (content != null && content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                     try {
+                        if (this.isAllSelected) {
+                            this.cacheType.setValue("");
+
+                            this.isAllSelected = false;
+                        }
+
                         this.cacheType.setValue(this.cacheType.getValue() + content.getTransferData(DataFlavor.stringFlavor));
+
+                        if (this.clientContainer.getModuleContainer() != null) {
+                            this.clientContainer.getModuleContainer().refreshSearchWidget(this.cacheType.getValue());
+                        }
                     } catch (UnsupportedFlavorException | IOException exc) {
                         ChatUtil.print("Exception: " + exc);
 
@@ -214,6 +219,10 @@ public class SearchModuleWidget extends Widget {
                         this.offsetPositionTextX = this.rectEntryBox.getWidth() - TurokFontManager.getStringWidth(Rocan.getWrapperGUI().fontSmallWidget, this.cacheType.getValue()) - 7;
                     }
                 }
+            } else if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_A)) {
+                if (this.cacheType.getValue().isEmpty() == false) {
+                    this.isAllSelected = true;
+                }
             } else {
                 switch (key) {
                     case Keyboard.KEY_ESCAPE: {
@@ -225,22 +234,32 @@ public class SearchModuleWidget extends Widget {
                     }
 
                     case Keyboard.KEY_BACK: {
-                        this.cacheType.setValue(this.removeLastChar(this.cacheType.getValue()));
+                        this.cacheType.setValue(this.isAllSelected ? "" : this.removeLastChar(this.cacheType.getValue()));
 
-                        if (this.moduleContainer != null) {
-                            this.moduleContainer.refreshSearchWidget(this.cacheType.getValue());
+                        if (this.isAllSelected) {
+                            this.isAllSelected = false;
+                        }
+
+                        if (this.clientContainer.getModuleContainer() != null) {
+                            this.clientContainer.getModuleContainer().refreshSearchWidget(this.cacheType.getValue());
                         }
                     }
 
                     default: {
                         // Some characters are not allowed at Minecraft.
                         if (ChatAllowedCharacters.isAllowedCharacter(character)) {
+                            if (this.isAllSelected) {
+                                this.cacheType.setValue("");
+
+                                this.isAllSelected = false;
+                            }
+
                             this.lastTypedCharacter = character;
 
                             this.cacheType.setValue(this.cacheType.getValue() + this.lastTypedCharacter);
 
-                            if (this.moduleContainer != null) {
-                                this.moduleContainer.refreshSearchWidget(this.cacheType.getValue());
+                            if (this.clientContainer.getModuleContainer() != null) {
+                                this.clientContainer.getModuleContainer().refreshSearchWidget(this.cacheType.getValue());
                             }
 
                             boolean isScrollLimit = TurokFontManager.getStringWidth(Rocan.getWrapperGUI().fontSmallWidget, this.cacheType.getValue()) + 1f >= this.rectEntryBox.getWidth();
@@ -283,9 +302,20 @@ public class SearchModuleWidget extends Widget {
 
     @Override
     public void onCustomMouseClicked(int button) {
+        if (this.clientContainer.flagMouse == Flag.MouseNotOver && this.rect.getTag().isEmpty() == false) {
+            this.clientContainer.getModuleContainer().refreshSearchWidget("");
+            this.rect.setTag("");
+
+            this.isFocused = false;
+        }
+
         if (this.flagMouseEntry == Flag.MouseOver) {
-            this.isFocused = button == 0;
-            this.isMouseClickedLeft = button == 0;
+            this.isAllSelected = false;
+
+            if (button == 0) {
+                this.isFocused = true;
+                this.isMouseClickedLeft = true;
+            }
         } else {
             if (this.isFocused) {
                 this.cancelSet();
@@ -335,11 +365,16 @@ public class SearchModuleWidget extends Widget {
         TurokRenderGL.drawOutlineRect(this.rectEntryBox);
 
         // The typing solid effect.
-        TurokRenderGL.color(190, 190, 190, this.alphaEffectPressed);
+        TurokRenderGL.color(255, 255, 255, this.alphaEffectPressed);
         TurokRenderGL.drawSolidRect(this.rectEntryBox);
 
+        // Push scissor test.
         TurokShaderGL.pushScissorMatrix();
         TurokShaderGL.drawScissor(this.rectEntryBox.getX() + 0.5f, this.rectEntryBox.getY(), this.rectEntryBox.getWidth() - (0.5f), this.rectEntryBox.getHeight());
+
+        // The selected solid effect.
+        TurokRenderGL.color(0, 0, 255, this.isAllSelected ? this.alphaEffectPressed : 0);
+        TurokRenderGL.drawSolidRect(this.rectEntryBox.getX(), this.rectEntryBox.getY(), offsetSpace + TurokFontManager.getStringWidth(Rocan.getWrapperGUI().fontSmallWidget, this.cacheType.getValue()), this.rectEntryBox.getHeight());
 
         this.stringPositionX = TurokMath.lerp(this.stringPositionX, this.rectEntryBox.getX() + offsetSpace + this.offsetPositionTextX, this.master.getPartialTicks());
         this.stringPositionY = this.rectEntryBox.getY() + (this.rectEntryBox.getHeight() / 2 - (TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontSmallWidget, "AaBbCc") / 2));
@@ -365,15 +400,13 @@ public class SearchModuleWidget extends Widget {
             this.master.setCanceledCloseGUI(false);
             this.cacheType.setValue(this.rect.getTag());
 
-            if (this.clientContainer.flagMouse == Flag.MouseNotOver) {
-                this.rect.setTag("");
-            }
-
             if (this.flagMouseEntry == Flag.MouseOver) {
                 TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag(), this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255));
             } else {
                 TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, "Search " + this.rect.getTag(), this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255, 100));
             }
+
+            this.isAllSelected = false;
         }
 
         TurokShaderGL.popScissorMatrix();
