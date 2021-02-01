@@ -201,7 +201,7 @@ public class ClientContainer extends Container {
                 this.realRect.setHeight(this.rect.getHeight() - realScrollHeight);
 
                 this.rect.setWidth(this.getWidthScale());
-                this.rect.setHeight(this.moduleContainer.getRect().getHeight());
+                this.rect.setHeight(this.moduleContainer.getHeightScale());
             } else {
                 this.rect.setWidth(0);
                 this.rect.setHeight(0);

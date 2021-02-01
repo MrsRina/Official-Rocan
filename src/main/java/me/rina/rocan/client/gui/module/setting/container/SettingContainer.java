@@ -5,19 +5,13 @@ import me.rina.rocan.api.gui.container.Container;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.setting.Setting;
-import me.rina.rocan.api.setting.value.ValueBoolean;
-import me.rina.rocan.api.setting.value.ValueEnum;
-import me.rina.rocan.api.setting.value.ValueNumber;
-import me.rina.rocan.api.setting.value.ValueString;
+import me.rina.rocan.api.setting.value.*;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
-import me.rina.rocan.client.gui.module.setting.widget.SettingBooleanWidget;
-import me.rina.rocan.client.gui.module.setting.widget.SettingEnumWidget;
-import me.rina.rocan.client.gui.module.setting.widget.SettingNumberWidget;
-import me.rina.rocan.client.gui.module.setting.widget.SettingStringWidget;
+import me.rina.rocan.client.gui.module.setting.widget.*;
 import me.rina.rocan.client.gui.module.visual.LabelWidget;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.render.opengl.TurokShaderGL;
@@ -135,6 +129,18 @@ public class SettingContainer extends Container {
                     this.scrollRect.height += settingStringWidget.getRect().getHeight() + 1;
                 }
             }
+
+            if (settings instanceof ValueBind) {
+                SettingBindWidget settingBindWidget = new SettingBindWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, (ValueBind) settings);
+
+                this.loadedWidgetList.add(settingBindWidget);
+
+                settingBindWidget.setOffsetY(this.scrollRect.getHeight());
+
+                if (settingBindWidget.getSetting().isEnabled()) {
+                    this.scrollRect.height += settingBindWidget.getRect().getHeight() + 1;
+                }
+            }
         }
     }
 
@@ -180,6 +186,15 @@ public class SettingContainer extends Container {
 
                 if (settingStringWidget.getSetting().isEnabled()) {
                     this.scrollRect.height += settingStringWidget.getRect().getHeight() + 1;
+                }
+            }
+
+            if (widgets instanceof SettingBindWidget) {
+                SettingBindWidget settingBindWidget = (SettingBindWidget) widgets;
+                settingBindWidget.setOffsetY(this.scrollRect.getHeight());
+
+                if (settingBindWidget.getSetting().isEnabled()) {
+                    this.scrollRect.height += settingBindWidget.getRect().getHeight() + 1;
                 }
             }
         }
@@ -296,6 +311,14 @@ public class SettingContainer extends Container {
                     widgets.onKeyboard(character, key);
                 }
             }
+
+            if (widgets instanceof SettingBindWidget) {
+                SettingBindWidget settingBindWidget = (SettingBindWidget) widgets;
+
+                if (settingBindWidget.getSetting().isEnabled()) {
+                    widgets.onKeyboard(character, key);
+                }
+            }
         }
     }
 
@@ -333,6 +356,14 @@ public class SettingContainer extends Container {
                     widgets.onCustomKeyboard(character, key);
                 }
             }
+
+            if (widgets instanceof SettingBindWidget) {
+                SettingBindWidget settingBindWidget = (SettingBindWidget) widgets;
+
+                if (settingBindWidget.getSetting().isEnabled()) {
+                    widgets.onCustomKeyboard(character, key);
+                }
+            }
         }
     }
 
@@ -367,6 +398,14 @@ public class SettingContainer extends Container {
                 SettingStringWidget settingStringWidget = (SettingStringWidget) widgets;
 
                 if (settingStringWidget.getSetting().isEnabled()) {
+                    widgets.onMouseReleased(button);
+                }
+            }
+
+            if (widgets instanceof SettingBindWidget) {
+                SettingBindWidget settingBindWidget = (SettingBindWidget) widgets;
+
+                if (settingBindWidget.getSetting().isEnabled()) {
                     widgets.onMouseReleased(button);
                 }
             }
@@ -408,6 +447,14 @@ public class SettingContainer extends Container {
                         widgets.onCustomMouseReleased(button);
                     }
                 }
+
+                if (widgets instanceof SettingBindWidget) {
+                    SettingBindWidget settingBindWidget = (SettingBindWidget) widgets;
+
+                    if (settingBindWidget.getSetting().isEnabled()) {
+                        widgets.onCustomMouseReleased(button);
+                    }
+                }
             }
         }
     }
@@ -446,6 +493,14 @@ public class SettingContainer extends Container {
                     widgets.onMouseClicked(button);
                 }
             }
+
+            if (widgets instanceof SettingBindWidget) {
+                SettingBindWidget settingBindWidget = (SettingBindWidget) widgets;
+
+                if (settingBindWidget.getSetting().isEnabled()) {
+                    widgets.onMouseClicked(button);
+                }
+            }
         }
     }
 
@@ -481,6 +536,14 @@ public class SettingContainer extends Container {
                     SettingStringWidget settingStringWidget = (SettingStringWidget) widgets;
 
                     if (settingStringWidget.getSetting().isEnabled()) {
+                        widgets.onCustomMouseClicked(button);
+                    }
+                }
+
+                if (widgets instanceof SettingBindWidget) {
+                    SettingBindWidget settingBindWidget = (SettingBindWidget) widgets;
+
+                    if (settingBindWidget.getSetting().isEnabled()) {
                         widgets.onCustomMouseClicked(button);
                     }
                 }
@@ -547,7 +610,7 @@ public class SettingContainer extends Container {
                     SettingBooleanWidget settingBooleanWidget = (SettingBooleanWidget) widgets;
 
                     if (settingBooleanWidget.getSetting().isEnabled()) {
-                        widgets.onRender();
+                        settingBooleanWidget.onRender();
                     }
                 }
 
@@ -555,7 +618,7 @@ public class SettingContainer extends Container {
                     SettingNumberWidget settingNumberWidget = (SettingNumberWidget) widgets;
 
                     if (settingNumberWidget.getSetting().isEnabled()) {
-                        widgets.onRender();
+                        settingNumberWidget.onRender();
                     }
                 }
 
@@ -563,7 +626,7 @@ public class SettingContainer extends Container {
                     SettingEnumWidget settingEnumWidget = (SettingEnumWidget) widgets;
 
                     if (settingEnumWidget.getSetting().isEnabled()) {
-                        widgets.onRender();
+                        settingEnumWidget.onRender();
                     }
                 }
 
@@ -571,7 +634,15 @@ public class SettingContainer extends Container {
                     SettingStringWidget settingStringWidget = (SettingStringWidget) widgets;
 
                     if (settingStringWidget.getSetting().isEnabled()) {
-                        widgets.onRender();
+                        settingStringWidget.onRender();
+                    }
+                }
+
+                if (widgets instanceof SettingBindWidget) {
+                    SettingBindWidget settingBindWidget = (SettingBindWidget) widgets;
+
+                    if (settingBindWidget.getSetting().isEnabled()) {
+                        settingBindWidget.onRender();
                     }
                 }
             }
@@ -595,7 +666,7 @@ public class SettingContainer extends Container {
                 SettingBooleanWidget settingBooleanWidget = (SettingBooleanWidget) widgets;
 
                 if (settingBooleanWidget.getSetting().isEnabled()) {
-                    widgets.onCustomRender();
+                    settingBooleanWidget.onCustomRender();
                 }
             }
 
@@ -603,7 +674,7 @@ public class SettingContainer extends Container {
                 SettingNumberWidget settingNumberWidget = (SettingNumberWidget) widgets;
 
                 if (settingNumberWidget.getSetting().isEnabled()) {
-                    widgets.onCustomRender();
+                    settingNumberWidget.onCustomRender();
                 }
             }
 
@@ -611,7 +682,7 @@ public class SettingContainer extends Container {
                 SettingEnumWidget settingEnumWidget = (SettingEnumWidget) widgets;
 
                 if (settingEnumWidget.getSetting().isEnabled()) {
-                    widgets.onCustomRender();
+                    settingEnumWidget.onCustomRender();
                 }
             }
 
@@ -619,7 +690,15 @@ public class SettingContainer extends Container {
                 SettingStringWidget settingStringWidget = (SettingStringWidget) widgets;
 
                 if (settingStringWidget.getSetting().isEnabled()) {
-                    widgets.onCustomRender();
+                    settingStringWidget.onCustomRender();
+                }
+            }
+
+            if (widgets instanceof SettingBindWidget) {
+                SettingBindWidget settingBindWidget = (SettingBindWidget) widgets;
+
+                if (settingBindWidget.getSetting().isEnabled()) {
+                    settingBindWidget.onCustomRender();
                 }
             }
         }

@@ -5,10 +5,7 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.ISLClass;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.setting.Setting;
-import me.rina.rocan.api.setting.value.ValueBoolean;
-import me.rina.rocan.api.setting.value.ValueEnum;
-import me.rina.rocan.api.setting.value.ValueNumber;
-import me.rina.rocan.api.setting.value.ValueString;
+import me.rina.rocan.api.setting.value.*;
 import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.turok.util.TurokClass;
 import net.minecraft.client.Minecraft;
@@ -32,13 +29,12 @@ public class Module implements ISLClass {
 
     private ModuleCategory category;
 
-    private boolean isEnabled;
-    private int keyCode;
-
     private ArrayList<Setting> settingList;
 
-    public static ValueBoolean showModuleEnableList = new ValueBoolean("Show Module Enabled List", "ShowModuleEnabledList", "Show in component Module Enabled List", true);
-    public static ValueBoolean toggleMessage = new ValueBoolean("Toggle Message", "ToggleMessage", "Send a message when enable or disable.", true);
+    private ValueBind keyBinding = new ValueBind("Key Bind", "KeyBind", "Key bind to active or disable module.", -1);
+
+    private ValueBoolean showModuleEnableList = new ValueBoolean("Show Module Enabled List", "ShowModuleEnabledList", "Show in component Module Enabled List", true);
+    private ValueBoolean toggleMessage = new ValueBoolean("Toggle Message", "ToggleMessage", "Alert if is toggled.", true);
 
     /*
      * Frustum camera for render in 3D space.
@@ -54,10 +50,8 @@ public class Module implements ISLClass {
 
         this.category = category;
 
-        this.isEnabled = false;
-        this.keyCode = -1;
-
-        // We need registry the currents two settings at own Module.
+        // We need registry the currents pre settings at own Module class.
+        this.registry(keyBinding);
         this.registry(showModuleEnableList);
         this.registry(toggleMessage);
     }
@@ -103,23 +97,23 @@ public class Module implements ISLClass {
     }
 
     public void setEnabled(boolean enabled) {
-        if (this.isEnabled != enabled) {
-            this.isEnabled = enabled;
+        if (this.keyBinding.getState() != enabled) {
+            this.keyBinding.setState(enabled);
 
             this.onReload();
         }
     }
 
     public boolean isEnabled() {
-        return isEnabled;
+        return keyBinding.getState();
     }
 
-    public void setKeyCode(int keyCode) {
-        this.keyCode = keyCode;
+    public void setKeyCode(int key) {
+        this.keyBinding.setKeyCode(key);
     }
 
     public int getKeyCode() {
-        return keyCode;
+        return keyBinding.getKeyCode();
     }
 
     public void registry(Setting setting) {
@@ -169,11 +163,11 @@ public class Module implements ISLClass {
     }
 
     public void toggle() {
-        this.setEnabled(!this.isEnabled);
+        this.setEnabled(!this.keyBinding.getState());
     }
 
     public void onReload() {
-        if (this.isEnabled) {
+        if (this.keyBinding.getState()) {
             this.setEnabled();
         } else {
             this.setDisabled();
@@ -181,7 +175,7 @@ public class Module implements ISLClass {
     }
 
     public void setEnabled() {
-        this.isEnabled = true;
+        this.keyBinding.setState(true);
 
         if (toggleMessage.getValue()) {
             ChatUtil.print(this.tag + " enabled.");
@@ -193,7 +187,7 @@ public class Module implements ISLClass {
     }
 
     public void setDisabled() {
-        this.isEnabled = false;
+        this.keyBinding.setState(false);
 
         if (toggleMessage.getValue()) {
             ChatUtil.print(this.tag + " disabled.");
@@ -235,9 +229,6 @@ public class Module implements ISLClass {
             }
 
             JsonObject mainJson = new JsonObject();
-
-            mainJson.add("enabled", new JsonPrimitive(this.isEnabled));
-
             JsonObject jsonSettingList = new JsonObject();
 
             for (Setting settings : this.settingList) {
@@ -263,7 +254,18 @@ public class Module implements ISLClass {
                     ValueString settingValueString = (ValueString) settings;
 
                     jsonSettingList.add(settingValueString.getTag(), new JsonPrimitive(settingValueString.getValue()));
+                }
 
+                if (settings instanceof ValueBind) {
+                    ValueBind settingValueBind = (ValueBind) settings;
+
+                    // We create a object json to save key and state.
+                    JsonObject valueBindObject = new JsonObject();
+
+                    valueBindObject.add("key", new JsonPrimitive(settingValueBind.getKeyCode()));
+                    valueBindObject.add("state", new JsonPrimitive(settingValueBind.getState()));
+
+                    jsonSettingList.add(settingValueBind.getTag(), valueBindObject);
                 }
             }
 
@@ -293,10 +295,6 @@ public class Module implements ISLClass {
             InputStream file = Files.newInputStream(Paths.get(pathFile));
 
             JsonObject mainJson = new JsonParser().parse(new InputStreamReader(file)).getAsJsonObject();
-
-            if (mainJson.get("enabled") != null) {
-                this.setEnabled(mainJson.get("enabled").getAsBoolean());
-            }
 
             if (mainJson.get("settings") != null) {
                 JsonObject jsonSettingList = mainJson.get("settings").getAsJsonObject();
@@ -332,6 +330,21 @@ public class Module implements ISLClass {
                         ValueEnum settingValueEnum = (ValueEnum) settings;
 
                         settingValueEnum.setValue(TurokClass.getEnumByName(settingValueEnum.getValue(), jsonSettingList.get(settings.getTag()).getAsString()));
+                    }
+
+                    if (settings instanceof ValueBind) {
+                        ValueBind settingValueBind = (ValueBind) settings;
+
+                        // Get the values from bind as json object.
+                        JsonObject valueBindObject = jsonSettingList.get(settingValueBind.getTag()).getAsJsonObject();
+
+                        if (valueBindObject.get("key") != null) {
+                            settingValueBind.setKeyCode(valueBindObject.get("key").getAsInt());
+                        }
+
+                        if (valueBindObject.get("state") != null) {
+                            settingValueBind.setState(valueBindObject.get("state").getAsBoolean());
+                        }
                     }
                 }
             }

@@ -10,6 +10,7 @@ import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.turok.render.font.management.TurokFontManager;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.util.TurokMath;
+import me.rina.turok.util.TurokRect;
 
 import java.awt.*;
 
@@ -194,7 +195,6 @@ public class ModuleCategoryWidget extends Widget {
 
             this.container.onRender();
         } else {
-            this.container.getRect().setWidth(0);
             this.container.getRect().setHeight(0);
         }
 

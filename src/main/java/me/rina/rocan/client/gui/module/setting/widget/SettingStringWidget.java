@@ -212,20 +212,29 @@ public class SettingStringWidget extends Widget {
                 }
             } else {
                 switch (key) {
+                    // Cancel typing.
                     case Keyboard.KEY_ESCAPE: {
                         this.cancel();
+
+                        break;
                     }
 
+                    // Set the new string.
                     case Keyboard.KEY_RETURN: {
                         this.cancelSet();
+
+                        break;
                     }
 
+                    // Delete last char in string.
                     case Keyboard.KEY_BACK: {
                         this.cacheType.setValue(this.isAllSelected ? "" : this.removeLastChar(this.cacheType.getValue()));
 
                         if (this.isAllSelected) {
                             this.isAllSelected = false;
                         }
+
+                        break;
                     }
 
                     default: {
@@ -247,6 +256,8 @@ public class SettingStringWidget extends Widget {
                                 this.offsetPositionTextX = this.rectEntryBox.getWidth() - TurokFontManager.getStringWidth(Rocan.getWrapperGUI().fontSmallWidget, this.cacheType.getValue()) - 7;
                             }
                         }
+
+                        break;
                     }
                 }
             }
