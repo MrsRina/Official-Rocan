@@ -11,6 +11,8 @@ import me.rina.rocan.client.command.CommandPrefix;
 import me.rina.rocan.client.command.CommandToggle;
 import me.rina.rocan.client.gui.GUI;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
+import me.rina.rocan.client.module.misc.ModuleAutoFish;
+import me.rina.rocan.client.module.misc.ModuleAutoRespawn;
 import me.rina.rocan.client.module.render.ModuleBlockHighlight;
 import me.rina.rocan.client.module.render.ModuleHoleESP;
 import net.minecraft.client.Minecraft;
@@ -37,7 +39,7 @@ public enum Rocan {
     /*
      * Yoink Event Manager;
      */
-    public static final cat.yoink.eventmanager.EventManager EVENT_BUS = new cat.yoink.eventmanager.EventManager();
+    private cat.yoink.eventmanager.EventManager eventManager;
 
     /* All managers of the client. */
     private ModuleManager moduleManager;
@@ -53,10 +55,16 @@ public enum Rocan {
      * Registry all components.
      */
     public void onRegistry() {
-        // Modules.
+        // Category Client.
         this.moduleManager.registry(new me.rina.rocan.client.module.client.ModuleClickGUI());
+
+        // Category Render.
         this.moduleManager.registry(new ModuleBlockHighlight());
         this.moduleManager.registry(new ModuleHoleESP());
+
+        // Category Misc.
+        this.moduleManager.registry(new ModuleAutoRespawn());
+        this.moduleManager.registry(new ModuleAutoFish());
 
         // Commands.
         this.commandManager.registry(new CommandPrefix());
@@ -86,6 +94,8 @@ public enum Rocan {
     }
 
     public void onClientStarted(FMLInitializationEvent event) {
+        this.eventManager = new cat.yoink.eventmanager.EventManager();
+
         this.moduleManager = new ModuleManager();
         this.clientEventManager = new EventManager();
         this.commandManager = new CommandManager();
@@ -127,5 +137,9 @@ public enum Rocan {
 
     public static Minecraft getMinecraft() {
         return MC;
+    }
+
+    public static cat.yoink.eventmanager.EventManager getEventManager() {
+        return INSTANCE.eventManager;
     }
 }

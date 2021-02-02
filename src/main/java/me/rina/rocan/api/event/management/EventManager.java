@@ -66,7 +66,7 @@ public class EventManager {
             return;
         }
 
-        Rocan.EVENT_BUS.dispatch(new ClientTickEvent());
+        Rocan.getEventManager().dispatch(new ClientTickEvent());
     }
 
     @SubscribeEvent

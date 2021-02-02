@@ -181,7 +181,7 @@ public class Module implements ISLClass {
             ChatUtil.print(this.tag + " enabled.");
         }
 
-        Rocan.EVENT_BUS.register(this);
+        Rocan.getEventManager().register(this);
 
         this.onEnable();
     }
@@ -193,7 +193,7 @@ public class Module implements ISLClass {
             ChatUtil.print(this.tag + " disabled.");
         }
 
-        Rocan.EVENT_BUS.remove(this);
+        Rocan.getEventManager().remove(this);
 
         this.onDisable();
     }

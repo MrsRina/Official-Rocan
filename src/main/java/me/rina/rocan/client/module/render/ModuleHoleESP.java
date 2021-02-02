@@ -6,8 +6,9 @@ import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
+import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.api.util.crystal.HoleUtil;
-import me.rina.rocan.api.util.player.PlayerUtil;
+import me.rina.rocan.api.util.entity.PlayerUtil;
 import me.rina.rocan.api.util.render.Render3DUtil;
 import me.rina.turok.util.TurokMath;
 import net.minecraft.block.Block;
@@ -85,21 +86,21 @@ public class ModuleHoleESP extends Module {
             holes.clear();
         }
 
-        if (mc.player != null || mc.world != null) {
+        if (NullUtil.isPlayerWorld() == false) {
             int r = TurokMath.ceiling((float) range.getValue());
 
             List<BlockPos> sphereList = HoleUtil.getSphereList(PlayerUtil.getBlockPos(), r, r, false, true);
 
             for (BlockPos blocks : sphereList) {
-                if (mc.world.getBlockState(blocks).getBlock() != Blocks.AIR) {
+                if (mc.world.getBlockState(blocks).getBlock().equals(Blocks.AIR)) {
                     continue;
                 }
 
-                if (mc.world.getBlockState(blocks.add(0, 1, 0)).getBlock() != Blocks.AIR) {
+                if (mc.world.getBlockState(blocks.add(0, 1, 0)).getBlock().equals(Blocks.AIR)) {
                     continue;
                 }
 
-                if (mc.world.getBlockState(blocks.add(0, 2, 0)).getBlock() != Blocks.AIR) {
+                if (mc.world.getBlockState(blocks.add(0, 2, 0)).getBlock().equals(Blocks.AIR)) {
                     continue;
                 }
 

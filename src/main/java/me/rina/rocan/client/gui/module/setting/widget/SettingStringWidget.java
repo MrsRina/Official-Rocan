@@ -380,9 +380,7 @@ public class SettingStringWidget extends Widget {
 
             TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.cacheType.getValue() + (this.isAllSelected ? "" : this.split), this.stringPositionX, this.stringPositionY, true, new Color(255, 255, 255));
         } else {
-            this.master.setCanceledCloseGUI(false);
             this.cacheType.setValue(this.setting.getValue());
-
             this.isAllSelected = false;
 
             String currentFormat = this.setting.getValue().isEmpty() ? this.setting.getFormat() : this.setting.getValue();

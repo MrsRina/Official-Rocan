@@ -8,6 +8,7 @@ import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.api.util.chat.ChatUtil;
+import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.api.util.render.Render3DUtil;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
@@ -72,7 +73,7 @@ public class ModuleBlockHighlight extends Module {
 
     @Override
     public void onRender3D() {
-        if (mc.world == null) {
+        if (NullUtil.isWorld()) {
             return;
         }
 

@@ -5,6 +5,7 @@ import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.setting.value.ValueBind;
 import me.rina.rocan.api.setting.value.ValueBoolean;
+import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
@@ -129,6 +130,11 @@ public class SettingBindWidget extends Widget {
 
     @Override
     public void onKeyboard(char character, int key) {
+        if (this.isListening) {
+            if (key == Keyboard.KEY_ESCAPE) {
+                this.isListening = false;
+            }
+        }
     }
 
     @Override
@@ -137,7 +143,6 @@ public class SettingBindWidget extends Widget {
             switch (key) {
                 // For we cancel the binding.
                 case Keyboard.KEY_ESCAPE: {
-                    this.master.setCanceledCloseGUI(false);
                     this.isListening = false;
 
                     break;
@@ -147,7 +152,6 @@ public class SettingBindWidget extends Widget {
                 case Keyboard.KEY_DELETE: {
                     this.setting.setKeyCode(-1);
 
-                    this.master.setCanceledCloseGUI(false);
                     this.isListening = false;
 
                     break;
@@ -156,7 +160,6 @@ public class SettingBindWidget extends Widget {
                 default: {
                     this.setting.setKeyCode(key);
 
-                    this.master.setCanceledCloseGUI(false);
                     this.isListening = false;
 
                     break;
@@ -169,14 +172,16 @@ public class SettingBindWidget extends Widget {
     public void onCustomMouseReleased(int button) {
         if (this.flagMouse == Flag.MouseOver) {
             if (this.isMouseClickedLeft) {
-                this.master.setCanceledCloseGUI(true);
-
                 this.isListening = true;
                 this.isMouseClickedLeft = false;
             }
         } else {
             if (this.isListening) {
-                this.master.setCanceledCloseGUI(false);
+                if (this.master.isCanceledCloseGUI()) {
+                    this.master.setCanceledCloseGUI(false);
+                }
+
+
                 this.isListening = false;
             }
 
@@ -187,7 +192,10 @@ public class SettingBindWidget extends Widget {
     @Override
     public void onMouseClicked(int button) {
         if (this.flagMouse == Flag.MouseNotOver && this.isListening) {
-            this.master.setCanceledCloseGUI(false);
+            if (this.master.isCanceledCloseGUI()) {
+                this.master.setCanceledCloseGUI(false);
+            }
+
             this.isListening = false;
         }
     }
@@ -198,8 +206,11 @@ public class SettingBindWidget extends Widget {
             this.isMouseClickedLeft = button == 0;
         } else {
             if (this.isListening) {
-                this.master.setCanceledCloseGUI(false);
                 this.isListening = false;
+
+                if (this.master.isCanceledCloseGUI()) {
+                    this.master.setCanceledCloseGUI(false);
+                }
             }
         }
     }
@@ -230,7 +241,7 @@ public class SettingBindWidget extends Widget {
         this.alphaEffectHighlightRect = this.flagMouse == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
         this.alphaEffectPressed = this.setting.getState() ? (int) TurokMath.lerp(this.alphaEffectPressed, Rocan.getWrapperGUI().colorWidgetPressed[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectPressed, 0, this.master.getPartialTicks());
 
-        String currentName = this.rect.getTag() + " " + (this.isListening ? "Listening" : TurokKeyboard.toString(this.setting.getKeyCode()));
+        String currentName = this.rect.getTag() + " | " + (this.isListening ? "Listening" : TurokKeyboard.toString(this.setting.getKeyCode()));
 
         TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, currentName, this.rect.getX() + 2, this.rectCheckbox.getY() + ((this.rectCheckbox.getHeight() / 2) - (TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag()) / 2)), true, new Color(255, 255, 255));
 

@@ -2,6 +2,7 @@ package me.rina.rocan.mixin;
 
 import me.rina.rocan.Rocan;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.crash.CrashReport;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

@@ -1,4 +1,4 @@
-package me.rina.rocan.api.util.player;
+package me.rina.rocan.api.util.entity;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
