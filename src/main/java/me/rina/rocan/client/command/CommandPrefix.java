@@ -36,6 +36,6 @@ public class CommandPrefix extends Command {
 
         CommandManager.getCommandPrefix().setPrefix(_char);
 
-        ChatUtil.print("Chat prefix has been update to " + "'" + CommandManager.getCommandPrefix().getPrefix() + "'.");
+        this.print("Chat prefix has been update to " + "'" + CommandManager.getCommandPrefix().getPrefix() + "'.");
     }
 }

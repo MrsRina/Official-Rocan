@@ -100,6 +100,15 @@ public class ModuleManager implements ISLClass {
         return moduleListRequested;
     }
 
+    /**
+     * Current method to reload and refresh event listener.
+     */
+    public static void reload() {
+        for (Module modules : INSTANCE.getModuleList()) {
+            modules.onReload();
+        }
+    }
+
     @Override
     public void onSave() {
         for (Module modules : this.getModuleList()) {

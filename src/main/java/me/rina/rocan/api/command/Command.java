@@ -1,6 +1,7 @@
 package me.rina.rocan.api.command;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
+import me.rina.rocan.Rocan;
 import me.rina.rocan.api.util.chat.ChatUtil;
 
 /**
@@ -36,11 +37,15 @@ public class Command {
      * Tools.
      */
     public void splash() {
-        ChatUtil.print(ChatFormatting.RED + setSyntax());
+        this.print(ChatFormatting.RED + setSyntax());
     }
 
     public void splash(String splash) {
-        ChatUtil.print(splash);
+        this.print(splash);
+    }
+
+    public void print(String message) {
+        ChatUtil.print(Rocan.CHAT + " " + message);
     }
 
     /*

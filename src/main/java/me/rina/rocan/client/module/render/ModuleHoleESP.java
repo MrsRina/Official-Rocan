@@ -10,10 +10,12 @@ import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.api.util.crystal.HoleUtil;
 import me.rina.rocan.api.util.entity.PlayerUtil;
 import me.rina.rocan.api.util.render.Render3DUtil;
+import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.turok.util.TurokMath;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
+import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -78,60 +80,65 @@ public class ModuleHoleESP extends Module {
         }
     }
 
-    @Override
-    public void onRender3D() {
+    @Listener
+    public void onListen(ClientTickEvent event) {
+        if (NullUtil.isPlayerWorld()) {
+            return;
+        }
+
         if (holes == null) {
             holes = new ArrayList<>();
         } else {
             holes.clear();
         }
 
-        if (NullUtil.isPlayerWorld() == false) {
-            int r = TurokMath.ceiling((float) range.getValue());
+        int r = TurokMath.ceiling((float) range.getValue());
 
-            List<BlockPos> sphereList = HoleUtil.getSphereList(PlayerUtil.getBlockPos(), r, r, false, true);
+        List<BlockPos> sphereList = HoleUtil.getSphereList(PlayerUtil.getBlockPos(), r, r, false, true);
 
-            for (BlockPos blocks : sphereList) {
-                if (mc.world.getBlockState(blocks).getBlock().equals(Blocks.AIR)) {
-                    continue;
-                }
+        for (BlockPos blocks : sphereList) {
+            if (mc.world.getBlockState(blocks).getBlock().equals(Blocks.AIR)) {
+                continue;
+            }
 
-                if (mc.world.getBlockState(blocks.add(0, 1, 0)).getBlock().equals(Blocks.AIR)) {
-                    continue;
-                }
+            if (mc.world.getBlockState(blocks.add(0, 1, 0)).getBlock().equals(Blocks.AIR)) {
+                continue;
+            }
 
-                if (mc.world.getBlockState(blocks.add(0, 2, 0)).getBlock().equals(Blocks.AIR)) {
-                    continue;
-                }
+            if (mc.world.getBlockState(blocks.add(0, 2, 0)).getBlock().equals(Blocks.AIR)) {
+                continue;
+            }
 
-                boolean isHole = true;
+            boolean isHole = true;
 
-                for (BlockPos _blocks : HoleUtil.SURROUND) {
-                    Block block = mc.world.getBlockState(_blocks).getBlock();
+            for (BlockPos _blocks : HoleUtil.SURROUND) {
+                Block block = mc.world.getBlockState(_blocks).getBlock();
 
-                    if (block != Blocks.BEDROCK || block != Blocks.OBSIDIAN || block != Blocks.ENDER_CHEST || block != Blocks.ANVIL) {
-                        isHole = false;
+                if (block != Blocks.BEDROCK || block != Blocks.OBSIDIAN || block != Blocks.ENDER_CHEST || block != Blocks.ANVIL) {
+                    isHole = false;
 
-                        break;
-                    }
-                }
-
-                if (isHole) {
-                    holes.add(blocks);
+                    break;
                 }
             }
 
-            Color color = new Color(renderRed.getValue().intValue(), renderGreen.getValue().intValue(), renderBlue.getValue().intValue(), renderAlpha.getValue().intValue());
-            Color colorOutline = new Color(renderOutlineRed.getValue().intValue(), renderOutlineGreen.getValue().intValue(), renderOutlineBlue.getValue().intValue(), renderOutlineAlpha.getValue().intValue());
+            if (isHole) {
+                holes.add(blocks);
+            }
+        }
+    }
 
-            for (BlockPos blocks : holes) {
-                Render3DUtil.render3DSolid(camera, blocks, color);
+    @Override
+    public void onRender3D() {
+        Color color = new Color(renderRed.getValue().intValue(), renderGreen.getValue().intValue(), renderBlue.getValue().intValue(), renderAlpha.getValue().intValue());
+        Color colorOutline = new Color(renderOutlineRed.getValue().intValue(), renderOutlineGreen.getValue().intValue(), renderOutlineBlue.getValue().intValue(), renderOutlineAlpha.getValue().intValue());
 
-                if (renderOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled) {
-                    float line = (float) renderOutlineLineSize.getValue();
+        for (BlockPos blocks : holes) {
+            Render3DUtil.render3DSolid(camera, blocks, color);
 
-                    Render3DUtil.render3DOutline(camera, blocks, line, colorOutline);
-                }
+            if (renderOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled) {
+                float line = renderOutlineLineSize.getValue().floatValue();
+
+                Render3DUtil.render3DOutline(camera, blocks, line, colorOutline);
             }
         }
     }

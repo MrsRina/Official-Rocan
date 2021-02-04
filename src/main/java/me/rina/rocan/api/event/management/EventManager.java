@@ -70,7 +70,7 @@ public class EventManager {
             return;
         }
 
-        Rocan.EVENT_BUS.dispatchEvent(new ClientTickEvent());
+        Rocan.getPomeloEventManager().dispatchEvent(new ClientTickEvent());
     }
 
     @SubscribeEvent

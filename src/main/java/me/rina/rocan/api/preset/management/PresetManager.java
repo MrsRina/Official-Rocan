@@ -83,12 +83,11 @@ public class PresetManager implements ISLClass {
     }
 
     public static void reload() {
-        if (INSTANCE.currentPreset == null) {
-            Rocan.getModuleManager().onLoad();
-        } else {
+        if (INSTANCE.currentPreset != null) {
             INSTANCE.currentPreset.onLoad();
         }
 
+        Rocan.getModuleManager().onLoad();
         Rocan.getSocialManager().onLoad();
     }
 
@@ -153,7 +152,7 @@ public class PresetManager implements ISLClass {
 
             String currentPresetName = "";
 
-            if (mainJson.get("current") == null) {
+            if (mainJson.get("current") != null) {
                 currentPresetName = mainJson.get("current").getAsString();
             }
 

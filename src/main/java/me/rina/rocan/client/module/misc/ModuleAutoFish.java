@@ -1,19 +1,22 @@
 package me.rina.rocan.client.module.misc;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.setting.value.ValueNumber;
-import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.api.util.item.SlotUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
-import me.rina.rocan.client.event.network.EventPacket;;
+;
+import me.rina.rocan.client.event.network.ReceiveEventPacket;
 import me.rina.turok.util.TurokTick;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.network.play.client.CPacketPlayerTryUseItem;
 import net.minecraft.network.play.server.SPacketSoundEffect;
+import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundEvent;
-import net.minecraftforge.common.MinecraftForge;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
@@ -21,31 +24,27 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  * @since 02/02/2021 at 13:28
  **/
 public class ModuleAutoFish extends Module {
-    public static ValueNumber settingMSTimePostSplash = new ValueNumber("MS Delay Post Splash Fishing", "MSDelayPostSplashFishing", "The MS later watter splash.", 750, 1, 3000);
+    public static ValueNumber settingMSDelay = new ValueNumber("Splash MS Delay", "SplashMSDelay", "The MS delay after the event sound splash.", 750, 1, 3000);
 
-    private Flag flag = Flag.NoFishRood;
-    private int currentSlot;
-
+    private Flag flag = Flag.NoFishing;
     private TurokTick tick = new TurokTick();
 
     public ModuleAutoFish() {
-        super("Auto-Fish", "AutoFish", "Automatically start fishing.", ModuleCategory.Misc);
+        super("Auto-Fish", "AutoFish", "Automatically fish to you.", ModuleCategory.Misc);
     }
 
     public enum Flag {
-        Splash, Fishing, NoFishing, NoFishRood;
+        Splash, Fishing, NoFishing;
     }
 
     @Listener
-    public void onListenReceivePacket(EventPacket.Receive event) {
+    public void onListen(ReceiveEventPacket event) {
         if ((event.getPacket() instanceof SPacketSoundEffect) == false) {
             return;
         }
 
-        SPacketSoundEffect eventPacketSoundEffect = (SPacketSoundEffect) event.getPacket();
-        SoundEvent currentSoundEvent = eventPacketSoundEffect.getSound();
-
-        ChatUtil.print(currentSoundEvent.getSoundName().toString());
+        SPacketSoundEffect packet = (SPacketSoundEffect) event.getPacket();
+        SoundEvent currentSoundEvent = packet.getSound();
 
         if (currentSoundEvent == SoundEvents.ENTITY_BOBBER_SPLASH) {
             this.flag = Flag.Splash;
@@ -58,41 +57,37 @@ public class ModuleAutoFish extends Module {
             return;
         }
 
-        currentSlot = SlotUtil.getCurrentItemSlotHotBar();
-
-        if (mc.player.inventory.getStackInSlot(currentSlot).getItem() != Items.FISHING_ROD) {
-            this.print("no fishing rod at hand.");
-
+        if (mc.player.getHeldItemMainhand().getItem() != Items.FISHING_ROD) {
+            this.print("No fishing rod at hand!");
             this.setDisabled();
 
             return;
         }
 
         if (this.flag == Flag.Splash) {
-            this.print("you fish!");
+            if (tick.isPassedMS(settingMSDelay.getValue().intValue())) {
+                this.print("You fish!");
 
-            mc.rightClickMouse();
+                this.swingFishingRod();
+                this.swingFishingRod();
 
-            this.flag = Flag.NoFishing;
+                this.flag = Flag.Fishing;
+            }
         } else {
             tick.reset();
 
-            if (mc.player.fishEntity != null) {
-                if (mc.player.fishEntity.onGround) {
-                    this.print("you can not fish out of water!");
-
-                    mc.rightClickMouse();
-
-                    this.flag = Flag.NoFishing;
-                } else {
-                    if (this.flag == Flag.NoFishing) {
-                        mc.rightClickMouse();
-
-                        this.flag = Flag.Fishing;
-                    }
-                }
-            } else {
+            if (this.flag == Flag.NoFishing && mc.player.fishEntity == null) {
+                this.swingFishingRod();
                 this.flag = Flag.Fishing;
+            }
+
+            if (this.flag == Flag.Fishing) {
+                if (mc.player.fishEntity.onGround) {
+                    this.print("You can't fish out of " + ChatFormatting.BLUE + "water" + ChatFormatting.WHITE + ".");
+                    this.setDisabled();
+
+                    return;
+                }
             }
         }
     }
@@ -104,6 +99,17 @@ public class ModuleAutoFish extends Module {
 
     @Override
     public void onDisable() {
+        if (this.flag == Flag.Fishing) {
+            this.swingFishingRod();
+        }
+
         this.flag = Flag.NoFishing;
+    }
+
+    public void swingFishingRod() {
+        EnumHand currentHand = EnumHand.MAIN_HAND;
+
+        mc.player.connection.sendPacket(new CPacketPlayerTryUseItem(currentHand));
+        mc.player.swingArm(currentHand);
     }
 }

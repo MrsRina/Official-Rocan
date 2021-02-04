@@ -14,7 +14,7 @@ public class ChatUtil {
             return;
         }
 
-        Rocan.getMinecraft().ingameGUI.getChatGUI().printChatMessage(new TextComponentString(Rocan.CHAT + ChatFormatting.GRAY + message));
+        Rocan.getMinecraft().ingameGUI.getChatGUI().printChatMessage(new TextComponentString(ChatFormatting.GRAY + message));
     }
 
     public static void malloc(String message) {

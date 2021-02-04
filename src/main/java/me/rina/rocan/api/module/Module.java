@@ -181,24 +181,24 @@ public class Module implements ISLClass {
         this.keyBinding.setState(true);
 
         if (toggleMessage.getValue()) {
-            ChatUtil.print(this.tag + " enabled.");
+            this.print("Enabled.");
         }
 
         this.onEnable();
 
-        Rocan.EVENT_BUS.addEventListener(this);
+        Rocan.getPomeloEventManager().addEventListener(this);
     }
 
     public void setDisabled() {
         this.keyBinding.setState(false);
 
         if (toggleMessage.getValue()) {
-            ChatUtil.print(this.tag + " disabled.");
+            this.print("Disabled.");
         }
 
         this.onDisable();
 
-        Rocan.EVENT_BUS.removeEventListener(this);
+        Rocan.getPomeloEventManager().removeEventListener(this);
     }
 
     public void print(String message) {

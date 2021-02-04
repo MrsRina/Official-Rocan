@@ -10,8 +10,10 @@ import me.rina.rocan.client.command.CommandPrefix;
 import me.rina.rocan.client.command.CommandToggle;
 import me.rina.rocan.client.gui.GUI;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
+import me.rina.rocan.client.module.exploit.ModuleXCarry;
 import me.rina.rocan.client.module.misc.ModuleAutoFish;
 import me.rina.rocan.client.module.misc.ModuleAutoRespawn;
+import me.rina.rocan.client.module.misc.ModuleChatSuffix;
 import me.rina.rocan.client.module.render.ModuleBlockHighlight;
 import me.rina.rocan.client.module.render.ModuleHoleESP;
 import net.minecraft.client.Minecraft;
@@ -40,9 +42,9 @@ public class Rocan {
     public static final Minecraft MC = Minecraft.getMinecraft();
 
     /*
-     * Pomelo Event Manager;
+     * The event manager of team pomelo!!
      */
-    public static team.stiff.pomelo.EventManager EVENT_BUS;
+    private team.stiff.pomelo.EventManager pomeloEventManager = new AnnotatedEventManager();
 
     /* All managers of the client. */
     private ModuleManager moduleManager;
@@ -68,6 +70,10 @@ public class Rocan {
         // Category Misc.
         this.moduleManager.registry(new ModuleAutoRespawn());
         this.moduleManager.registry(new ModuleAutoFish());
+        this.moduleManager.registry(new ModuleChatSuffix());
+
+        // Exploit.
+        this.moduleManager.registry(new ModuleXCarry());
 
         // Commands.
         this.commandManager.registry(new CommandPrefix());
@@ -84,8 +90,9 @@ public class Rocan {
         this.moduleClickGUI = new ModuleClickGUI();
         this.moduleClickGUI.init();
 
-        // Reload the current preset or nothing.
+        // Reload method to refresh states and values.
         PresetManager.reload();
+        ModuleManager.reload();
     }
 
     /**
@@ -101,8 +108,6 @@ public class Rocan {
 
     @Mod.EventHandler
     public void onClientStarted(FMLInitializationEvent event) {
-        EVENT_BUS = new AnnotatedEventManager();
-
         this.moduleManager = new ModuleManager();
         this.clientEventManager = new EventManager();
         this.commandManager = new CommandManager();
@@ -116,6 +121,10 @@ public class Rocan {
 
         this.onRegistry();
         this.onInitClient();
+    }
+
+    public static team.stiff.pomelo.EventManager getPomeloEventManager() {
+        return INSTANCE.pomeloEventManager;
     }
 
     public static ModuleManager getModuleManager() {

@@ -23,7 +23,7 @@ public class ModuleClickGUI extends Module {
     }
 
     @Listener
-    public void onListenClientEvent(ClientTickEvent event) {
+    public void onListen(ClientTickEvent event) {
         if (mc.currentScreen != Rocan.getModuleClickGUI()) {
             mc.displayGuiScreen(Rocan.getModuleClickGUI());
         }

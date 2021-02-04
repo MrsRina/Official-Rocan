@@ -44,7 +44,7 @@ public class ModuleBlockHighlight extends Module {
     public static ValueNumber renderOutlineAlpha = new ValueNumber("Outline Alpha", "OutlineAlpha", "Color line range alpha.", 255, 0, 255);
 
     public ModuleBlockHighlight() {
-        super("Block Highlight", "BlockHighlight", "Draw over the block of mouse object.", ModuleCategory.Render);
+        super("Block Highlight", "BlockHighlight", "Draw block over the mouse.", ModuleCategory.Render);
     }
 
     @Override

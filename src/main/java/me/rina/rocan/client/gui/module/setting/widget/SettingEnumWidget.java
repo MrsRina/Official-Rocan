@@ -177,14 +177,6 @@ public class SettingEnumWidget extends Widget {
         // Where the smooth animation works.
         this.alphaEffectHighlightRect = this.flagMouse == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
 
-        String name = this.rect.getTag() + ": " + ((Enum<?>) this.setting.getValue()).name();
-
-        TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, name, this.rect.getX() + 2, this.rect.getY() + ((this.rect.getHeight() / 2) - (TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag()) / 2) - 1), true, new Color(255, 255, 255));
-
-        // Outline on rect render.
-        TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetHighlight[0], Rocan.getWrapperGUI().colorWidgetHighlight[1], Rocan.getWrapperGUI().colorWidgetHighlight[2], this.alphaEffectHighlightRect);
-        TurokRenderGL.drawOutlineRect(this.rect);
-
         // We verify the current enum value at mode when we load the client.
         // Loop.
         if (this.isStarted) {
@@ -208,6 +200,14 @@ public class SettingEnumWidget extends Widget {
 
             this.settingContainer.flagDescription = Flag.MouseOver;
         }
+
+        String name = this.rect.getTag() + ": " + this.setting.getValue().name();
+
+        TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, name, this.rect.getX() + 2, this.rect.getY() + ((this.rect.getHeight() / 2) - (TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag()) / 2) - 1), true, new Color(255, 255, 255));
+
+        // Outline on rect render.
+        TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetHighlight[0], Rocan.getWrapperGUI().colorWidgetHighlight[1], Rocan.getWrapperGUI().colorWidgetHighlight[2], this.alphaEffectHighlightRect);
+        TurokRenderGL.drawOutlineRect(this.rect);
     }
 
     @Override

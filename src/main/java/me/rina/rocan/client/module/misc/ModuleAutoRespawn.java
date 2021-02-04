@@ -16,46 +16,30 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  * @since 02/02/2021 at 00:07
  **/
 public class ModuleAutoRespawn extends Module {
-    public static ValueNumber settingDelay = new ValueNumber("Delay", "Delay", "Delay for respawn.", 0.5f, 0f, 10f);
-    public static ValueBoolean settingCloseGUI = new ValueBoolean("Close GUI", "CloseGUI", "Close death screen GUI.", true);
+    public static ValueNumber settingSecondsDelay = new ValueNumber("Seconds Delay", "SecondsDelay", "The delay for respawn.", 0, 0, 10);
 
     private TurokTick tick = new TurokTick();
 
-    private CustomDeathGUI customDeathGUI = new CustomDeathGUI(null);
-
     public ModuleAutoRespawn() {
-        super("Auto-Respawn", "AutoRespawn", "Automatically close dead guiscreen.", ModuleCategory.Misc);
+        super("Auto-Respawn", "AutoRespawn", "Automatically respawn after you die.", ModuleCategory.Misc);
     }
 
     @Listener
-    public void onListenClientEvent(ClientTickEvent event) {
+    public void onListen(ClientTickEvent event) {
         if (NullUtil.isPlayerWorld()) {
             return;
         }
 
-        if (settingCloseGUI.getValue()) {
-            if (mc.player.isDead || mc.player.getHealth() <= 0) {
-                mc.currentScreen = null;
-                mc.displayGuiScreen(null);
-
-                doRequest();
-            } else {
-                tick.reset();
-            }
+        if (mc.currentScreen instanceof GuiGameOver) {
+            this.doRequest();
         } else {
-            if (mc.currentScreen instanceof GuiGameOver) {
-                doRequest();
-            } else {
-                tick.reset();
-            }
+            tick.reset();
         }
     }
 
     public void doRequest() {
-        if (tick.isPassedMS(settingDelay.getValue().floatValue() * 1000)) {
+        if (tick.isPassedMS(settingSecondsDelay.getValue().floatValue() * 1000)) {
             mc.player.respawnPlayer();
-
-            tick.reset();
         }
     }
 }

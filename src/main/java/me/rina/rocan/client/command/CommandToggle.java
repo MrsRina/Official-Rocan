@@ -39,7 +39,7 @@ public class CommandToggle extends Command {
         Module module = ModuleManager.get(tag);
 
         if (module == null) {
-            ChatUtil.print(ChatFormatting.RED + "Unknown module.");
+            this.print(ChatFormatting.RED + "Unknown module.");
 
             return;
         }
@@ -49,7 +49,7 @@ public class CommandToggle extends Command {
         ValueBoolean toggleMessage = (ValueBoolean) module.get("ToggleMessage");
 
         if (toggleMessage.getValue() == false) {
-            ChatUtil.print("Module has been update to " + Boolean.toString(module.isEnabled()) + ".");
+            this.print("Module has been update to " + Boolean.toString(module.isEnabled()) + ".");
         }
     }
 }
