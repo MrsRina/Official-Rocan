@@ -20,7 +20,7 @@ public class MixinNetworkManager {
     public void onSendPacket(Packet<?> packet, CallbackInfo callbackInfo) {
         EventPacket.Send event = new EventPacket.Send(packet);
 
-        Rocan.getEventManager().dispatch(event);
+        Rocan.EVENT_BUS.dispatchEvent(event);
 
         if (event.isCanceled()) {
             callbackInfo.cancel();
@@ -31,7 +31,7 @@ public class MixinNetworkManager {
     public void onReceivePacket(ChannelHandlerContext context, Packet<?> packet, CallbackInfo callbackInfo) {
         EventPacket.Receive event = new EventPacket.Receive(packet);
 
-        Rocan.getEventManager().dispatch(event);
+        Rocan.EVENT_BUS.dispatchEvent(event);
 
         if (event.isCanceled()) {
             callbackInfo.cancel();

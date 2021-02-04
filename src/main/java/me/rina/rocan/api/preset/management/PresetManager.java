@@ -76,8 +76,8 @@ public class PresetManager implements ISLClass {
     }
 
     public static void finish() {
-        Rocan.getModuleManager().onLoad();
-        Rocan.getSocialManager().onLoad();
+        Rocan.getModuleManager().onSave();
+        Rocan.getSocialManager().onSave();
 
         INSTANCE.onSave();
     }

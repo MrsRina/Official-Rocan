@@ -4,7 +4,6 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rina.rocan.api.command.management.CommandManager;
 import me.rina.rocan.api.event.management.EventManager;
 import me.rina.rocan.api.module.management.ModuleManager;
-import me.rina.rocan.api.preset.Preset;
 import me.rina.rocan.api.preset.management.PresetManager;
 import me.rina.rocan.api.social.management.SocialManager;
 import me.rina.rocan.client.command.CommandPrefix;
@@ -17,19 +16,23 @@ import me.rina.rocan.client.module.render.ModuleBlockHighlight;
 import me.rina.rocan.client.module.render.ModuleHoleESP;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import team.stiff.pomelo.impl.annotated.AnnotatedEventManager;
 
 /**
  * @author SrRina
  * @since 15/11/20 at 4:51pm
  */
-public enum Rocan {
-    INSTANCE;
+@Mod(modid = "rocan", name = Rocan.NAME, version = Rocan.VERSION)
+public class Rocan {
+    @Mod.Instance
+    public static Rocan INSTANCE;
 
     public static final String NAME        = "Rocan";
-    public static final String VERSION     = "0.0.1";
-    public static final String PATH_CONFIG = "/Rocan/";
-    public static final String CHAT        = ChatFormatting.GOLD + "/* Rocan */ ";
+    public static final String VERSION     = "0.1.7";
+    public static final String PATH_CONFIG = "Rocan/";
+    public static final String CHAT        = ChatFormatting.GRAY + "Rocan " + ChatFormatting.WHITE;
 
     /*
      * We create one final Minecraft, there is the function Minecraft or this variable;
@@ -37,9 +40,9 @@ public enum Rocan {
     public static final Minecraft MC = Minecraft.getMinecraft();
 
     /*
-     * Yoink Event Manager;
+     * Pomelo Event Manager;
      */
-    private cat.yoink.eventmanager.EventManager eventManager;
+    public static team.stiff.pomelo.EventManager EVENT_BUS;
 
     /* All managers of the client. */
     private ModuleManager moduleManager;
@@ -90,11 +93,15 @@ public enum Rocan {
      */
     public static void onEndClient() {
         // Finish the preset saving all.
-        PresetManager.finish();
+        Rocan.getModuleManager().onSave();
+        Rocan.getSocialManager().onSave();
+
+        PresetManager.INSTANCE.onSave();
     }
 
+    @Mod.EventHandler
     public void onClientStarted(FMLInitializationEvent event) {
-        this.eventManager = new cat.yoink.eventmanager.EventManager();
+        EVENT_BUS = new AnnotatedEventManager();
 
         this.moduleManager = new ModuleManager();
         this.clientEventManager = new EventManager();
@@ -137,9 +144,5 @@ public enum Rocan {
 
     public static Minecraft getMinecraft() {
         return MC;
-    }
-
-    public static cat.yoink.eventmanager.EventManager getEventManager() {
-        return INSTANCE.eventManager;
     }
 }

@@ -143,6 +143,8 @@ public class TurokRenderGL {
 		TurokGL.enable(GL11.GL_SRC_ALPHA);
 		TurokGL.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
+		TurokGL.lineSize(1.0f);
+
 		TurokGL.prepare(GL11.GL_LINE_STRIP);
 		{
 			TurokGL.addVertex(x, y);

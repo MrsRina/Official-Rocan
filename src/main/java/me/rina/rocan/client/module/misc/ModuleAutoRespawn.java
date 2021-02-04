@@ -1,6 +1,5 @@
 package me.rina.rocan.client.module.misc;
 
-import cat.yoink.eventmanager.Listener;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.setting.value.ValueBoolean;
@@ -9,8 +8,8 @@ import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.rocan.client.gui.minecraft.CustomDeathGUI;
 import me.rina.turok.util.TurokTick;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGameOver;
+import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
  * @author SrRina

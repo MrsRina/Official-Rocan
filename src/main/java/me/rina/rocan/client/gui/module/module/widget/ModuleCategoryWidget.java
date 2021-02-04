@@ -168,6 +168,7 @@ public class ModuleCategoryWidget extends Widget {
         this.rect.setX(this.frame.getRect().getX() + this.offsetX);
         this.rect.setY(this.frame.getRect().getY() + this.offsetY);
 
+        this.container.getRect().setWidth(this.container.getWidthScale());
         this.rect.setHeight(6 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontBigWidget, this.rect.getTag()) + 6);
 
         this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
@@ -184,14 +185,9 @@ public class ModuleCategoryWidget extends Widget {
          * to fix slow linear slow interpolation.
          */
         if (this.isSelected) {
-            this.container.getRect().setWidth(this.container.getWidthScale());
             this.container.getRect().setHeight(this.container.getHeightScale());
 
-            this.frame.getRectWidgetSelected().setX((int) TurokMath.lerp(this.frame.getRectWidgetSelected().getX(), this.rect.getX(), this.master.getPartialTicks()));
-
-            if (this.frame.getRectWidgetSelected().getDistance(this.rect) <= 10) {
-                this.frame.getRectWidgetSelected().setX(this.rect.getX());
-            }
+            this.frame.getRectWidgetSelected().setX(this.rect.getX());
 
             this.container.onRender();
         } else {

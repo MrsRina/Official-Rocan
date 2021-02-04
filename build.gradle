@@ -31,7 +31,7 @@ archivesBaseName = "Rocan"
 minecraft {
 	version = "1.12.2-14.23.0.2531"
 	runDir = "run"
-	coreMod = "cat.yoink.loader.Core"
+	coreMod = "me.rina.rocan.mixin.loader.MixinLoader"
 	mappings = "snapshot_20180814"
 	makeObfSourceJar = true
 }
@@ -66,8 +66,6 @@ dependencies {
 		exclude module: "guava"
 		exclude module: "gson"
 	}
-
-    compile("com.github.Katatje:EventManager:1.0")
 }
 
 shadowJar {
@@ -76,7 +74,6 @@ shadowJar {
 		include(dependency("org.javassist:javassist"))
 		include(dependency("org.spongepowered:mixin"))
 		include(dependency("net.jodah:typetools"))
-        include(dependency("com.github.Katatje:EventManager"))
 	}
 }
 
@@ -114,7 +111,7 @@ jar {
 		attributes (
 			"FMLCorePluginContainsFMLMod" : "true",
 			"ForceLoadAsMod"              : "true",
-			"FMLCorePlugin"               : "cat.yoink.loader.Core",
+			"FMLCorePlugin"               : "me.rina.rocan.mixin.loader.MixinLoader",
 			"MixinConfigs"                : "mixins.rocan.json",
 			"tweakClass"                  : "org.spongepowered.asm.launch.MixinTweaker",
 			"TweakOrder"                  : 0,
@@ -123,23 +120,4 @@ jar {
 	}
 }
 
-task clientJar(type: Jar, dependsOn: jar) {
-	from(zipTree(shadowJar.archivePath)) {
-		include "me/rina/**"
-	}
-	baseName = ""
-	version = ""
-	classifier = "client"
-}
-
-task loaderJar(type: Jar, dependsOn: shadowJar) {
-	from(zipTree(shadowJar.archivePath)) {
-		exclude "me/rina/**"
-	}
-	baseName = ""
-	version = ""
-	classifier = "loader"
-	manifest = jar.manifest
-}
-
-build.dependsOn(clientJar, loaderJar)
+build.dependsOn(shadowJar)

@@ -9,6 +9,9 @@ import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.rocan.client.event.render.Render2DEvent;
 import me.rina.rocan.client.event.render.Render3DEvent;
+import me.rina.turok.render.opengl.TurokGL;
+import me.rina.turok.render.opengl.TurokRenderGL;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -18,6 +21,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
@@ -66,7 +70,7 @@ public class EventManager {
             return;
         }
 
-        Rocan.getEventManager().dispatch(new ClientTickEvent());
+        Rocan.EVENT_BUS.dispatchEvent(new ClientTickEvent());
     }
 
     @SubscribeEvent
@@ -79,6 +83,21 @@ public class EventManager {
 
         for (Module modules : Rocan.getModuleManager().getModuleList()) {
             modules.onRender2D();
+
+            TurokGL.pushMatrix();
+
+            TurokGL.enable(GL11.GL_TEXTURE_2D);
+            TurokGL.enable(GL11.GL_BLEND);
+
+            GlStateManager.enableBlend();
+
+            TurokGL.popMatrix();
+
+            GlStateManager.enableCull();
+            GlStateManager.depthMask(true);
+            GlStateManager.enableTexture2D();
+            GlStateManager.enableBlend();
+            GlStateManager.enableDepth();
         }
     }
 

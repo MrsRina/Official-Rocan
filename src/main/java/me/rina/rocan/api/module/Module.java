@@ -1,6 +1,7 @@
 package me.rina.rocan.api.module;
 
 import com.google.gson.*;
+import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rina.rocan.Rocan;
 import me.rina.rocan.api.ISLClass;
 import me.rina.rocan.api.module.impl.ModuleCategory;
@@ -11,11 +12,13 @@ import me.rina.turok.util.TurokClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.culling.ICamera;
+import net.minecraftforge.common.MinecraftForge;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * @author SrRina
@@ -181,9 +184,9 @@ public class Module implements ISLClass {
             ChatUtil.print(this.tag + " enabled.");
         }
 
-        Rocan.getEventManager().register(this);
-
         this.onEnable();
+
+        Rocan.EVENT_BUS.addEventListener(this);
     }
 
     public void setDisabled() {
@@ -193,9 +196,13 @@ public class Module implements ISLClass {
             ChatUtil.print(this.tag + " disabled.");
         }
 
-        Rocan.getEventManager().remove(this);
-
         this.onDisable();
+
+        Rocan.EVENT_BUS.removeEventListener(this);
+    }
+
+    public void print(String message) {
+        ChatUtil.print(ChatFormatting.GRAY + this.name + " " + ChatFormatting.WHITE + message);
     }
 
     protected void onEnable() {}

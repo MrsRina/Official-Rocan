@@ -1,14 +1,12 @@
 package me.rina.rocan.client.module.client;
 
-import cat.yoink.eventmanager.Listener;
 import me.rina.rocan.Rocan;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
-import me.rina.rocan.api.setting.Setting;
 import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueString;
-import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
+import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
  * @author SrRina

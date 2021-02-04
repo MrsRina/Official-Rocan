@@ -84,7 +84,7 @@ public class SocialManager implements ISLClass {
                 Files.createFile(Paths.get(pathFile));
             }
 
-            JsonObject mainJson = new JsonObject();
+            JsonArray mainJson = new JsonArray();
 
             for (Social socials : this.socialList) {
                 JsonObject socialJson = new JsonObject();
@@ -95,7 +95,7 @@ public class SocialManager implements ISLClass {
                     socialJson.add("type", new JsonPrimitive(socials.getType().toString()));
                 }
 
-                mainJson.add(socials.getName(), socialJson);
+                mainJson.add(socialJson);
             }
 
             String stringJson = gsonBuilder.toJson(new JsonParser().parse(mainJson.toString()));
