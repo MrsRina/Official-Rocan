@@ -22,16 +22,6 @@ public class CommandManager {
         this.commandPrefix = new CommandPrefix(".");
     }
 
-    public void registry(Command command) {
-        this.commandList.add(command);
-    }
-
-    public void unregister(Command command) {
-        if (get(command.getClass()) != null) {
-            this.commandList.remove(command);
-        }
-    }
-
     public void setCommandList(ArrayList<Command> commandList) {
         this.commandList = commandList;
     }
@@ -42,6 +32,16 @@ public class CommandManager {
 
     public static CommandPrefix getCommandPrefix() {
         return INSTANCE.commandPrefix;
+    }
+
+    public void registry(Command command) {
+        this.commandList.add(command);
+    }
+
+    public void unregister(Command command) {
+        if (get(command.getClass()) != null) {
+            this.commandList.remove(command);
+        }
     }
 
     public static Command get(Class<?> clazz) {

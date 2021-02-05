@@ -27,6 +27,14 @@ public class SocialManager implements ISLClass {
         this.socialList = new ArrayList<>();
     }
 
+    public void setSocialList(ArrayList<Social> socialList) {
+        this.socialList = socialList;
+    }
+
+    public ArrayList<Social> getSocialList() {
+        return socialList;
+    }
+
     public void registry(Social social) {
         this.socialList.add(social);
     }
@@ -35,14 +43,6 @@ public class SocialManager implements ISLClass {
         if (get(social.getClass()) != null) {
             this.socialList.remove(social);
         }
-    }
-
-    public void setSocialList(ArrayList<Social> socialList) {
-        this.socialList = socialList;
-    }
-
-    public ArrayList<Social> getSocialList() {
-        return socialList;
     }
 
     public static Social get(Class<?> clazz) {

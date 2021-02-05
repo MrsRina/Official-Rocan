@@ -52,7 +52,7 @@ public class ModuleHoleESP extends Module {
     public static ValueNumber renderOutlineBlue = new ValueNumber("Outline Blue", "OutlineBlue", "Color line range blue.", 255, 0, 255);
     public static ValueNumber renderOutlineAlpha = new ValueNumber("Outline Alpha", "OutlineAlpha", "Color line range alpha.", 255, 0, 255);
 
-    private ArrayList<BlockPos> holes;
+    private ArrayList<BlockPos> holes = new ArrayList<>();
 
     public ModuleHoleESP() {
         super("Hole ESP", "HoleESP", "Draw the holes to help visibility.", ModuleCategory.Render);
@@ -86,11 +86,7 @@ public class ModuleHoleESP extends Module {
             return;
         }
 
-        if (holes == null) {
-            holes = new ArrayList<>();
-        } else {
-            holes.clear();
-        }
+        holes.clear();
 
         int r = TurokMath.ceiling((float) range.getValue());
 

@@ -5,20 +5,16 @@ import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.frame.Frame;
 import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.module.impl.ModuleCategory;
-import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.client.container.ClientContainer;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.turok.hardware.mouse.TurokMouse;
-import me.rina.turok.render.font.management.TurokFontManager;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
 
-import java.awt.*;
 import java.util.ArrayList;
 
-import me.rina.turok.util.TurokRect.Dock;
 import org.lwjgl.input.Keyboard;
 
 /**
@@ -58,7 +54,7 @@ public class MotherFrame extends Frame {
     private TurokRect rectResize = new TurokRect("Goo", 0, 0);
 
     private boolean isStarted = true;
-    private boolean isMouseClickedMiddle;
+    private boolean isDragging;
     private boolean isMouseClickedLeft;
     private boolean isReturnCenterPressed;
 
@@ -163,6 +159,30 @@ public class MotherFrame extends Frame {
         return scaleHeight;
     }
 
+    public void setDragX(float dragX) {
+        this.dragX = dragX;
+    }
+
+    public float getDragX() {
+        return dragX;
+    }
+
+    public void setDragY(float dragY) {
+        this.dragY = dragY;
+    }
+
+    public float getDragY() {
+        return dragY;
+    }
+
+    public void setDragging(boolean dragging) {
+        isDragging = dragging;
+    }
+
+    public boolean isDragging() {
+        return isDragging;
+    }
+
     @Override
     public void onClose() {
         for (Widget widgets : this.loadedWidgetList) {
@@ -170,7 +190,7 @@ public class MotherFrame extends Frame {
         }
 
         this.isMouseClickedLeft = false;
-        this.isMouseClickedMiddle = false;
+        this.isDragging = false;
 
         this.clientContainer.onClose();
     }
@@ -187,7 +207,7 @@ public class MotherFrame extends Frame {
     @Override
     public void onKeyboard(char character, int key) {
         // Its reset the current position of screen to center, its help if GUI glitch.
-        if (key == Keyboard.KEY_F1 && (this.isMouseClickedLeft == false && this.isMouseClickedMiddle == false) && this.master.isPositionBack() && this.master.isOpened()) {
+        if (key == Keyboard.KEY_F1 && (this.isMouseClickedLeft == false && this.isDragging == false) && this.master.isPositionBack() && this.master.isOpened()) {
             this.isReturnCenterPressed = true;
         }
 
@@ -213,8 +233,8 @@ public class MotherFrame extends Frame {
 
     @Override
     public void onMouseReleased(int button) {
-        if (this.isMouseClickedMiddle) {
-            this.isMouseClickedMiddle = false;
+        if (this.isDragging) {
+            this.isDragging = false;
         }
 
         if (this.isMouseClickedLeft) {
@@ -237,13 +257,6 @@ public class MotherFrame extends Frame {
 
     @Override
     public void onMouseClicked(int button) {
-        if (button == TurokMouse.BUTTON_MIDDLE) {
-            this.dragX = this.master.getMouse().getX() - this.rect.getX();
-            this.dragY = this.master.getMouse().getY() - this.rect.getY();
-
-            this.isMouseClickedMiddle = this.flagMouse == Flag.MouseOver;
-        }
-
         if (button == TurokMouse.BUTTON_LEFT) {
             if (this.flagMouseResize == Flag.MouseOver) {
                 this.resizeX = this.master.getMouse().getX() - this.rect.getX();
@@ -332,7 +345,7 @@ public class MotherFrame extends Frame {
         TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetSelected[0], Rocan.getWrapperGUI().colorWidgetSelected[1], Rocan.getWrapperGUI().colorWidgetSelected[2], Rocan.getWrapperGUI().colorWidgetSelected[3]);
         TurokRenderGL.drawOutlineRect(this.rectWidgetSelected);
 
-        if (this.isMouseClickedMiddle && this.master.isOpened()) {
+        if (this.isDragging && this.master.isOpened()) {
             float x = this.master.getMouse().getX() - this.dragX;
             float y = this.master.getMouse().getY() - this.dragY;
 
@@ -362,7 +375,7 @@ public class MotherFrame extends Frame {
         /**
          * We need make the GUI return backs, so we need get distance and bypass the interpolation delay.
          */
-        if (this.isReturnCenterPressed && ((this.isMouseClickedLeft == false && this.isMouseClickedMiddle == false) && this.master.isPositionBack() && this.master.isOpened())) {
+        if (this.isReturnCenterPressed && ((this.isMouseClickedLeft == false && this.isDragging == false) && this.master.isPositionBack() && this.master.isOpened())) {
             float x = this.master.getDisplay().getScaledWidth() / 2 - (this.rect.getWidth() / 2);
             float y = this.master.getDisplay().getScaledHeight() / 2 - (this.rect.getHeight() / 2);
 
@@ -373,7 +386,7 @@ public class MotherFrame extends Frame {
                 this.isReturnCenterPressed = false;
             } else {
                 this.isMouseClickedLeft = false;
-                this.isMouseClickedMiddle = false;
+                this.isDragging = false;
             }
         }
     }

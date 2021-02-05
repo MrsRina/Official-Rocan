@@ -87,9 +87,9 @@ public class SettingContainer extends Container {
         for (Setting settings : this.widgetModule.getModule().getSettingList()) {
             if (settings instanceof ValueBoolean) {
                 SettingBooleanWidget settingBooleanWidget = new SettingBooleanWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, (ValueBoolean) settings);
-                this.loadedWidgetList.add(settingBooleanWidget);
-
                 settingBooleanWidget.setOffsetY(this.scrollRect.getHeight());
+
+                this.loadedWidgetList.add(settingBooleanWidget);
 
                 if (settingBooleanWidget.getSetting().isEnabled()) {
                     this.scrollRect.height += settingBooleanWidget.getRect().getHeight() + 1;
@@ -98,48 +98,46 @@ public class SettingContainer extends Container {
 
             if (settings instanceof ValueNumber) {
                 SettingNumberWidget settingNumberWidget = new SettingNumberWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, (ValueNumber) settings);
-                this.loadedWidgetList.add(settingNumberWidget);
-
                 settingNumberWidget.setOffsetY(this.scrollRect.getHeight());
 
                 if (settingNumberWidget.getSetting().isEnabled()) {
                     this.scrollRect.height += settingNumberWidget.getRect().getHeight() + 1;
                 }
+
+                this.loadedWidgetList.add(settingNumberWidget);
             }
 
             if (settings instanceof ValueEnum) {
                 SettingEnumWidget settingEnumWidget = new SettingEnumWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, (ValueEnum) settings);
-                this.loadedWidgetList.add(settingEnumWidget);
-
                 settingEnumWidget.setOffsetY(this.scrollRect.getHeight());
 
                 if (settingEnumWidget.getSetting().isEnabled()) {
                     this.scrollRect.height += settingEnumWidget.getRect().getHeight() + 1;
                 }
+
+                this.loadedWidgetList.add(settingEnumWidget);
             }
 
             if (settings instanceof ValueString) {
                 SettingStringWidget settingStringWidget = new SettingStringWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, (ValueString) settings);
-
-                this.loadedWidgetList.add(settingStringWidget);
-
                 settingStringWidget.setOffsetY(this.scrollRect.getHeight());
 
                 if (settingStringWidget.getSetting().isEnabled()) {
                     this.scrollRect.height += settingStringWidget.getRect().getHeight() + 1;
                 }
+
+                this.loadedWidgetList.add(settingStringWidget);
             }
 
             if (settings instanceof ValueBind) {
                 SettingBindWidget settingBindWidget = new SettingBindWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, (ValueBind) settings);
-
-                this.loadedWidgetList.add(settingBindWidget);
-
                 settingBindWidget.setOffsetY(this.scrollRect.getHeight());
 
                 if (settingBindWidget.getSetting().isEnabled()) {
                     this.scrollRect.height += settingBindWidget.getRect().getHeight() + 1;
                 }
+
+                this.loadedWidgetList.add(settingBindWidget);
             }
         }
     }

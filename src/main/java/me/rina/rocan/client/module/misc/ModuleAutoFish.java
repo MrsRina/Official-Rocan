@@ -4,11 +4,15 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rina.rocan.Rocan;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
+import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
+import me.rina.rocan.api.tracker.Tracker;
+import me.rina.rocan.api.tracker.impl.RightMouseClickTracker;
+import me.rina.rocan.api.tracker.management.TrackerManager;
+import me.rina.rocan.api.util.client.FlagUtil;
 import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.rocan.client.event.network.ReceiveEventPacket;
-import me.rina.rocan.client.manager.network.PacketAntiSpamManager;
 import me.rina.turok.util.TurokTick;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
@@ -24,13 +28,23 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  **/
 public class ModuleAutoFish extends Module {
     public static ValueNumber settingSplashDelay = new ValueNumber("Splash Delay", "SplashDelay", "The MS delay after the event sound splash.", 750, 1, 3000);
-    public static ValueNumber settingPacketDelay = new ValueNumber("Packet Delay", "PacketDelay", "The packet delay for anti spam in somes servers.", 500.0f, 250f, 10000f);
+    public static ValueNumber settingPacketDelay = new ValueNumber("Packet Delay", "PacketDelay", "The MS delay for send packet.", 500, 0, 3000);
 
     private Flag flag = Flag.NoFishing;
     private TurokTick tick = new TurokTick();
 
+    private Tracker tracker;
+
     public ModuleAutoFish() {
         super("Auto-Fish", "AutoFish", "Automatically fish to you.", ModuleCategory.Misc);
+
+        this.tracker = new Tracker("AutoFishTrack");
+        this.tracker.inject();
+    }
+
+    @Override
+    public void onSetting() {
+        this.tracker.setDelay((float) settingPacketDelay.getValue().intValue());
     }
 
     public enum Flag {
@@ -68,17 +82,15 @@ public class ModuleAutoFish extends Module {
             if (tick.isPassedMS(settingSplashDelay.getValue().intValue())) {
                 this.print("You fish!");
 
-                Rocan.getPacketAntiSpamManager().sendPacket(new CPacketPlayerTryUseItem());
-                Rocan.getPacketAntiSpamManager().sendPacket(new CPacketPlayerTryUseItem());
+                this.tracker.send(new RightMouseClickTracker(EnumHand.MAIN_HAND));
+                this.tracker.join(new RightMouseClickTracker(EnumHand.MAIN_HAND));
 
                 this.flag = Flag.Fishing;
             }
         } else {
             tick.reset();
 
-            if (this.flag == Flag.NoFishing && mc.player.fishEntity == null) {
-                Rocan.getPacketAntiSpamManager().sendPacket(new CPacketPlayerTryUseItem());
-
+            if (this.flag == Flag.NoFishing && mc.gameSettings.keyBindUseItem.isKeyDown()) {
                 this.flag = Flag.Fishing;
             }
 
@@ -91,33 +103,21 @@ public class ModuleAutoFish extends Module {
                 }
             }
         }
-
-        if (Rocan.getPacketAntiSpamManager().isNext() && Rocan.getPacketAntiSpamManager().getLast() != null && Rocan.getPacketAntiSpamManager().getLast() instanceof CPacketPlayerTryUseItem) {
-            mc.player.swingArm(EnumHand.MAIN_HAND);
-        }
-
-        if (Rocan.getPacketAntiSpamManager().getDelay() != settingPacketDelay.getValue().floatValue()) {
-            Rocan.getPacketAntiSpamManager().setDelay(settingPacketDelay.getValue().floatValue());
-        }
     }
 
     @Override
     public void onEnable() {
-        Rocan.getPacketAntiSpamManager().setDelay(settingPacketDelay.getValue().floatValue());
-
         this.flag = Flag.NoFishing;
+        this.tracker.register();
     }
 
     @Override
     public void onDisable() {
         if (this.flag == Flag.Fishing) {
-            Rocan.getPacketAntiSpamManager().sendPacket(new CPacketPlayerTryUseItem());
+            this.tracker.send(new RightMouseClickTracker(EnumHand.MAIN_HAND));
         }
 
-        if (Rocan.getPacketAntiSpamManager().getDelay() != PacketAntiSpamManager.DEFAULT_DELAY) {
-            Rocan.getPacketAntiSpamManager().setDelay(PacketAntiSpamManager.DEFAULT_DELAY);
-        }
-
+        this.tracker.unregister();
         this.flag = Flag.NoFishing;
     }
 }

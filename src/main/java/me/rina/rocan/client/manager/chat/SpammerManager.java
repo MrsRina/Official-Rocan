@@ -1,6 +1,5 @@
 package me.rina.rocan.client.manager.chat;
 
-import me.rina.rocan.Rocan;
 import me.rina.rocan.api.manager.Manager;
 import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.turok.util.TurokTick;
@@ -13,6 +12,8 @@ import java.util.ArrayList;
  **/
 public class SpammerManager extends Manager {
     private ArrayList<String> queue;
+    private ArrayList<String> lastQueue;
+
     private TurokTick tick = new TurokTick();
 
     private float delay;
@@ -24,6 +25,7 @@ public class SpammerManager extends Manager {
         super("Spammer", "Manage");
 
         this.queue = new ArrayList<>();
+        this.lastQueue = new ArrayList<>();
     }
 
     public void setQueue(ArrayList<String> queue) {
@@ -32,6 +34,14 @@ public class SpammerManager extends Manager {
 
     public ArrayList<String> getQueue() {
         return queue;
+    }
+
+    public void setLastQueue(ArrayList<String> lastQueue) {
+        this.lastQueue = lastQueue;
+    }
+
+    public ArrayList<String> getLastQueue() {
+        return lastQueue;
     }
 
     public void setTick(TurokTick tick) {
@@ -67,20 +77,34 @@ public class SpammerManager extends Manager {
     }
 
     public void send(String message) {
-        this.queue.add(message);
+        boolean isAcceptToJoinQueue = true;
+
+        for (String messages : new ArrayList<>(this.lastQueue)) {
+            if (messages.equals(message)) {
+                isAcceptToJoinQueue = false;
+
+                this.lastQueue.clear();
+            }
+        }
+
+        if (isAcceptToJoinQueue) {
+            this.queue.add(message);
+        }
     }
 
     public void onUpdate() {
-        if (this.queue.size() > limit) {
+        if (this.queue.size() >= limit) {
             this.queue.clear();
         }
 
         for (String messages : new ArrayList<>(this.queue)) {
             if (tick.isPassedMS(delay * 1000f)) {
+                this.isNext = true;
+
                 ChatUtil.message(messages);
 
+                this.lastQueue.add(messages);
                 this.queue.remove(messages);
-                this.isNext = true;
 
                 tick.reset();
             } else {

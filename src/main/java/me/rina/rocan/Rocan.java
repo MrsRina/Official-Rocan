@@ -6,12 +6,12 @@ import me.rina.rocan.api.event.management.EventManager;
 import me.rina.rocan.api.module.management.ModuleManager;
 import me.rina.rocan.api.preset.management.PresetManager;
 import me.rina.rocan.api.social.management.SocialManager;
+import me.rina.rocan.api.tracker.management.TrackerManager;
 import me.rina.rocan.client.command.CommandPrefix;
 import me.rina.rocan.client.command.CommandToggle;
 import me.rina.rocan.client.gui.GUI;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.manager.chat.SpammerManager;
-import me.rina.rocan.client.manager.network.PacketAntiSpamManager;
 import me.rina.rocan.client.module.exploit.ModuleXCarry;
 import me.rina.rocan.client.module.misc.ModuleAutoFish;
 import me.rina.rocan.client.module.misc.ModuleAutoRespawn;
@@ -50,6 +50,7 @@ public class Rocan {
     private team.stiff.pomelo.EventManager pomeloEventManager = new AnnotatedEventManager();
 
     /* API managers. */
+    private TrackerManager trackerManager;
     private ModuleManager moduleManager;
     private EventManager clientEventManager;
     private CommandManager commandManager;
@@ -58,7 +59,6 @@ public class Rocan {
 
     /* Not API managers. */
     private SpammerManager spammerManager;
-    private PacketAntiSpamManager packetAntiSpamManager;
 
     /* Gui screen stuff. */
     private ModuleClickGUI moduleClickGUI;
@@ -124,13 +124,13 @@ public class Rocan {
 
     @Mod.EventHandler
     public void onClientStarted(FMLInitializationEvent event) {
+        this.trackerManager = new TrackerManager();
         this.moduleManager = new ModuleManager();
         this.clientEventManager = new EventManager();
         this.commandManager = new CommandManager();
         this.socialManager = new SocialManager();
         this.presetManager = new PresetManager();
         this.spammerManager = new SpammerManager();
-        this.packetAntiSpamManager = new PacketAntiSpamManager();
 
         this.wrapperGUI = new GUI();
 
@@ -143,6 +143,10 @@ public class Rocan {
 
     public static team.stiff.pomelo.EventManager getPomeloEventManager() {
         return INSTANCE.pomeloEventManager;
+    }
+
+    public static TrackerManager getTrackerManager() {
+        return INSTANCE.trackerManager;
     }
 
     public static ModuleManager getModuleManager() {
@@ -167,10 +171,6 @@ public class Rocan {
 
     public static SpammerManager getSpammerManager() {
         return INSTANCE.spammerManager;
-    }
-
-    public static PacketAntiSpamManager getPacketAntiSpamManager() {
-        return INSTANCE.packetAntiSpamManager;
     }
 
     public static GUI getWrapperGUI() {

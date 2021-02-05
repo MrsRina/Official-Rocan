@@ -23,6 +23,20 @@ public class ModuleManager implements ISLClass {
         this.moduleList = new ArrayList<>();
     }
 
+    public void setModuleList(ArrayList<Module> moduleList) {
+        this.moduleList = moduleList;
+    }
+
+    public ArrayList<Module> getModuleList() {
+        return moduleList;
+    }
+
+    public void onKeyPressed(int keyCode) {
+        for (Module modules : this.getModuleList()) {
+            modules.onKeyPressed(keyCode);
+        }
+    }
+
     public void registry(Module module) {
         try {
             for (Field fields : module.getClass().getDeclaredFields()) {
@@ -49,25 +63,6 @@ public class ModuleManager implements ISLClass {
         }
     }
 
-    public void setModuleList(ArrayList<Module> moduleList) {
-        this.moduleList = moduleList;
-    }
-
-    public ArrayList<Module> getModuleList() {
-        return moduleList;
-    }
-
-    public void onKeyPressed(int keyCode) {
-        for (Module modules : this.getModuleList()) {
-            if (modules.getKeyCode() == keyCode) {
-                modules.toggle();
-            }
-        }
-    }
-
-    /*
-     * Tools.
-     */
     public static Module get(Class<?> clazz) {
         for (Module modules : ModuleManager.INSTANCE.getModuleList()) {
             if (modules.getClass() == clazz) {
