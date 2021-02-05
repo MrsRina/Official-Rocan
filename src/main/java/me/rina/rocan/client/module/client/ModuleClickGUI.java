@@ -19,7 +19,7 @@ public class ModuleClickGUI extends Module {
     public static ValueString typeBox = new ValueString("Type Box", "TypeBox", "Black.", "SCrim").addFormat("fuck just type");
 
     public ModuleClickGUI() {
-        super("Module Click GUI", "ModuleClickGUI", "Open GUI to manage module, settings...", ModuleCategory.Client);
+        super("Click GUI", "gui", "Open GUI to manage module, settings...", ModuleCategory.Client);
     }
 
     @Listener
