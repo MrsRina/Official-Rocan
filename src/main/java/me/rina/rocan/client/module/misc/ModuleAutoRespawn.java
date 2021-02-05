@@ -16,7 +16,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  * @since 02/02/2021 at 00:07
  **/
 public class ModuleAutoRespawn extends Module {
-    public static ValueNumber settingSecondsDelay = new ValueNumber("Seconds Delay", "SecondsDelay", "The delay for respawn.", 0, 0, 10);
+    public static ValueNumber settingDelay = new ValueNumber("Delay", "Delay", "The secoonds delay for respawn.", 0, 0, 10);
 
     private TurokTick tick = new TurokTick();
 
@@ -38,7 +38,7 @@ public class ModuleAutoRespawn extends Module {
     }
 
     public void doRequest() {
-        if (tick.isPassedMS(settingSecondsDelay.getValue().floatValue() * 1000)) {
+        if (tick.isPassedMS(settingDelay.getValue().floatValue() * 1000)) {
             mc.player.respawnPlayer();
         }
     }

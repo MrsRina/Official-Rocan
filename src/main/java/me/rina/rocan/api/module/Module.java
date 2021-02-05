@@ -190,6 +190,8 @@ public class Module implements ISLClass {
     }
 
     public void setDisabled() {
+        Rocan.getPacketAntiSpamManager().setDelay(250f);
+
         this.keyBinding.setState(false);
 
         if (toggleMessage.getValue()) {

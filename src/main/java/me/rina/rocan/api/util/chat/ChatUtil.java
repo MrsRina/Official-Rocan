@@ -2,6 +2,7 @@ package me.rina.rocan.api.util.chat;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rina.rocan.Rocan;
+import net.minecraft.network.play.client.CPacketChatMessage;
 import net.minecraft.util.text.TextComponentString;
 
 /**
@@ -23,5 +24,13 @@ public class ChatUtil {
         }
 
         Rocan.getMinecraft().ingameGUI.getChatGUI().addToSentMessages(message);
+    }
+
+    public static void message(String message) {
+        if (Rocan.getMinecraft().player == null) {
+            return;
+        }
+
+        Rocan.getMinecraft().player.connection.sendPacket(new CPacketChatMessage(message));
     }
 }

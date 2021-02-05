@@ -10,10 +10,13 @@ import me.rina.rocan.client.command.CommandPrefix;
 import me.rina.rocan.client.command.CommandToggle;
 import me.rina.rocan.client.gui.GUI;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
+import me.rina.rocan.client.manager.chat.SpammerManager;
+import me.rina.rocan.client.manager.network.PacketAntiSpamManager;
 import me.rina.rocan.client.module.exploit.ModuleXCarry;
 import me.rina.rocan.client.module.misc.ModuleAutoFish;
 import me.rina.rocan.client.module.misc.ModuleAutoRespawn;
 import me.rina.rocan.client.module.misc.ModuleChatSuffix;
+import me.rina.rocan.client.module.misc.ModuleSpammer;
 import me.rina.rocan.client.module.render.ModuleBlockHighlight;
 import me.rina.rocan.client.module.render.ModuleHoleESP;
 import net.minecraft.client.Minecraft;
@@ -46,13 +49,18 @@ public class Rocan {
      */
     private team.stiff.pomelo.EventManager pomeloEventManager = new AnnotatedEventManager();
 
-    /* All managers of the client. */
+    /* API managers. */
     private ModuleManager moduleManager;
     private EventManager clientEventManager;
     private CommandManager commandManager;
     private SocialManager socialManager;
     private PresetManager presetManager;
 
+    /* Not API managers. */
+    private SpammerManager spammerManager;
+    private PacketAntiSpamManager packetAntiSpamManager;
+
+    /* Gui screen stuff. */
     private ModuleClickGUI moduleClickGUI;
     private GUI wrapperGUI;
 
@@ -71,6 +79,7 @@ public class Rocan {
         this.moduleManager.registry(new ModuleAutoRespawn());
         this.moduleManager.registry(new ModuleAutoFish());
         this.moduleManager.registry(new ModuleChatSuffix());
+        this.moduleManager.registry(new ModuleSpammer());
 
         // Exploit.
         this.moduleManager.registry(new ModuleXCarry());
@@ -99,6 +108,13 @@ public class Rocan {
      * Method static to end client, save or disable something.
      */
     public static void onEndClient() {
+        me.rina.rocan.client.module.client.ModuleClickGUI moduleClickGUI = (me.rina.rocan.client.module.client.ModuleClickGUI) ModuleManager.get(me.rina.rocan.client.module.client.ModuleClickGUI.class);
+        ModuleSpammer moduleSpammer = (ModuleSpammer) ModuleManager.get(ModuleSpammer.class);
+
+        // Close some modules.
+        moduleClickGUI.setDisabled();
+        moduleSpammer.setDisabled();
+
         // Finish the preset saving all.
         Rocan.getModuleManager().onSave();
         Rocan.getSocialManager().onSave();
@@ -113,6 +129,8 @@ public class Rocan {
         this.commandManager = new CommandManager();
         this.socialManager = new SocialManager();
         this.presetManager = new PresetManager();
+        this.spammerManager = new SpammerManager();
+        this.packetAntiSpamManager = new PacketAntiSpamManager();
 
         this.wrapperGUI = new GUI();
 
@@ -145,6 +163,14 @@ public class Rocan {
 
     public static SocialManager getSocialManager() {
         return INSTANCE.socialManager;
+    }
+
+    public static SpammerManager getSpammerManager() {
+        return INSTANCE.spammerManager;
+    }
+
+    public static PacketAntiSpamManager getPacketAntiSpamManager() {
+        return INSTANCE.packetAntiSpamManager;
     }
 
     public static GUI getWrapperGUI() {

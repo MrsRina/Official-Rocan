@@ -79,6 +79,9 @@ public class EventManager {
             return;
         }
 
+        Rocan.getSpammerManager().onUpdate();
+        Rocan.getPacketAntiSpamManager().onUpdate();
+
         this.setCurrentRender2DPartialTicks(event.getPartialTicks());
 
         for (Module modules : Rocan.getModuleManager().getModuleList()) {
