@@ -33,154 +33,154 @@ import team.stiff.pomelo.impl.annotated.AnnotatedEventManager;
  */
 @Mod(modid = "rocan", name = Rocan.NAME, version = Rocan.VERSION)
 public class Rocan {
-    @Mod.Instance
-    public static Rocan INSTANCE;
+  @Mod.Instance
+  public static Rocan INSTANCE;
 
-    public static final String NAME        = "Rocan";
-    public static final String VERSION     = "0.1.7";
-    public static final String PATH_CONFIG = "Rocan/";
-    public static final String CHAT        = ChatFormatting.GRAY + "Rocan " + ChatFormatting.WHITE;
+  public static final String NAME        = "Rocan";
+  public static final String VERSION     = "0.1.7";
+  public static final String PATH_CONFIG = "Rocan/";
+  public static final String CHAT        = ChatFormatting.GRAY + "Rocan " + ChatFormatting.WHITE;
 
-    /*
-     * We create one final Minecraft, there is the function Minecraft or this variable;
-     */
-    public static final Minecraft MC = Minecraft.getMinecraft();
+  /*
+   * We create one final Minecraft, there is the function Minecraft or this variable;
+   */
+  public static final Minecraft MC = Minecraft.getMinecraft();
 
-    /*
-     * The event manager of team pomelo!!
-     */
-    private team.stiff.pomelo.EventManager pomeloEventManager = new AnnotatedEventManager();
+  /*
+   * The event manager of team pomelo!!
+   */
+  private team.stiff.pomelo.EventManager pomeloEventManager = new AnnotatedEventManager();
 
-    /* API managers. */
-    private ModuleManager moduleManager;
-    private EventManager clientEventManager;
-    private CommandManager commandManager;
-    private SocialManager socialManager;
-    private PresetManager presetManager;
+  /* API managers. */
+  private ModuleManager moduleManager;
+  private EventManager clientEventManager;
+  private CommandManager commandManager;
+  private SocialManager socialManager;
+  private PresetManager presetManager;
 
-    /* Not API managers. */
-    private SpammerManager spammerManager;
-    private PacketAntiSpamManager packetAntiSpamManager;
+  /* Not API managers. */
+  private SpammerManager spammerManager;
+  private PacketAntiSpamManager packetAntiSpamManager;
 
-    /* Gui screen stuff. */
-    private ModuleClickGUI moduleClickGUI;
-    private GUI wrapperGUI;
+  /* Gui screen stuff. */
+  private ModuleClickGUI moduleClickGUI;
+  private GUI wrapperGUI;
 
-    /**
-     * Registry all components.
-     */
-    public void onRegistry() {
-        // Category Client.
-        this.moduleManager.registry(new me.rina.rocan.client.module.client.ModuleClickGUI());
+  /**
+   * Registry all components.
+   */
+  public void onRegistry() {
+    // Category Client.
+    this.moduleManager.registry(new me.rina.rocan.client.module.client.ModuleClickGUI());
 
-        // Category Render.
-        this.moduleManager.registry(new ModuleBlockHighlight());
-        this.moduleManager.registry(new ModuleHoleESP());
+    // Category Render.
+    this.moduleManager.registry(new ModuleBlockHighlight());
+    this.moduleManager.registry(new ModuleHoleESP());
 
-        // Category Misc.
-        this.moduleManager.registry(new ModuleAutoRespawn());
-        this.moduleManager.registry(new ModuleAutoFish());
-        this.moduleManager.registry(new ModuleChatSuffix());
-        this.moduleManager.registry(new ModuleSpammer());
+    // Category Misc.
+    this.moduleManager.registry(new ModuleAutoRespawn());
+    this.moduleManager.registry(new ModuleAutoFish());
+    this.moduleManager.registry(new ModuleChatSuffix());
+    this.moduleManager.registry(new ModuleSpammer());
 
-        // Exploit.
-        this.moduleManager.registry(new ModuleXCarry());
+    // Exploit.
+    this.moduleManager.registry(new ModuleXCarry());
 
-        // Commands.
-        this.commandManager.registry(new CommandCoords());
-        this.commandManager.registry(new CommandPrefix());
-        this.commandManager.registry(new CommandToggle());
-    }
+    // Commands.
+    this.commandManager.registry(new CommandCoords());
+    this.commandManager.registry(new CommandPrefix());
+    this.commandManager.registry(new CommandToggle());
+  }
 
-    /**
-     * Method non-static to init the client.
-     */
-    public void onInitClient() {
-        this.presetManager.onLoad();
+  /**
+   * Method non-static to init the client.
+   */
+  public void onInitClient() {
+    this.presetManager.onLoad();
 
-        // We start here the GUI, cause, all settings and modules are loaded.
-        this.moduleClickGUI = new ModuleClickGUI();
-        this.moduleClickGUI.init();
+    // We start here the GUI, cause, all settings and modules are loaded.
+    this.moduleClickGUI = new ModuleClickGUI();
+    this.moduleClickGUI.init();
 
-        // Reload method to refresh states and values.
-        PresetManager.reload();
-        ModuleManager.reload();
-    }
+    // Reload method to refresh states and values.
+    PresetManager.reload();
+    ModuleManager.reload();
+  }
 
-    /**
-     * Method static to end client, save or disable something.
-     */
-    public static void onEndClient() {
-        me.rina.rocan.client.module.client.ModuleClickGUI moduleClickGUI = (me.rina.rocan.client.module.client.ModuleClickGUI) ModuleManager.get(me.rina.rocan.client.module.client.ModuleClickGUI.class);
-        ModuleSpammer moduleSpammer = (ModuleSpammer) ModuleManager.get(ModuleSpammer.class);
+  /**
+   * Method static to end client, save or disable something.
+   */
+  public static void onEndClient() {
+    me.rina.rocan.client.module.client.ModuleClickGUI moduleClickGUI = (me.rina.rocan.client.module.client.ModuleClickGUI) ModuleManager.get(me.rina.rocan.client.module.client.ModuleClickGUI.class);
+    ModuleSpammer moduleSpammer = (ModuleSpammer) ModuleManager.get(ModuleSpammer.class);
 
-        // Close some modules.
-        moduleClickGUI.setDisabled();
-        moduleSpammer.setDisabled();
+    // Close some modules.
+    moduleClickGUI.setDisabled();
+    moduleSpammer.setDisabled();
 
-        // Finish the preset saving all.
-        Rocan.getModuleManager().onSave();
-        Rocan.getSocialManager().onSave();
+    // Finish the preset saving all.
+    Rocan.getModuleManager().onSave();
+    Rocan.getSocialManager().onSave();
 
-        PresetManager.INSTANCE.onSave();
-    }
+    PresetManager.INSTANCE.onSave();
+  }
 
-    @Mod.EventHandler
-    public void onClientStarted(FMLInitializationEvent event) {
-        this.moduleManager = new ModuleManager();
-        this.clientEventManager = new EventManager();
-        this.commandManager = new CommandManager();
-        this.socialManager = new SocialManager();
-        this.presetManager = new PresetManager();
-        this.spammerManager = new SpammerManager();
-        this.packetAntiSpamManager = new PacketAntiSpamManager();
+  @Mod.EventHandler
+  public void onClientStarted(FMLInitializationEvent event) {
+    this.moduleManager = new ModuleManager();
+    this.clientEventManager = new EventManager();
+    this.commandManager = new CommandManager();
+    this.socialManager = new SocialManager();
+    this.presetManager = new PresetManager();
+    this.spammerManager = new SpammerManager();
+    this.packetAntiSpamManager = new PacketAntiSpamManager();
 
-        this.wrapperGUI = new GUI();
+    this.wrapperGUI = new GUI();
 
-        MinecraftForge.EVENT_BUS.register(this.clientEventManager);
-        MinecraftForge.EVENT_BUS.register(this.commandManager);
+    MinecraftForge.EVENT_BUS.register(this.clientEventManager);
+    MinecraftForge.EVENT_BUS.register(this.commandManager);
 
-        this.onRegistry();
-        this.onInitClient();
-    }
+    this.onRegistry();
+    this.onInitClient();
+  }
 
-    public static team.stiff.pomelo.EventManager getPomeloEventManager() {
-        return INSTANCE.pomeloEventManager;
-    }
+  public static team.stiff.pomelo.EventManager getPomeloEventManager() {
+    return INSTANCE.pomeloEventManager;
+  }
 
-    public static ModuleManager getModuleManager() {
-        return INSTANCE.moduleManager;
-    }
+  public static ModuleManager getModuleManager() {
+    return INSTANCE.moduleManager;
+  }
 
-    public static EventManager getClientEventManager() {
-        return INSTANCE.clientEventManager;
-    }
+  public static EventManager getClientEventManager() {
+    return INSTANCE.clientEventManager;
+  }
 
-    public static CommandManager getCommandManager() {
-        return INSTANCE.commandManager;
-    }
+  public static CommandManager getCommandManager() {
+    return INSTANCE.commandManager;
+  }
 
-    public static ModuleClickGUI getModuleClickGUI() {
-        return INSTANCE.moduleClickGUI;
-    }
+  public static ModuleClickGUI getModuleClickGUI() {
+    return INSTANCE.moduleClickGUI;
+  }
 
-    public static SocialManager getSocialManager() {
-        return INSTANCE.socialManager;
-    }
+  public static SocialManager getSocialManager() {
+    return INSTANCE.socialManager;
+  }
 
-    public static SpammerManager getSpammerManager() {
-        return INSTANCE.spammerManager;
-    }
+  public static SpammerManager getSpammerManager() {
+    return INSTANCE.spammerManager;
+  }
 
-    public static PacketAntiSpamManager getPacketAntiSpamManager() {
-        return INSTANCE.packetAntiSpamManager;
-    }
+  public static PacketAntiSpamManager getPacketAntiSpamManager() {
+    return INSTANCE.packetAntiSpamManager;
+  }
 
-    public static GUI getWrapperGUI() {
-        return INSTANCE.wrapperGUI;
-    }
+  public static GUI getWrapperGUI() {
+    return INSTANCE.wrapperGUI;
+  }
 
-    public static Minecraft getMinecraft() {
-        return MC;
-    }
+  public static Minecraft getMinecraft() {
+    return MC;
+  }
 }
