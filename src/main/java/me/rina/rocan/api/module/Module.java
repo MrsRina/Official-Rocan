@@ -8,6 +8,7 @@ import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.setting.Setting;
 import me.rina.rocan.api.setting.value.*;
 import me.rina.rocan.api.util.chat.ChatUtil;
+import me.rina.rocan.mixin.interfaces.IMinecraft;
 import me.rina.turok.util.TurokClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.culling.Frustum;
@@ -39,6 +40,7 @@ public class Module implements ISLClass {
     private ValueBoolean showModuleEnableList = new ValueBoolean("Show Module Enabled List", "ShowModuleEnabledList", "Show in component Module Enabled List", true);
     private ValueBoolean toggleMessage = new ValueBoolean("Toggle Message", "ToggleMessage", "Alert if is toggled.", true);
 
+    public me.rina.rocan.mixin.interfaces.IMinecraft imc = (IMinecraft) Minecraft.getMinecraft();
     /*
      * Frustum camera for render in 3D space.
      */

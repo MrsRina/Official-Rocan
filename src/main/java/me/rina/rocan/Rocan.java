@@ -1,7 +1,6 @@
 package me.rina.rocan;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
-import me.rina.rocan.api.command.Command;
 import me.rina.rocan.api.command.management.CommandManager;
 import me.rina.rocan.api.event.management.EventManager;
 import me.rina.rocan.api.module.management.ModuleManager;
@@ -15,11 +14,9 @@ import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.manager.chat.SpammerManager;
 import me.rina.rocan.client.manager.network.PacketAntiSpamManager;
 import me.rina.rocan.client.module.combat.ModuleAutoArmour;
+import me.rina.rocan.client.module.exploit.ModuleFastUse;
 import me.rina.rocan.client.module.exploit.ModuleXCarry;
-import me.rina.rocan.client.module.misc.ModuleAutoFish;
-import me.rina.rocan.client.module.misc.ModuleAutoRespawn;
-import me.rina.rocan.client.module.misc.ModuleChatSuffix;
-import me.rina.rocan.client.module.misc.ModuleSpammer;
+import me.rina.rocan.client.module.misc.*;
 import me.rina.rocan.client.module.render.ModuleBlockHighlight;
 import me.rina.rocan.client.module.render.ModuleHoleESP;
 import net.minecraft.client.Minecraft;
@@ -90,6 +87,7 @@ public class Rocan {
 
     // Category Exploit.
     this.moduleManager.registry(new ModuleXCarry());
+    this.moduleManager.registry(new ModuleFastUse());
 
     // Commands.
     this.commandManager.registry(new CommandCoords());
