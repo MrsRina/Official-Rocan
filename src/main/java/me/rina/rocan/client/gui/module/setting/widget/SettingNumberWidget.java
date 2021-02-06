@@ -71,7 +71,7 @@ public class SettingNumberWidget extends Widget {
         this.setting = setting;
 
         this.rect.setWidth(this.settingContainer.getRect().getWidth());
-        this.rect.setHeight(10 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 10);
+        this.rect.setHeight(8 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 8);
     }
 
     public void setRectSlider(TurokRect rectSlider) {

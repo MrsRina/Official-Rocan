@@ -26,31 +26,32 @@ import java.util.List;
  * @since 28/01/2021 at 13:38
  **/
 public class ModuleHoleESP extends Module {
-    private ValueNumber range = new ValueNumber("Range", "Range", "Maximum distance to render.", 6f, 0.1f, 10f);
+    private ValueNumber settingRange = new ValueNumber("Range", "Range", "Maximum distance to render.", 6f, 0.1f, 10f);
+    private ValueNumber settingOffsetY = new ValueNumber("Offset Y", "OffsetY", "Offset y block render.", 25, 0, 100);
+    
+    public static ValueBoolean settingRGB = new ValueBoolean("RGB", "RGB", "RGB effect.", false);
 
-    public static ValueBoolean renderRGB = new ValueBoolean("RGB", "RGB", "RGB effect.", false);
-
-    public static ValueNumber renderRed = new ValueNumber("Red", "Red", "Color line range red.", 255, 0, 255);
-    public static ValueNumber renderGreen = new ValueNumber("Green", "Green", "Color line range green.", 0, 0, 255);
-    public static ValueNumber renderBlue = new ValueNumber("Blue", "Blue", "Color line range blue.", 255, 0, 255);
-    public static ValueNumber renderAlpha = new ValueNumber("Alpha", "Alpha", "Color line range alpha.", 255, 0, 255);
+    public static ValueNumber settingRed = new ValueNumber("Red", "Red", "Color line range red.", 255, 0, 255);
+    public static ValueNumber settingGreen = new ValueNumber("Green", "Green", "Color line range green.", 0, 0, 255);
+    public static ValueNumber settingBlue = new ValueNumber("Blue", "Blue", "Color line range blue.", 255, 0, 255);
+    public static ValueNumber settingAlpha = new ValueNumber("Alpha", "Alpha", "Color line range alpha.", 255, 0, 255);
 
     /*
      * Outline config;
      */
-    public static ValueEnum renderOutline = new ValueEnum("Outline", "Outline", "Outline effect.", ModuleBlockHighlight.RenderOutline.Enabled);
+    public static ValueEnum settingOutline = new ValueEnum("Outline", "Outline", "Outline effect.", ModuleBlockHighlight.RenderOutline.Enabled);
 
     enum RenderOutline {
         Enabled, Disabled;
     }
 
-    public static ValueNumber renderOutlineLineSize = new ValueNumber("Outline Line Size", "OutlineLineSize", "Line size.", 1.0f, 0.1f, 3.0f);
-    public static ValueBoolean renderOutlineRGB = new ValueBoolean("Outline RGB", "OutlineRGB", "360 color range.", false);
+    public static ValueNumber settingOutlineLineSize = new ValueNumber("Outline Line Size", "OutlineLineSize", "Line size.", 1.0f, 0.1f, 3.0f);
+    public static ValueBoolean settingOutlineRGB = new ValueBoolean("Outline RGB", "OutlineRGB", "360 color range.", false);
 
-    public static ValueNumber renderOutlineRed = new ValueNumber("Outline Red", "OutlineRed", "Color line range red.", 255, 0, 255);
-    public static ValueNumber renderOutlineGreen = new ValueNumber("Outline Green", "OutlineGreen", "Color line range green.", 0, 0, 255);
-    public static ValueNumber renderOutlineBlue = new ValueNumber("Outline Blue", "OutlineBlue", "Color line range blue.", 255, 0, 255);
-    public static ValueNumber renderOutlineAlpha = new ValueNumber("Outline Alpha", "OutlineAlpha", "Color line range alpha.", 255, 0, 255);
+    public static ValueNumber settingOutlineRed = new ValueNumber("Outline Red", "OutlineRed", "Color line range red.", 255, 0, 255);
+    public static ValueNumber settingOutlineGreen = new ValueNumber("Outline Green", "OutlineGreen", "Color line range green.", 0, 0, 255);
+    public static ValueNumber settingOutlineBlue = new ValueNumber("Outline Blue", "OutlineBlue", "Color line range blue.", 255, 0, 255);
+    public static ValueNumber settingOutlineAlpha = new ValueNumber("Outline Alpha", "OutlineAlpha", "Color line range alpha.", 255, 0, 255);
 
     private ArrayList<BlockPos> holes = new ArrayList<>();
 
@@ -60,23 +61,23 @@ public class ModuleHoleESP extends Module {
 
     @Override
     public void onSetting() {
-        renderOutlineLineSize.setEnabled(renderOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled);
-        renderOutlineRed.setEnabled(renderOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled);
-        renderOutlineGreen.setEnabled(renderOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled);
-        renderOutlineBlue.setEnabled(renderOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled);
-        renderOutlineAlpha.setEnabled(renderOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled);
-        renderOutlineRGB.setEnabled(renderOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled);
+        settingOutlineLineSize.setEnabled(settingOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled);
+        settingOutlineRed.setEnabled(settingOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled);
+        settingOutlineGreen.setEnabled(settingOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled);
+        settingOutlineBlue.setEnabled(settingOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled);
+        settingOutlineAlpha.setEnabled(settingOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled);
+        settingOutlineRGB.setEnabled(settingOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled);
 
-        if (renderRGB.getValue()) {
-            renderRed.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[0]);
-            renderGreen.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[1]);
-            renderBlue.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[2]);
+        if (settingRGB.getValue()) {
+            settingRed.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[0]);
+            settingGreen.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[1]);
+            settingBlue.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[2]);
         }
 
-        if (renderOutlineRGB.getValue()) {
-            renderOutlineRed.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[0]);
-            renderOutlineGreen.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[1]);
-            renderOutlineBlue.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[2]);
+        if (settingOutlineRGB.getValue()) {
+            settingOutlineRed.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[0]);
+            settingOutlineGreen.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[1]);
+            settingOutlineBlue.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[2]);
         }
     }
 
@@ -88,29 +89,29 @@ public class ModuleHoleESP extends Module {
 
         holes.clear();
 
-        int r = TurokMath.ceiling((float) range.getValue());
+        int r = TurokMath.ceiling((float) settingRange.getValue());
 
         List<BlockPos> sphereList = HoleUtil.getSphereList(PlayerUtil.getBlockPos(), r, r, false, true);
 
         for (BlockPos blocks : sphereList) {
-            if (mc.world.getBlockState(blocks).getBlock().equals(Blocks.AIR)) {
+            if (mc.world.getBlockState(blocks).getBlock() != Blocks.AIR) {
                 continue;
             }
 
-            if (mc.world.getBlockState(blocks.add(0, 1, 0)).getBlock().equals(Blocks.AIR)) {
+            if (mc.world.getBlockState(blocks.add(0, 1, 0)).getBlock() != Blocks.AIR) {
                 continue;
             }
 
-            if (mc.world.getBlockState(blocks.add(0, 2, 0)).getBlock().equals(Blocks.AIR)) {
+            if (mc.world.getBlockState(blocks.add(0, 2, 0)).getBlock() != Blocks.AIR) {
                 continue;
             }
 
             boolean isHole = true;
 
             for (BlockPos _blocks : HoleUtil.SURROUND) {
-                Block block = mc.world.getBlockState(_blocks).getBlock();
+                Block block = mc.world.getBlockState(blocks.add(_blocks)).getBlock();
 
-                if (block != Blocks.BEDROCK || block != Blocks.OBSIDIAN || block != Blocks.ENDER_CHEST || block != Blocks.ANVIL) {
+                if (block != Blocks.BEDROCK && block != Blocks.OBSIDIAN && block != Blocks.ENDER_CHEST && block != Blocks.ANVIL) {
                     isHole = false;
 
                     break;
@@ -125,16 +126,18 @@ public class ModuleHoleESP extends Module {
 
     @Override
     public void onRender3D() {
-        Color color = new Color(renderRed.getValue().intValue(), renderGreen.getValue().intValue(), renderBlue.getValue().intValue(), renderAlpha.getValue().intValue());
-        Color colorOutline = new Color(renderOutlineRed.getValue().intValue(), renderOutlineGreen.getValue().intValue(), renderOutlineBlue.getValue().intValue(), renderOutlineAlpha.getValue().intValue());
+        Color color = new Color(settingRed.getValue().intValue(), settingGreen.getValue().intValue(), settingBlue.getValue().intValue(), settingAlpha.getValue().intValue());
+        Color colorOutline = new Color(settingOutlineRed.getValue().intValue(), settingOutlineGreen.getValue().intValue(), settingOutlineBlue.getValue().intValue(), settingOutlineAlpha.getValue().intValue());
 
         for (BlockPos blocks : holes) {
-            Render3DUtil.render3DSolid(camera, blocks, color);
+            float offsetY = settingOffsetY.getValue().intValue() / 100f;
+            
+            Render3DUtil.render3DSolid(camera, blocks.x, blocks.y, blocks.z, 1, offsetY, 1, color);
 
-            if (renderOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled) {
-                float line = renderOutlineLineSize.getValue().floatValue();
+            if (settingOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled) {
+                float line = settingOutlineLineSize.getValue().floatValue();
 
-                Render3DUtil.render3DOutline(camera, blocks, line, colorOutline);
+                Render3DUtil.render3DOutline(camera, blocks.x, blocks.y, blocks.z, 1, offsetY, 1, line, colorOutline);
             }
         }
     }
