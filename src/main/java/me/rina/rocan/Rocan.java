@@ -6,17 +6,17 @@ import me.rina.rocan.api.event.management.EventManager;
 import me.rina.rocan.api.module.management.ModuleManager;
 import me.rina.rocan.api.preset.management.PresetManager;
 import me.rina.rocan.api.social.management.SocialManager;
-import me.rina.rocan.client.command.CommandCoords;
+import me.rina.rocan.api.tracker.management.TrackerManager;
 import me.rina.rocan.client.command.CommandPrefix;
 import me.rina.rocan.client.command.CommandToggle;
 import me.rina.rocan.client.gui.GUI;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.manager.chat.SpammerManager;
-import me.rina.rocan.client.manager.network.PacketAntiSpamManager;
-import me.rina.rocan.client.module.combat.ModuleAutoArmour;
-import me.rina.rocan.client.module.exploit.ModuleFastUse;
 import me.rina.rocan.client.module.exploit.ModuleXCarry;
-import me.rina.rocan.client.module.misc.*;
+import me.rina.rocan.client.module.misc.ModuleAutoFish;
+import me.rina.rocan.client.module.misc.ModuleAutoRespawn;
+import me.rina.rocan.client.module.misc.ModuleChatSuffix;
+import me.rina.rocan.client.module.misc.ModuleSpammer;
 import me.rina.rocan.client.module.render.ModuleBlockHighlight;
 import me.rina.rocan.client.module.render.ModuleHoleESP;
 import net.minecraft.client.Minecraft;
@@ -31,159 +31,153 @@ import team.stiff.pomelo.impl.annotated.AnnotatedEventManager;
  */
 @Mod(modid = "rocan", name = Rocan.NAME, version = Rocan.VERSION)
 public class Rocan {
-  @Mod.Instance
-  public static Rocan INSTANCE;
+    @Mod.Instance
+    public static Rocan INSTANCE;
 
-  public static final String NAME        = "Rocan";
-  public static final String VERSION     = "0.1.7";
-  public static final String PATH_CONFIG = "Rocan/";
-  public static final String CHAT        = ChatFormatting.GRAY + "Rocan " + ChatFormatting.WHITE;
+    public static final String NAME        = "Rocan";
+    public static final String VERSION     = "0.1.7";
+    public static final String PATH_CONFIG = "Rocan/";
+    public static final String CHAT        = ChatFormatting.GRAY + "Rocan " + ChatFormatting.WHITE;
 
-  /*
-   * We create one final Minecraft, there is the function Minecraft or this variable;
-   */
-  public static final Minecraft MC = Minecraft.getMinecraft();
+    /*
+     * We create one final Minecraft, there is the function Minecraft or this variable;
+     */
+    public static final Minecraft MC = Minecraft.getMinecraft();
 
-  /*
-   * The event manager of team pomelo!!
-   */
-  private team.stiff.pomelo.EventManager pomeloEventManager = new AnnotatedEventManager();
+    /*
+     * The event manager of team pomelo!!
+     */
+    private team.stiff.pomelo.EventManager pomeloEventManager = new AnnotatedEventManager();
 
-  /* API managers. */
-  private ModuleManager moduleManager;
-  private EventManager clientEventManager;
-  private CommandManager commandManager;
-  private SocialManager socialManager;
-  private PresetManager presetManager;
+    /* API managers. */
+    private TrackerManager trackerManager;
+    private ModuleManager moduleManager;
+    private EventManager clientEventManager;
+    private CommandManager commandManager;
+    private SocialManager socialManager;
+    private PresetManager presetManager;
 
-  /* Not API managers. */
-  private SpammerManager spammerManager;
-  private PacketAntiSpamManager packetAntiSpamManager;
+    /* Not API managers. */
+    private SpammerManager spammerManager;
 
-  /* Gui screen stuff. */
-  private ModuleClickGUI moduleClickGUI;
-  private GUI wrapperGUI;
+    /* Gui screen stuff. */
+    private ModuleClickGUI moduleClickGUI;
+    private GUI wrapperGUI;
 
-  /**
-   * Registry all components.
-   */
-  public void onRegistry() {
+    /**
+     * Registry all components.
+     */
+    public void onRegistry() {
+        // Category Client.
+        this.moduleManager.registry(new me.rina.rocan.client.module.client.ModuleClickGUI());
 
-    // Category Combat.
-    this.moduleManager.registry(new ModuleAutoArmour());
+        // Category Render.
+        this.moduleManager.registry(new ModuleBlockHighlight());
+        this.moduleManager.registry(new ModuleHoleESP());
 
-    // Category Client.
-    this.moduleManager.registry(new me.rina.rocan.client.module.client.ModuleClickGUI());
+        // Category Misc.
+        this.moduleManager.registry(new ModuleAutoRespawn());
+        this.moduleManager.registry(new ModuleAutoFish());
+        this.moduleManager.registry(new ModuleChatSuffix());
+        this.moduleManager.registry(new ModuleSpammer());
 
-    // Category Render.
-    this.moduleManager.registry(new ModuleBlockHighlight());
-    this.moduleManager.registry(new ModuleHoleESP());
+        // Exploit.
+        this.moduleManager.registry(new ModuleXCarry());
 
-    // Category Misc.
-    this.moduleManager.registry(new ModuleAutoRespawn());
-    this.moduleManager.registry(new ModuleAutoFish());
-    this.moduleManager.registry(new ModuleChatSuffix());
-    this.moduleManager.registry(new ModuleSpammer());
+        // Commands.
+        this.commandManager.registry(new CommandPrefix());
+        this.commandManager.registry(new CommandToggle());
+    }
 
-    // Category Exploit.
-    this.moduleManager.registry(new ModuleXCarry());
-    this.moduleManager.registry(new ModuleFastUse());
+    /**
+     * Method non-static to init the client.
+     */
+    public void onInitClient() {
+        this.presetManager.onLoad();
 
-    // Commands.
-    this.commandManager.registry(new CommandCoords());
-    this.commandManager.registry(new CommandPrefix());
-    this.commandManager.registry(new CommandToggle());
-  }
+        // We start here the GUI, cause, all settings and modules are loaded.
+        this.moduleClickGUI = new ModuleClickGUI();
+        this.moduleClickGUI.init();
 
-  /**
-   * Method non-static to init the client.
-   */
-  public void onInitClient() {
-    this.presetManager.onLoad();
+        // Reload method to refresh states and values.
+        PresetManager.reload();
+        ModuleManager.reload();
+    }
 
-    // We start here the GUI, cause, all settings and modules are loaded.
-    this.moduleClickGUI = new ModuleClickGUI();
-    this.moduleClickGUI.init();
+    /**
+     * Method static to end client, save or disable something.
+     */
+    public static void onEndClient() {
+        me.rina.rocan.client.module.client.ModuleClickGUI moduleClickGUI = (me.rina.rocan.client.module.client.ModuleClickGUI) ModuleManager.get(me.rina.rocan.client.module.client.ModuleClickGUI.class);
+        ModuleSpammer moduleSpammer = (ModuleSpammer) ModuleManager.get(ModuleSpammer.class);
 
-    // Reload method to refresh states and values.
-    PresetManager.reload();
-    ModuleManager.reload();
-  }
+        // Close some modules.
+        moduleClickGUI.setDisabled();
+        moduleSpammer.setDisabled();
 
-  /**
-   * Method static to end client, save or disable something.
-   */
-  public static void onEndClient() {
-    me.rina.rocan.client.module.client.ModuleClickGUI moduleClickGUI = (me.rina.rocan.client.module.client.ModuleClickGUI) ModuleManager.get(me.rina.rocan.client.module.client.ModuleClickGUI.class);
-    ModuleSpammer moduleSpammer = (ModuleSpammer) ModuleManager.get(ModuleSpammer.class);
+        // Finish the preset saving all.
+        Rocan.getModuleManager().onSave();
+        Rocan.getSocialManager().onSave();
 
-    // Close some modules.
-    moduleClickGUI.setDisabled();
-    moduleSpammer.setDisabled();
+        PresetManager.INSTANCE.onSave();
+    }
 
-    // Finish the preset saving all.
-    Rocan.getModuleManager().onSave();
-    Rocan.getSocialManager().onSave();
+    @Mod.EventHandler
+    public void onClientStarted(FMLInitializationEvent event) {
+        this.trackerManager = new TrackerManager();
+        this.moduleManager = new ModuleManager();
+        this.clientEventManager = new EventManager();
+        this.commandManager = new CommandManager();
+        this.socialManager = new SocialManager();
+        this.presetManager = new PresetManager();
+        this.spammerManager = new SpammerManager();
 
-    PresetManager.INSTANCE.onSave();
-  }
+        this.wrapperGUI = new GUI();
 
-  @Mod.EventHandler
-  public void onClientStarted(FMLInitializationEvent event) {
-    this.moduleManager = new ModuleManager();
-    this.clientEventManager = new EventManager();
-    this.commandManager = new CommandManager();
-    this.socialManager = new SocialManager();
-    this.presetManager = new PresetManager();
-    this.spammerManager = new SpammerManager();
-    this.packetAntiSpamManager = new PacketAntiSpamManager();
+        MinecraftForge.EVENT_BUS.register(this.clientEventManager);
+        MinecraftForge.EVENT_BUS.register(this.commandManager);
 
-    this.wrapperGUI = new GUI();
+        this.onRegistry();
+        this.onInitClient();
+    }
 
-    MinecraftForge.EVENT_BUS.register(this.clientEventManager);
-    MinecraftForge.EVENT_BUS.register(this.commandManager);
+    public static team.stiff.pomelo.EventManager getPomeloEventManager() {
+        return INSTANCE.pomeloEventManager;
+    }
 
-    this.onRegistry();
-    this.onInitClient();
-  }
+    public static TrackerManager getTrackerManager() {
+        return INSTANCE.trackerManager;
+    }
 
-  public static team.stiff.pomelo.EventManager getPomeloEventManager() {
-    return INSTANCE.pomeloEventManager;
-  }
+    public static ModuleManager getModuleManager() {
+        return INSTANCE.moduleManager;
+    }
 
-  public static ModuleManager getModuleManager() {
-    return INSTANCE.moduleManager;
-  }
+    public static EventManager getClientEventManager() {
+        return INSTANCE.clientEventManager;
+    }
 
-  public static EventManager getClientEventManager() {
-    return INSTANCE.clientEventManager;
-  }
+    public static CommandManager getCommandManager() {
+        return INSTANCE.commandManager;
+    }
 
-  public static CommandManager getCommandManager() {
-    return INSTANCE.commandManager;
-  }
+    public static ModuleClickGUI getModuleClickGUI() {
+        return INSTANCE.moduleClickGUI;
+    }
 
-  public static ModuleClickGUI getModuleClickGUI() {
-    return INSTANCE.moduleClickGUI;
-  }
+    public static SocialManager getSocialManager() {
+        return INSTANCE.socialManager;
+    }
 
-  public static SocialManager getSocialManager() {
-    return INSTANCE.socialManager;
-  }
+    public static SpammerManager getSpammerManager() {
+        return INSTANCE.spammerManager;
+    }
 
-  public static SpammerManager getSpammerManager() {
-    return INSTANCE.spammerManager;
-  }
+    public static GUI getWrapperGUI() {
+        return INSTANCE.wrapperGUI;
+    }
 
-  public static PacketAntiSpamManager getPacketAntiSpamManager() {
-    return INSTANCE.packetAntiSpamManager;
-  }
-
-  public static GUI getWrapperGUI() {
-    return INSTANCE.wrapperGUI;
-  }
-
-  public static Minecraft getMinecraft() {
-    return MC;
-  }
+    public static Minecraft getMinecraft() {
+        return MC;
+    }
 }

@@ -7,6 +7,7 @@ import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.api.setting.value.ValueString;
+import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.api.util.client.FlagUtil;
 import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.api.util.entity.PlayerUtil;
@@ -41,7 +42,7 @@ public class ModuleSpammer extends Module {
 
     @Listener
     public void onListen(ClientTickEvent event) {
-        if (NullUtil.isPlayerWorld() == false) {
+        if (NullUtil.isPlayerWorld()) {
             return;
         }
 
@@ -51,22 +52,24 @@ public class ModuleSpammer extends Module {
     }
 
     public void verifyWalking() {
-        if (Rocan.getSpammerManager().isNext()) {
-            // If speed is > 0, is because we are moving.
-            if (PlayerUtil.getSpeed() > 0d) {
-                int x = (int) (this.lastWalkingPlayerPos[0] - PlayerUtil.getPos()[0]);
-                int y = (int) (this.lastWalkingPlayerPos[0] - PlayerUtil.getPos()[0]);
-                int z = (int) (this.lastWalkingPlayerPos[0] - PlayerUtil.getPos()[0]);
+        if (this.lastWalkingPlayerPos == null) {
+            this.lastWalkingPlayerPos = PlayerUtil.getLastPos();
+        }
 
-                // x^2 + y^2 + z^2;
-                int walkedBlocks = TurokMath.sqrt(x * x + y * y + z * z);
+        // If speed is > 0, is because we are moving.
+        if (mc.player.movementInput.moveForward > 0f || mc.player.movementInput.moveStrafe > 0f) {
+            int x = (int) (this.lastWalkingPlayerPos[0] - PlayerUtil.getPos()[0]);
+            int y = (int) (this.lastWalkingPlayerPos[1] - PlayerUtil.getPos()[1]);
+            int z = (int) (this.lastWalkingPlayerPos[2] - PlayerUtil.getPos()[2]);
 
+            // x^2 + y^2 + z^2;
+            int walkedBlocks = TurokMath.sqrt(x * x + y * y + z * z);
+
+            if (walkedBlocks != 0) {
                 Rocan.getSpammerManager().send(settingWalkText.getValue().replaceAll("<blocks>", "" + walkedBlocks));
-
-                this.lastWalkingPlayerPos = PlayerUtil.getLastPos();
             }
+        } else {
+            this.lastWalkingPlayerPos = PlayerUtil.getLastPos();
         }
     }
-
-
 }

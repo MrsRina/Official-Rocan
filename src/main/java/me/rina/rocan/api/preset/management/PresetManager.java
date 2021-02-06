@@ -147,6 +147,10 @@ public class PresetManager implements ISLClass {
 
             InputStream file = Files.newInputStream(Paths.get(pathFile));
 
+            if (new JsonParser().parse(new InputStreamReader(file)) == null) {
+                return;
+            }
+
             JsonObject mainJson = new JsonParser().parse(new InputStreamReader(file)).getAsJsonObject();
             JsonArray mainJsonArray = new JsonParser().parse(new InputStreamReader(file)).getAsJsonArray();
 

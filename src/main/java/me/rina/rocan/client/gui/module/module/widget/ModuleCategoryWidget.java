@@ -143,6 +143,13 @@ public class ModuleCategoryWidget extends Widget {
     @Override
     public void onMouseClicked(int button) {
         if (this.flagMouse == Flag.MouseOver) {
+            if (button == 2) {
+                this.frame.setDragX(this.master.getMouse().getX() - this.frame.getRect().getX());
+                this.frame.setDragY(this.master.getMouse().getY() - this.frame.getRect().getY());
+
+                this.frame.setDragging(true);
+            }
+
             if (button == 0 && this.isSelected == false) {
                 this.frame.resetWidget();
                 this.frame.getClientContainer().setModuleContainer(this.container);

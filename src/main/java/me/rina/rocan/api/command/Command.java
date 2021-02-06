@@ -45,7 +45,7 @@ public class Command {
     }
 
     public void print(String message) {
-        ChatUtil.print(Rocan.CHAT + " " + message);
+        ChatUtil.print(Rocan.CHAT + message);
     }
 
     /*

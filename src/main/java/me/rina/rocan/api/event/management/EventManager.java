@@ -80,7 +80,7 @@ public class EventManager {
         }
 
         Rocan.getSpammerManager().onUpdate();
-        Rocan.getPacketAntiSpamManager().onUpdate();
+        Rocan.getTrackerManager().onUpdateAll();
 
         this.setCurrentRender2DPartialTicks(event.getPartialTicks());
 

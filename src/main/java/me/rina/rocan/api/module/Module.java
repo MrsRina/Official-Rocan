@@ -121,6 +121,14 @@ public class Module implements ISLClass {
         return keyBinding.getKeyCode();
     }
 
+    public void setSettingList(ArrayList<Setting> settingList) {
+        this.settingList = settingList;
+    }
+
+    public ArrayList<Setting> getSettingList() {
+        return settingList;
+    }
+
     public void registry(Setting setting) {
         if (this.settingList == null) {
             this.settingList = new ArrayList<>();
@@ -137,14 +145,6 @@ public class Module implements ISLClass {
                 this.settingList.remove(setting);
             }
         }
-    }
-
-    public void setSettingList(ArrayList<Setting> settingList) {
-        this.settingList = settingList;
-    }
-
-    public ArrayList<Setting> getSettingList() {
-        return settingList;
     }
 
     public Setting get(Class<?> clazz) {
@@ -165,6 +165,22 @@ public class Module implements ISLClass {
         }
 
         return null;
+    }
+
+    public void onKeyPressed(int key) {
+        for (Setting settings : this.settingList) {
+            if (settings instanceof ValueBind) {
+                ValueBind settingValueBind = (ValueBind) settings;
+
+                if (settingValueBind.getKeyCode() == key) {
+                    settingValueBind.setState(!settingValueBind.getState());
+
+                    if (settingValueBind.getClass() == this.keyBinding.getClass()) {
+                        this.onReload();
+                    }
+                }
+            }
+        }
     }
 
     public void toggle() {
@@ -192,8 +208,6 @@ public class Module implements ISLClass {
     }
 
     public void setDisabled() {
-        Rocan.getPacketAntiSpamManager().setDelay(250f);
-
         this.keyBinding.setState(false);
 
         if (toggleMessage.getValue()) {
@@ -209,8 +223,8 @@ public class Module implements ISLClass {
         ChatUtil.print(ChatFormatting.GRAY + this.name + " " + ChatFormatting.WHITE + message);
     }
 
-    protected void onEnable() {}
-    protected void onDisable() {}
+    public void onEnable() {}
+    public void onDisable() {}
 
     public void onRender2D() {}
     public void onRender3D() {}
