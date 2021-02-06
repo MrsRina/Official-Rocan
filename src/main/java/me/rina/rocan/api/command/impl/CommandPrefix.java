@@ -5,10 +5,10 @@ package me.rina.rocan.api.command.impl;
  * @since 16/11/20 at 02:03pm
  */
 public class CommandPrefix {
-    String prefix;
+    private String prefix;
 
-    public CommandPrefix(String _default) {
-        this.prefix =_default;
+    public CommandPrefix(String prefix) {
+        this.prefix = prefix;
     }
 
     public void setPrefix(String prefix) {

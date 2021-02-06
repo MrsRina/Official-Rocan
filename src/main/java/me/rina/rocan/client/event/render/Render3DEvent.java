@@ -11,7 +11,7 @@ public class Render3DEvent extends Event {
     private float partialTicks;
 
     public Render3DEvent(float partialTicks) {
-        super(EventStage.Pre);
+        super(EventStage.PRE);
 
         this.partialTicks = partialTicks;
     }

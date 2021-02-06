@@ -58,8 +58,8 @@ public class MotherFrame extends Frame {
     private boolean isMouseClickedLeft;
     private boolean isReturnCenterPressed;
 
-    public Flag flagMouse = Flag.MouseNotOver;
-    public Flag flagMouseResize = Flag.MouseNotOver;
+    public Flag flagMouse = Flag.MOUSE_NOT_OVER;
+    public Flag flagMouseResize = Flag.MOUSE_NOT_OVER;
 
     public MotherFrame(ModuleClickGUI master) {
         super("Mother");
@@ -258,7 +258,7 @@ public class MotherFrame extends Frame {
     @Override
     public void onMouseClicked(int button) {
         if (button == TurokMouse.BUTTON_LEFT) {
-            if (this.flagMouseResize == Flag.MouseOver) {
+            if (this.flagMouseResize == Flag.MOUSE_OVER) {
                 this.resizeX = this.master.getMouse().getX() - this.rect.getX();
                 this.resizeY = this.master.getMouse().getY() - this.rect.getY();
 
@@ -296,8 +296,8 @@ public class MotherFrame extends Frame {
         this.rectWidgetSelected.setY(this.rect.getY());
         this.rectWidgetSelected.setHeight(this.widgetHeight);
 
-        this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
-        this.flagMouseResize = this.rectResize.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+        this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
+        this.flagMouseResize = this.rectResize.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
 
         /*
          * Its the width of widget category, if you:

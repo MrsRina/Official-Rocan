@@ -35,7 +35,7 @@ public class LabelWidget extends Widget {
     private float offsetWidth;
     private float offsetHeight;
 
-    public Flag flagMouse = Flag.MouseNotOver;
+    public Flag flagMouse = Flag.MOUSE_NOT_OVER;
 
     public LabelWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer moduleContainer, ModuleWidget widgetModule, SettingContainer settingContainer, String text) {
         super(text);

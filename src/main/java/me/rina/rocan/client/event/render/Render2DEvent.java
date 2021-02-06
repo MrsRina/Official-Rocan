@@ -11,7 +11,7 @@ public class Render2DEvent extends Event {
     private float partialTicks;
 
     public Render2DEvent(float partialTicks) {
-        super(EventStage.Pre);
+        super(EventStage.PRE);
 
         this.partialTicks = partialTicks;
     }

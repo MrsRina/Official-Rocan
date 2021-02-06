@@ -10,7 +10,6 @@ import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.turok.render.font.management.TurokFontManager;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.util.TurokMath;
-import me.rina.turok.util.TurokRect;
 
 import java.awt.*;
 
@@ -33,10 +32,10 @@ public class ModuleCategoryWidget extends Widget {
 
     private int alphaEffect;
 
-    public Flag flagMouse = Flag.MouseNotOver;
+    public Flag flagMouse = Flag.MOUSE_NOT_OVER;
 
     public ModuleCategoryWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategory category) {
-        super(category.name());
+        super(category.name().substring(0, 1).toUpperCase() + category.name().substring(1));
 
         this.master = master;
         this.frame = frame;
@@ -128,7 +127,7 @@ public class ModuleCategoryWidget extends Widget {
 
     @Override
     public void onMouseReleased(int button) {
-        if (this.flagMouse == Flag.MouseOver && this.isMouseClickedLeft) {
+        if (this.flagMouse == Flag.MOUSE_OVER && this.isMouseClickedLeft) {
             this.isMouseClickedLeft = false;
         }
 
@@ -142,14 +141,14 @@ public class ModuleCategoryWidget extends Widget {
 
     @Override
     public void onMouseClicked(int button) {
-        if ((this.flagMouse == Flag.MouseOver && button == 0) || (this.frame.flagMouse == Flag.MouseOver && button == 2)) {
+        if ((this.flagMouse == Flag.MOUSE_OVER && button == 0) || (this.frame.flagMouse == Flag.MOUSE_OVER && button == 2)) {
             this.frame.setDragX(this.master.getMouse().getX() - this.frame.getRect().getX());
             this.frame.setDragY(this.master.getMouse().getY() - this.frame.getRect().getY());
 
             this.frame.setDragging(true);
         }
 
-        if (this.flagMouse == Flag.MouseOver) {
+        if (this.flagMouse == Flag.MOUSE_OVER) {
             if (button == 0 && this.isSelected == false) {
                 this.frame.resetWidget();
                 this.frame.getClientContainer().setModuleContainer(this.container);
@@ -178,8 +177,8 @@ public class ModuleCategoryWidget extends Widget {
         this.container.getRect().setWidth(this.container.getWidthScale());
         this.rect.setHeight(6 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontBigWidget, this.rect.getTag()) + 6);
 
-        this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
-        this.alphaEffect = this.flagMouse == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffect, 0, this.master.getPartialTicks());
+        this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
+        this.alphaEffect = this.flagMouse == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffect, 0, this.master.getPartialTicks());
 
         TurokFontManager.render(Rocan.getWrapperGUI().fontBigWidget, this.rect.getTag(), this.rect.getX() + (this.rect.getWidth() / 2 - (TurokFontManager.getStringWidth(Rocan.getWrapperGUI().fontBigWidget, this.rect.getTag()) / 2)), this.rect.getY() + 6, true, new Color(255, 255, 255));
 

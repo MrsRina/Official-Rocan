@@ -11,14 +11,12 @@ import java.awt.*;
  */
 public class TurokFont extends CFontRenderer {
     private Font font;
-
     private boolean isRenderingCustomFont;
 
     public TurokFont(Font font, boolean antiAlias, boolean fractionalMetrics) {
         super(font, antiAlias, fractionalMetrics);
 
         this.font = font;
-
         this.isRenderingCustomFont = true;
     }
 

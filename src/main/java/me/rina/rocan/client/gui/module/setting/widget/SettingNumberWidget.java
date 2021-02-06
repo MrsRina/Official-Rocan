@@ -3,7 +3,6 @@ package me.rina.rocan.client.gui.module.setting.widget;
 import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
-import me.rina.rocan.api.setting.Setting;
 import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
@@ -53,8 +52,8 @@ public class SettingNumberWidget extends Widget {
 
     private ValueNumber setting;
 
-    public Flag flagMouseSlider = Flag.MouseNotOver;
-    public Flag flagMouse = Flag.MouseNotOver;
+    public Flag flagMouseSlider = Flag.MOUSE_NOT_OVER;
+    public Flag flagMouse = Flag.MOUSE_NOT_OVER;
 
     public SettingNumberWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer moduleContainer, ModuleWidget widgetModule, SettingContainer settingContainer, ValueNumber setting) {
         super(setting.getName());
@@ -141,7 +140,7 @@ public class SettingNumberWidget extends Widget {
 
     @Override
     public void onCustomMouseReleased(int button) {
-        if (this.flagMouseSlider == Flag.MouseOver && this.settingContainer.flagMouseRealRect == Flag.MouseOver) {
+        if (this.flagMouseSlider == Flag.MOUSE_OVER && this.settingContainer.flagMouseRealRect == Flag.MOUSE_OVER) {
             if (this.isMouseClickedLeft) {
                 this.isMouseClickedLeft = false;
             }
@@ -152,7 +151,7 @@ public class SettingNumberWidget extends Widget {
 
     @Override
     public void onCustomMouseClicked(int button) {
-        if (this.flagMouseSlider == Flag.MouseOver && this.settingContainer.flagMouseRealRect == Flag.MouseOver) {
+        if (this.flagMouseSlider == Flag.MOUSE_OVER && this.settingContainer.flagMouseRealRect == Flag.MOUSE_OVER) {
             if (button == 0) {
                 this.isMouseClickedLeft = true;
             }
@@ -183,12 +182,12 @@ public class SettingNumberWidget extends Widget {
         this.rectSlider.setWidth(clampedSliderRectWidth);
         this.rectSlider.setHeight(6);
 
-        if (this.settingContainer.flagMouseRealRect == Flag.MouseOver) {
-            this.flagMouseSlider = this.rectSlider.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
-            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+        if (this.settingContainer.flagMouseRealRect == Flag.MOUSE_OVER) {
+            this.flagMouseSlider = this.rectSlider.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
+            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
         } else {
-            this.flagMouseSlider = Flag.MouseNotOver;
-            this.flagMouse = Flag.MouseNotOver;
+            this.flagMouseSlider = Flag.MOUSE_NOT_OVER;
+            this.flagMouse = Flag.MOUSE_NOT_OVER;
         }
 
         String currentSettingValue = this.setting.getValue().toString();
@@ -200,8 +199,8 @@ public class SettingNumberWidget extends Widget {
         this.rectSlider.setY(this.rect.getY() + ((this.rect.getHeight() / 2) + 1.5f));
 
         // Where the smooth animation works.
-        this.alphaEffectHighlightSlider = this.flagMouseSlider == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightSlider, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightSlider, 0, this.master.getPartialTicks());
-        this.alphaEffectHighlightRect = this.flagMouse == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
+        this.alphaEffectHighlightSlider = this.flagMouseSlider == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffectHighlightSlider, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightSlider, 0, this.master.getPartialTicks());
+        this.alphaEffectHighlightRect = this.flagMouse == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
 
         TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag() + ": " + currentSettingValue, this.rect.getX() + 2, this.rectSlider.getY() - (TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag()) + 4), true, new Color(255, 255, 255));
 
@@ -246,10 +245,10 @@ public class SettingNumberWidget extends Widget {
             }
         }
 
-        if (this.flagMouse == Flag.MouseOver) {
+        if (this.flagMouse == Flag.MOUSE_OVER) {
             this.settingContainer.getDescriptionLabel().setText(this.setting.getDescription());
 
-            this.settingContainer.flagDescription = Flag.MouseOver;
+            this.settingContainer.flagDescription = Flag.MOUSE_OVER;
         }
     }
 

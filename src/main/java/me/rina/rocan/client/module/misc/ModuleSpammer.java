@@ -9,6 +9,7 @@ import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.api.setting.value.ValueString;
 import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.api.util.client.FlagUtil;
+import me.rina.rocan.api.util.client.KeyUtil;
 import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.api.util.entity.PlayerUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
@@ -20,16 +21,21 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  * @since 04/02/2021 at 20:28
  **/
 public class ModuleSpammer extends Module {
-    public static ValueNumber settingDelay = new ValueNumber("Delay", "Delay", "Seconds delay to send message.", 1.5f, 0.5f, 10.0f);
-    public static ValueNumber settingLimit = new ValueNumber("Limit", "Limit", "The limit of messages in queue.", 3, 1, 16);
+    public static ValueNumber settingDelay = new ValueNumber("Delay", "Delay", "Seconds delay to send message.", 0.5f, 0.5f, 10.0f);
+    public static ValueNumber settingLimit = new ValueNumber("Limit", "Limit", "The limit of messages in queue.", 3, 1, 6);
+    public static ValueBoolean settingAntiSpam = new ValueBoolean("Anti-Spam", "AntiSpam", "Make anti spam server crazy.", true);
 
     public static ValueEnum settingWalk = new ValueEnum("Walk", "Walk", "Spam blocks walked.", FlagUtil.True);
-    public static ValueString settingWalkText = new ValueString("Walk Text", "WalkText", "The custom text for spam.", "I just walked <blocks>, thanks for Rocan!");
+    public static ValueString settingWalkText = new ValueString("Walk Text", "WalkText", "The custom text for spam.", "I just walked <blocks> blocks, thanks to Rocan!");
+
+    public static ValueEnum settingJump = new ValueEnum("Jump", "Jump", "Spam jump action.", FlagUtil.True);
+    public static ValueString settingJumpText = new ValueString("Jump Text", "JumpText", "The custom text for spam.", "I just jumped, thanks to Rocan!");
 
     private double[] lastWalkingPlayerPos;
+    private String current;
 
     public ModuleSpammer() {
-        super("Spammer", "Spammer", "Spammer chat.", ModuleCategory.Misc);
+        super("Spammer", "Spammer", "Send a lot messages on chat.", ModuleCategory.MISC);
     }
 
     @Override
@@ -38,6 +44,7 @@ public class ModuleSpammer extends Module {
         Rocan.getSpammerManager().setLimit(settingLimit.getValue().intValue());
 
         settingWalkText.setEnabled(settingWalk.getValue() == FlagUtil.True);
+        settingJumpText.setEnabled(settingJump.getValue() == FlagUtil.True);
     }
 
     @Listener
@@ -45,19 +52,22 @@ public class ModuleSpammer extends Module {
         if (NullUtil.isPlayerWorld()) {
             return;
         }
-
+        
         if (settingWalkText.isEnabled()) {
             this.verifyWalking();
+        }
+
+        if (settingJumpText.isEnabled()) {
+            this.verifyJump();
         }
     }
 
     public void verifyWalking() {
         if (this.lastWalkingPlayerPos == null) {
-            this.lastWalkingPlayerPos = PlayerUtil.getLastPos();
+            this.lastWalkingPlayerPos = PlayerUtil.getLastTickPos();
         }
 
-        // If speed is > 0, is because we are moving.
-        if (mc.player.movementInput.moveForward > 0f || mc.player.movementInput.moveStrafe > 0f) {
+        if (PlayerUtil.getBPS() >= 4) {
             int x = (int) (this.lastWalkingPlayerPos[0] - PlayerUtil.getPos()[0]);
             int y = (int) (this.lastWalkingPlayerPos[1] - PlayerUtil.getPos()[1]);
             int z = (int) (this.lastWalkingPlayerPos[2] - PlayerUtil.getPos()[2]);
@@ -65,11 +75,30 @@ public class ModuleSpammer extends Module {
             // x^2 + y^2 + z^2;
             int walkedBlocks = TurokMath.sqrt(x * x + y * y + z * z);
 
-            if (walkedBlocks != 0) {
-                Rocan.getSpammerManager().send(settingWalkText.getValue().replaceAll("<blocks>", "" + walkedBlocks));
+            if (walkedBlocks >= 2) {
+                Rocan.getSpammerManager().send(settingWalkText.getValue().replaceAll("<blocks>", "" + walkedBlocks) + getRandom());
             }
         } else {
-            this.lastWalkingPlayerPos = PlayerUtil.getLastPos();
+            this.lastWalkingPlayerPos = PlayerUtil.getLastTickPos();
         }
+    }
+
+    public void verifyJump() {
+        if (KeyUtil.isJumping() && PlayerUtil.getBPS() <= 4 && mc.player.isInWater() == false) {
+            Rocan.getSpammerManager().send(settingJumpText.getValue() + getRandom());
+        }
+    }
+
+    public String getRandom() {
+        int min = 0;
+        int max = 500;
+
+        String random = "";
+
+        if (settingAntiSpam.getValue()) {
+            random = " " + ((int) (Math.random() * (max - min + 1) + min));
+        }
+
+        return random;
     }
 }

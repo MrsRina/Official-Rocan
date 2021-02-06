@@ -12,7 +12,7 @@ public class ReceiveEventPacket extends Event {
     private Packet<?> packet;
 
     public ReceiveEventPacket(Packet<?> packet) {
-        super(EventStage.Pre);
+        super(EventStage.PRE);
 
         this.packet = packet;
     }

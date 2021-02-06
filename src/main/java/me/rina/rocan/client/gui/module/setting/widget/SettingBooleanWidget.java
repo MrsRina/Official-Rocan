@@ -3,7 +3,6 @@ package me.rina.rocan.client.gui.module.setting.widget;
 import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
-import me.rina.rocan.api.setting.Setting;
 import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
@@ -48,7 +47,7 @@ public class SettingBooleanWidget extends Widget {
 
     private ValueBoolean setting;
 
-    public Flag flagMouse = Flag.MouseNotOver;
+    public Flag flagMouse = Flag.MOUSE_NOT_OVER;
 
     public SettingBooleanWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer moduleContainer, ModuleWidget widgetModule, SettingContainer settingContainer, ValueBoolean setting) {
         super(setting.getName());
@@ -134,7 +133,7 @@ public class SettingBooleanWidget extends Widget {
 
     @Override
     public void onCustomMouseReleased(int button) {
-        if (this.flagMouse == Flag.MouseOver) {
+        if (this.flagMouse == Flag.MOUSE_OVER) {
             if (this.isMouseClickedLeft) {
                 this.setting.setValue(!(boolean) this.setting.getValue());
 
@@ -147,7 +146,7 @@ public class SettingBooleanWidget extends Widget {
 
     @Override
     public void onCustomMouseClicked(int button) {
-        if (this.flagMouse == Flag.MouseOver) {
+        if (this.flagMouse == Flag.MOUSE_OVER) {
             this.isMouseClickedLeft = button == 0;
         }
     }
@@ -163,10 +162,10 @@ public class SettingBooleanWidget extends Widget {
         this.rectCheckbox.setWidth(6);
         this.rectCheckbox.setHeight(6);
 
-        if (this.settingContainer.flagMouseRealRect == Flag.MouseOver) {
-            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+        if (this.settingContainer.flagMouseRealRect == Flag.MOUSE_OVER) {
+            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
         } else {
-            this.flagMouse = Flag.MouseNotOver;
+            this.flagMouse = Flag.MOUSE_NOT_OVER;
         }
 
         // We need set the check box rect on the end of main rect.
@@ -174,8 +173,8 @@ public class SettingBooleanWidget extends Widget {
         this.rectCheckbox.setY(this.rect.getY() + ((this.rect.getHeight() / 2) - (this.rectCheckbox.getHeight() / 2)));
 
         // Where the smooth animation works.
-        this.alphaEffectHighlightCheckbox = this.flagMouse == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightCheckbox, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightCheckbox, 0, this.master.getPartialTicks());
-        this.alphaEffectHighlightRect = this.flagMouse == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
+        this.alphaEffectHighlightCheckbox = this.flagMouse == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffectHighlightCheckbox, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightCheckbox, 0, this.master.getPartialTicks());
+        this.alphaEffectHighlightRect = this.flagMouse == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
         this.alphaEffectPressed = this.setting.getValue() ? (int) TurokMath.lerp(this.alphaEffectPressed, Rocan.getWrapperGUI().colorWidgetPressed[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectPressed, 0, this.master.getPartialTicks());
 
         TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag(), this.rect.getX() + 2, this.rectCheckbox.getY() + ((this.rectCheckbox.getHeight() / 2) - (TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag()) / 2)), true, new Color(255, 255, 255));
@@ -199,10 +198,10 @@ public class SettingBooleanWidget extends Widget {
         TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetPressed[0], Rocan.getWrapperGUI().colorWidgetPressed[1], Rocan.getWrapperGUI().colorWidgetPressed[2], this.alphaEffectPressed);
         TurokRenderGL.drawSolidRect(this.rectCheckbox);
 
-        if (this.flagMouse == Flag.MouseOver) {
+        if (this.flagMouse == Flag.MOUSE_OVER) {
             this.settingContainer.getDescriptionLabel().setText(this.setting.getDescription());
 
-            this.settingContainer.flagDescription = Flag.MouseOver;
+            this.settingContainer.flagDescription = Flag.MOUSE_OVER;
         }
     }
 

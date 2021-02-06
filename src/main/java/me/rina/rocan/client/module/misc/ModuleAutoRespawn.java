@@ -2,11 +2,9 @@ package me.rina.rocan.client.module.misc;
 
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
-import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
-import me.rina.rocan.client.gui.minecraft.CustomDeathGUI;
 import me.rina.turok.util.TurokTick;
 import net.minecraft.client.gui.GuiGameOver;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
@@ -21,7 +19,7 @@ public class ModuleAutoRespawn extends Module {
     private TurokTick tick = new TurokTick();
 
     public ModuleAutoRespawn() {
-        super("Auto-Respawn", "AutoRespawn", "Automatically respawn after you die.", ModuleCategory.Misc);
+        super("Auto-Respawn", "AutoRespawn", "Automatically respawn after you die.", ModuleCategory.MISC);
     }
 
     @Listener

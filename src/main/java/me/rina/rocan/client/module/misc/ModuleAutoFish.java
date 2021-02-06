@@ -1,22 +1,17 @@
 package me.rina.rocan.client.module.misc;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
-import me.rina.rocan.Rocan;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
-import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.api.tracker.Tracker;
 import me.rina.rocan.api.tracker.impl.RightMouseClickTracker;
-import me.rina.rocan.api.tracker.management.TrackerManager;
-import me.rina.rocan.api.util.client.FlagUtil;
 import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.rocan.client.event.network.ReceiveEventPacket;
 import me.rina.turok.util.TurokTick;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.network.play.client.CPacketPlayerTryUseItem;
 import net.minecraft.network.play.server.SPacketSoundEffect;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundEvent;
@@ -36,7 +31,7 @@ public class ModuleAutoFish extends Module {
     private Tracker tracker;
 
     public ModuleAutoFish() {
-        super("Auto-Fish", "AutoFish", "Automatically fish to you.", ModuleCategory.Misc);
+        super("Auto-Fish", "AutoFish", "Automatically fish to you.", ModuleCategory.MISC);
 
         this.tracker = new Tracker("AutoFishTrack");
         this.tracker.inject();

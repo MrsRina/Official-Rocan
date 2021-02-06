@@ -56,7 +56,7 @@ public class ModuleHoleESP extends Module {
     private ArrayList<BlockPos> holes = new ArrayList<>();
 
     public ModuleHoleESP() {
-        super("Hole ESP", "HoleESP", "Draw the holes to help visibility.", ModuleCategory.Render);
+        super("Hole ESP", "HoleESP", "Draw the holes to help visibility.", ModuleCategory.RENDER);
     }
 
     @Override

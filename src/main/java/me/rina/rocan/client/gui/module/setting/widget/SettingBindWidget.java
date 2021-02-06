@@ -4,8 +4,6 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.setting.value.ValueBind;
-import me.rina.rocan.api.setting.value.ValueBoolean;
-import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
@@ -52,7 +50,7 @@ public class SettingBindWidget extends Widget {
 
     private ValueBind setting;
 
-    public Flag flagMouse = Flag.MouseNotOver;
+    public Flag flagMouse = Flag.MOUSE_NOT_OVER;
 
     public SettingBindWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer moduleContainer, ModuleWidget widgetModule, SettingContainer settingContainer, ValueBind setting) {
         super(setting.getName());
@@ -170,7 +168,7 @@ public class SettingBindWidget extends Widget {
 
     @Override
     public void onCustomMouseReleased(int button) {
-        if (this.flagMouse == Flag.MouseOver) {
+        if (this.flagMouse == Flag.MOUSE_OVER) {
             if (this.isMouseClickedLeft) {
                 this.isListening = true;
                 this.isMouseClickedLeft = false;
@@ -191,7 +189,7 @@ public class SettingBindWidget extends Widget {
 
     @Override
     public void onMouseClicked(int button) {
-        if (this.flagMouse == Flag.MouseNotOver && this.isListening) {
+        if (this.flagMouse == Flag.MOUSE_NOT_OVER && this.isListening) {
             if (this.master.isCanceledCloseGUI()) {
                 this.master.setCanceledCloseGUI(false);
             }
@@ -202,7 +200,7 @@ public class SettingBindWidget extends Widget {
 
     @Override
     public void onCustomMouseClicked(int button) {
-        if (this.flagMouse == Flag.MouseOver) {
+        if (this.flagMouse == Flag.MOUSE_OVER) {
             this.isMouseClickedLeft = button == 0;
         } else {
             if (this.isListening) {
@@ -226,10 +224,10 @@ public class SettingBindWidget extends Widget {
         this.rectCheckbox.setWidth(6);
         this.rectCheckbox.setHeight(6);
 
-        if (this.settingContainer.flagMouseRealRect == Flag.MouseOver) {
-            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+        if (this.settingContainer.flagMouseRealRect == Flag.MOUSE_OVER) {
+            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
         } else {
-            this.flagMouse = Flag.MouseNotOver;
+            this.flagMouse = Flag.MOUSE_NOT_OVER;
         }
 
         // We need set the check box rect on the end of main rect.
@@ -237,8 +235,8 @@ public class SettingBindWidget extends Widget {
         this.rectCheckbox.setY(this.rect.getY() + ((this.rect.getHeight() / 2) - (this.rectCheckbox.getHeight() / 2)));
 
         // Where the smooth animation works.
-        this.alphaEffectHighlightCheckbox = this.flagMouse == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightCheckbox, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightCheckbox, 0, this.master.getPartialTicks());
-        this.alphaEffectHighlightRect = this.flagMouse == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
+        this.alphaEffectHighlightCheckbox = this.flagMouse == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffectHighlightCheckbox, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightCheckbox, 0, this.master.getPartialTicks());
+        this.alphaEffectHighlightRect = this.flagMouse == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
         this.alphaEffectPressed = this.setting.getState() ? (int) TurokMath.lerp(this.alphaEffectPressed, Rocan.getWrapperGUI().colorWidgetPressed[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectPressed, 0, this.master.getPartialTicks());
 
         String currentName = this.rect.getTag() + " | " + (this.isListening ? "Listening" : TurokKeyboard.toString(this.setting.getKeyCode()));
@@ -268,10 +266,10 @@ public class SettingBindWidget extends Widget {
             this.master.setCanceledCloseGUI(true);
         }
 
-        if (this.flagMouse == Flag.MouseOver) {
+        if (this.flagMouse == Flag.MOUSE_OVER) {
             this.settingContainer.getDescriptionLabel().setText(this.setting.getDescription());
 
-            this.settingContainer.flagDescription = Flag.MouseOver;
+            this.settingContainer.flagDescription = Flag.MOUSE_OVER;
         }
     }
 

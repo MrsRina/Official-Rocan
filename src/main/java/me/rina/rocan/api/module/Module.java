@@ -41,6 +41,7 @@ public class Module implements ISLClass {
     private ValueBoolean toggleMessage = new ValueBoolean("Toggle Message", "ToggleMessage", "Alert if is toggled.", true);
 
     public me.rina.rocan.mixin.interfaces.IMinecraft imc = (IMinecraft) Minecraft.getMinecraft();
+
     /*
      * Frustum camera for render in 3D space.
      */

@@ -12,7 +12,7 @@ public class Event {
     private boolean isCanceled;
 
     public Event() {
-        this.stage = EventStage.Pre;
+        this.stage = EventStage.PRE;
     }
 
     public Event(EventStage stage) {

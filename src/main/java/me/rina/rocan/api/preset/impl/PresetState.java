@@ -5,5 +5,5 @@ package me.rina.rocan.api.preset.impl;
  * @since 24/01/2021 at 15:04
  **/
 public enum PresetState {
-    Operable, NotOperable;
+    OPERABLE, INOPERABLE;
 }
