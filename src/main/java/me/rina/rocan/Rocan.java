@@ -12,6 +12,7 @@ import me.rina.rocan.client.command.CommandToggle;
 import me.rina.rocan.client.gui.GUI;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.manager.chat.SpammerManager;
+import me.rina.rocan.client.module.exploit.ModuleFastUse;
 import me.rina.rocan.client.module.exploit.ModuleXCarry;
 import me.rina.rocan.client.module.misc.ModuleAutoFish;
 import me.rina.rocan.client.module.misc.ModuleAutoRespawn;
@@ -83,6 +84,7 @@ public class Rocan {
 
         // Exploit.
         this.moduleManager.registry(new ModuleXCarry());
+        this.moduleManager.registry(new ModuleFastUse());
 
         // Commands.
         this.commandManager.registry(new CommandPrefix());
