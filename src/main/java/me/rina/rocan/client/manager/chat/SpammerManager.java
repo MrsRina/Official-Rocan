@@ -79,11 +79,9 @@ public class SpammerManager extends Manager {
     public void send(String message) {
         boolean isAcceptToJoinQueue = true;
 
-        for (String messages : new ArrayList<>(this.lastQueue)) {
-            if (messages.equals(message)) {
+        for (String messages : this.queue) {
+            if (messages.equalsIgnoreCase(message)) {
                 isAcceptToJoinQueue = false;
-
-                this.lastQueue.clear();
             }
         }
 
@@ -95,6 +93,10 @@ public class SpammerManager extends Manager {
     public void onUpdate() {
         if (this.queue.size() >= limit) {
             this.queue.clear();
+        }
+
+        if (this.queue.isEmpty()) {
+            tick.reset();
         }
 
         for (String messages : new ArrayList<>(this.queue)) {

@@ -6,19 +6,16 @@ import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.client.container.ClientContainer;
-import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.turok.render.font.management.TurokFontManager;
-import me.rina.turok.render.opengl.TurokGL;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokGeneric;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
 import me.rina.turok.util.TurokTick;
-import net.minecraft.client.gui.GuiChat;
 import net.minecraft.util.ChatAllowedCharacters;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
@@ -71,8 +68,8 @@ public class SearchModuleWidget extends Widget {
     private TurokRect rectEntryBox = new TurokRect("EntryBox", 0, 0);
     private TurokTick tickAnimationSplit = new TurokTick();
 
-    public Flag flagMouse = Flag.MouseNotOver;
-    public Flag flagMouseEntry = Flag.MouseNotOver;
+    public Flag flagMouse = Flag.MOUSE_NOT_OVER;
+    public Flag flagMouseEntry = Flag.MOUSE_NOT_OVER;
 
     public SearchModuleWidget(ModuleClickGUI master, MotherFrame frame, ClientContainer clientContainer) {
         super("");
@@ -287,7 +284,7 @@ public class SearchModuleWidget extends Widget {
 
     @Override
     public void onCustomMouseReleased(int button) {
-        if (this.flagMouseEntry == Flag.MouseOver) {
+        if (this.flagMouseEntry == Flag.MOUSE_OVER) {
             if (this.isMouseClickedLeft) {
                 this.isMouseClickedLeft = false;
             }
@@ -302,7 +299,7 @@ public class SearchModuleWidget extends Widget {
 
     @Override
     public void onMouseClicked(int button) {
-        if (this.flagMouseEntry == Flag.MouseNotOver && this.isFocused) {
+        if (this.flagMouseEntry == Flag.MOUSE_NOT_OVER && this.isFocused) {
             this.cancelSet();
 
             if (this.master.isCanceledCloseGUI()) {
@@ -313,14 +310,14 @@ public class SearchModuleWidget extends Widget {
 
     @Override
     public void onCustomMouseClicked(int button) {
-        if (this.clientContainer.flagMouse == Flag.MouseNotOver && this.rect.getTag().isEmpty() == false) {
+        if (this.clientContainer.flagMouse == Flag.MOUSE_NOT_OVER && this.rect.getTag().isEmpty() == false) {
             this.clientContainer.getModuleContainer().refreshSearchWidget("");
             this.rect.setTag("");
 
             this.isFocused = false;
         }
 
-        if (this.flagMouseEntry == Flag.MouseOver) {
+        if (this.flagMouseEntry == Flag.MOUSE_OVER) {
             this.isAllSelected = false;
 
             if (button == 0) {
@@ -354,17 +351,17 @@ public class SearchModuleWidget extends Widget {
         this.rectEntryBox.setWidth(this.rect.getWidth() - (offsetEntryBox * 2));
         this.rectEntryBox.setHeight(this.rect.getHeight() - (offsetEntryBox * 2));
 
-        this.alphaEffectHighlightEntryBox = this.flagMouseEntry == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightEntryBox, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightEntryBox, 0, this.master.getPartialTicks());
-        this.alphaEffectHighlightRect = this.flagMouse == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
+        this.alphaEffectHighlightEntryBox = this.flagMouseEntry == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffectHighlightEntryBox, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightEntryBox, 0, this.master.getPartialTicks());
+        this.alphaEffectHighlightRect = this.flagMouse == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
 
         float offsetSpace = 1.0f;
 
-        if (this.clientContainer.flagMouse == Flag.MouseOver) {
-            this.flagMouseEntry = this.rectEntryBox.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
-            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+        if (this.clientContainer.flagMouse == Flag.MOUSE_OVER) {
+            this.flagMouseEntry = this.rectEntryBox.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
+            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
         } else {
-            this.flagMouseEntry = Flag.MouseNotOver;
-            this.flagMouse = Flag.MouseNotOver;
+            this.flagMouseEntry = Flag.MOUSE_NOT_OVER;
+            this.flagMouse = Flag.MOUSE_NOT_OVER;
         }
 
         // The outline rect effect.
@@ -411,7 +408,7 @@ public class SearchModuleWidget extends Widget {
             this.master.setCanceledCloseGUI(false);
             this.cacheType.setValue(this.rect.getTag());
 
-            if (this.flagMouseEntry == Flag.MouseOver) {
+            if (this.flagMouseEntry == Flag.MOUSE_OVER) {
                 TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag(), this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255));
             } else {
                 TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, "Search " + this.rect.getTag(), this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255, 100));
@@ -431,7 +428,7 @@ public class SearchModuleWidget extends Widget {
 
         boolean isScrollLimit = stringWidth + offsetSpace >= this.rectEntryBox.getWidth();
 
-        if (this.isFocused && this.flagMouseEntry == Flag.MouseOver && this.master.getMouse().hasWheel() && isScrollLimit) {
+        if (this.isFocused && this.flagMouseEntry == Flag.MOUSE_OVER && this.master.getMouse().hasWheel() && isScrollLimit) {
             this.offsetPositionTextX += this.master.getMouse().getScroll();
         }
 

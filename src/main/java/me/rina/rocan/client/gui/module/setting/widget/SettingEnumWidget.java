@@ -3,7 +3,6 @@ package me.rina.rocan.client.gui.module.setting.widget;
 import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
-import me.rina.rocan.api.setting.Setting;
 import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
@@ -15,7 +14,6 @@ import me.rina.turok.render.font.management.TurokFontManager;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.util.TurokClass;
 import me.rina.turok.util.TurokMath;
-import me.rina.turok.util.TurokRect;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -43,14 +41,14 @@ public class SettingEnumWidget extends Widget {
     private int alphaEffectHighlightRect;
 
     private boolean isStarted;
-    private boolean isMouseClickedLeft;
+    private boolean isMouseClicked;
 
     private int index;
     private ArrayList<Enum<?>> enumValueList;
 
     private ValueEnum setting;
 
-    public Flag flagMouse = Flag.MouseNotOver;
+    public Flag flagMouse = Flag.MOUSE_NOT_OVER;
 
     public SettingEnumWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer moduleContainer, ModuleWidget widgetModule, SettingContainer settingContainer, ValueEnum setting) {
         super(setting.getName());
@@ -138,25 +136,25 @@ public class SettingEnumWidget extends Widget {
 
     @Override
     public void onCustomMouseReleased(int button) {
-        if (this.flagMouse == Flag.MouseOver) {
-            if (this.isMouseClickedLeft) {
+        if (this.flagMouse == Flag.MOUSE_OVER) {
+            if (this.isMouseClicked) {
                 if (this.index >= this.enumValueList.size() - 1) {
                     this.index = 0;
                 } else {
                     this.index++;
                 }
 
-                this.isMouseClickedLeft = false;
+                this.isMouseClicked = false;
             }
         } else {
-            this.isMouseClickedLeft = false;
+            this.isMouseClicked = false;
         }
     }
 
     @Override
     public void onCustomMouseClicked(int button) {
-        if (this.flagMouse == Flag.MouseOver) {
-            this.isMouseClickedLeft = button == 0;
+        if (this.flagMouse == Flag.MOUSE_OVER) {
+            this.isMouseClicked = button == 0 || button == 1;
         }
     }
 
@@ -168,14 +166,14 @@ public class SettingEnumWidget extends Widget {
         this.rect.setX(this.settingContainer.getScrollRect().getX() + this.offsetX);
         this.rect.setY(this.settingContainer.getScrollRect().getY() + this.offsetY);
 
-        if (this.settingContainer.flagMouseRealRect == Flag.MouseOver) {
-            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+        if (this.settingContainer.flagMouseRealRect == Flag.MOUSE_OVER) {
+            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
         } else {
-            this.flagMouse = Flag.MouseNotOver;
+            this.flagMouse = Flag.MOUSE_NOT_OVER;
         }
 
         // Where the smooth animation works.
-        this.alphaEffectHighlightRect = this.flagMouse == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
+        this.alphaEffectHighlightRect = this.flagMouse == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
 
         // We verify the current enum value at mode when we load the client.
         // Loop.
@@ -195,10 +193,10 @@ public class SettingEnumWidget extends Widget {
             this.isStarted = true;
         }
 
-        if (this.flagMouse == Flag.MouseOver) {
+        if (this.flagMouse == Flag.MOUSE_OVER) {
             this.settingContainer.getDescriptionLabel().setText(this.setting.getDescription());
 
-            this.settingContainer.flagDescription = Flag.MouseOver;
+            this.settingContainer.flagDescription = Flag.MOUSE_OVER;
         }
 
         String name = this.rect.getTag() + ": " + this.setting.getValue().name();

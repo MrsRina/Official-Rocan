@@ -26,14 +26,16 @@ public class CommandCoords extends Command {
 
   @Override
   public void onCommand(String[] args) {
+    if (args.length > 1) {
+      splash();
 
-    splash();
+      return;
+    }
 
     String coords = "X: " + Rocan.MC.player.getPosition().getX() + " Y: " + Rocan.MC.player.getPosition().getY() + " Z: " + Rocan.MC.player.getPosition().getZ();
     StringSelection stringSelection = new StringSelection(coords);
     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
     clipboard.setContents(stringSelection, null);
-    this.print("Coords copied to clipboard");
-
+    this.print("Coords copied to clipboard.");
   }
 }

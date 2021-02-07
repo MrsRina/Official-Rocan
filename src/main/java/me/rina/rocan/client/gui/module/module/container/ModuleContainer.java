@@ -11,15 +11,12 @@ import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
-import me.rina.turok.render.font.management.TurokFontManager;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
 
-import java.awt.*;
 import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * @author SrRina
@@ -43,7 +40,7 @@ public class ModuleContainer extends Container {
 
     private boolean isModuleOpen;
 
-    public Flag flagMouse = Flag.MouseNotOver;
+    public Flag flagMouse = Flag.MOUSE_NOT_OVER;
 
     public ModuleContainer(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widget, ModuleCategory category) {
         super(widget.getRect().getTag());
@@ -303,7 +300,7 @@ public class ModuleContainer extends Container {
 
     @Override
     public void onRender() {
-        this.flagMouse = Flag.MouseNotOver;
+        this.flagMouse = Flag.MOUSE_NOT_OVER;
 
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onRender();
@@ -324,7 +321,7 @@ public class ModuleContainer extends Container {
 
         boolean isScrollLimit = this.scrollRect.getY() + this.scrollRect.getHeight() >= this.rect.getY() + this.rect.getHeight() - 3;
 
-        if (this.flagMouse == Flag.MouseOver && this.master.getMouse().hasWheel() && isScrollLimit) {
+        if (this.flagMouse == Flag.MOUSE_OVER && this.master.getMouse().hasWheel() && isScrollLimit) {
             this.offsetY -= this.master.getMouse().getScroll();
         }
 
@@ -336,7 +333,7 @@ public class ModuleContainer extends Container {
             this.offsetY = maximumScroll;
         }
 
-        this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+        this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
 
         // Background of container.
         TurokRenderGL.color(Rocan.getWrapperGUI().colorContainerBackground[0], Rocan.getWrapperGUI().colorContainerBackground[1], Rocan.getWrapperGUI().colorContainerBackground[2], Rocan.getWrapperGUI().colorContainerBackground[3]);

@@ -9,6 +9,6 @@ import me.rina.rocan.api.event.impl.EventStage;
  */
 public class ClientTickEvent extends Event {
     public ClientTickEvent() {
-        super(EventStage.Pre);
+        super(EventStage.PRE);
     }
 }

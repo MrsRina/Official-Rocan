@@ -12,13 +12,14 @@ import me.rina.rocan.client.command.CommandToggle;
 import me.rina.rocan.client.gui.GUI;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.manager.chat.SpammerManager;
+import me.rina.rocan.client.module.exploit.ModuleFastUse;
 import me.rina.rocan.client.module.exploit.ModuleXCarry;
-import me.rina.rocan.client.module.misc.ModuleAutoFish;
-import me.rina.rocan.client.module.misc.ModuleAutoRespawn;
-import me.rina.rocan.client.module.misc.ModuleChatSuffix;
-import me.rina.rocan.client.module.misc.ModuleSpammer;
+import me.rina.rocan.client.module.misc.*;
+import me.rina.rocan.client.module.movement.ModuleAutoWalk;
 import me.rina.rocan.client.module.render.ModuleBlockHighlight;
+import me.rina.rocan.client.module.render.ModuleFullBright;
 import me.rina.rocan.client.module.render.ModuleHoleESP;
+import me.rina.rocan.client.module.render.ModuleViewModel;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -74,19 +75,27 @@ public class Rocan {
         // Category Render.
         this.moduleManager.registry(new ModuleBlockHighlight());
         this.moduleManager.registry(new ModuleHoleESP());
+        this.moduleManager.registry(new ModuleFullBright());
+        this.moduleManager.registry(new ModuleViewModel());
 
         // Category Misc.
         this.moduleManager.registry(new ModuleAutoRespawn());
         this.moduleManager.registry(new ModuleAutoFish());
         this.moduleManager.registry(new ModuleChatSuffix());
         this.moduleManager.registry(new ModuleSpammer());
+        this.moduleManager.registry(new ModuleVisualRange());
 
         // Exploit.
         this.moduleManager.registry(new ModuleXCarry());
+        this.moduleManager.registry(new ModuleFastUse());
+
+        //Movement
+        this.moduleManager.registry(new ModuleAutoWalk());
 
         // Commands.
         this.commandManager.registry(new CommandPrefix());
         this.commandManager.registry(new CommandToggle());
+
     }
 
     /**

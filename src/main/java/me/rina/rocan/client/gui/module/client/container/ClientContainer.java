@@ -35,9 +35,9 @@ public class ClientContainer extends Container {
 
     private SearchModuleWidget searchModuleWidget;
 
-    public Flag flagMouse = Flag.MouseNotOver;
-    public Flag flagMouseModule = Flag.MouseNotOver;
-    public Flag flagMouseReal = Flag.MouseNotOver;
+    public Flag flagMouse = Flag.MOUSE_NOT_OVER;
+    public Flag flagMouseModule = Flag.MOUSE_NOT_OVER;
+    public Flag flagMouseReal = Flag.MOUSE_NOT_OVER;
 
     public ClientContainer(ModuleClickGUI master, MotherFrame frame) {
         super("client-container-user");
@@ -175,8 +175,8 @@ public class ClientContainer extends Container {
     @Override
     public void onRender() {
         if (this.moduleContainer != null) {
-            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
-            this.flagMouseReal = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
+            this.flagMouseReal = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
 
             // Background of container.
             TurokRenderGL.color(Rocan.getWrapperGUI().colorContainerBackground[0], Rocan.getWrapperGUI().colorContainerBackground[1], Rocan.getWrapperGUI().colorContainerBackground[2], Rocan.getWrapperGUI().colorContainerBackground[3]);
@@ -208,7 +208,7 @@ public class ClientContainer extends Container {
             }
 
             if (this.moduleContainer.isModuleOpen() == false) {
-                if (this.flagMouseModule == Flag.MouseNotOver) {
+                if (this.flagMouseModule == Flag.MOUSE_NOT_OVER) {
                     this.isUnselected = true;
                 } else {
                     this.isUnselected = false;
@@ -217,7 +217,7 @@ public class ClientContainer extends Container {
                 this.isUnselected = false;
             }
 
-            this.flagMouseModule = Flag.MouseNotOver;
+            this.flagMouseModule = Flag.MOUSE_NOT_OVER;
         }
     }
 

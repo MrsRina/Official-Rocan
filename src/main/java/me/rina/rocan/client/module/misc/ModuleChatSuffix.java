@@ -21,7 +21,7 @@ public class ModuleChatSuffix extends Module {
     public static ValueString settingSuffix = new ValueString("Suffix", "Suffix", "The lower case suffix.", "rocan");
 
     public ModuleChatSuffix() {
-        super("Chat Suffix", "ChatSuffix", "Send at end message the custom client suffix.", ModuleCategory.Misc);
+        super("Chat Suffix", "ChatSuffix", "Send at end message the custom client suffix.", ModuleCategory.MISC);
     }
 
     @Override

@@ -1,4 +1,4 @@
-package me.rina.rocan.mixin;
+package me.rina.rocan.mixin.mixins;
 
 import io.netty.channel.ChannelHandlerContext;
 import me.rina.rocan.Rocan;

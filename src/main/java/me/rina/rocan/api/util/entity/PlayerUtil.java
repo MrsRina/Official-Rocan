@@ -2,7 +2,6 @@ package me.rina.rocan.api.util.entity;
 
 import me.rina.rocan.Rocan;
 import me.rina.turok.util.TurokMath;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.math.BlockPos;
 
 /**
@@ -20,9 +19,15 @@ public class PlayerUtil {
         };
     }
 
-    public static double[] getLastPos() {
+    public static double[] getLastTickPos() {
         return new double[] {
                 Rocan.MC.player.lastTickPosX, Rocan.MC.player.lastTickPosY, Rocan.MC.player.lastTickPosZ
+        };
+    }
+
+    public static double[] getPrevPos() {
+        return new double[] {
+                Rocan.MC.player.prevPosX, Rocan.MC.player.prevPosY, Rocan.MC.player.prevPosZ
         };
     }
 
@@ -32,9 +37,19 @@ public class PlayerUtil {
         };
     }
 
-    public static double getSpeed() {
-        double[] motion = getMotion();
+    /**
+     * Calculate blocks per second.
+     *
+     * @return blocks per tick.
+     */
+    public static double getBPS() {
+        double[] prevPosition = getPrevPos();
+        double[] position = getPos();
 
-        return TurokMath.sqrt(motion[0] * motion[0] + motion[1] * motion[1] + motion[2] * motion[2]);
+        // Delta values.
+        double x = position[0] - prevPosition[0];
+        double z = position[2] - prevPosition[2];
+
+        return TurokMath.sqrt(x * x + z * z) / (Rocan.MC.timer.tickLength / 1000.0d);
     }
 }

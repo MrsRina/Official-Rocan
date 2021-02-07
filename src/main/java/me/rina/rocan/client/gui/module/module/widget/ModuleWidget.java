@@ -57,7 +57,7 @@ public class ModuleWidget extends Widget {
     private boolean isSelected;
     private boolean isLocked;
 
-    public Flag flagMouse = Flag.MouseNotOver;
+    public Flag flagMouse = Flag.MOUSE_NOT_OVER;
 
     public ModuleWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widget, ModuleContainer container, Module module) {
         super(module.getName());
@@ -184,7 +184,7 @@ public class ModuleWidget extends Widget {
     @Override
     public void onCustomMouseReleased(int button) {
         if (this.isMouseClickedLeft) {
-            if (this.flagMouse == Flag.MouseOver) {
+            if (this.flagMouse == Flag.MOUSE_OVER) {
                 this.module.toggle();
             }
 
@@ -201,11 +201,11 @@ public class ModuleWidget extends Widget {
 
     @Override
     public void onCustomMouseClicked(int button) {
-        if (this.settingContainer.flagMouse == Flag.MouseNotOver && this.flagMouse == Flag.MouseNotOver && this.frame.flagMouseResize == Flag.MouseNotOver && this.container.isModuleOpen() && this.isLocked && this.frame.getClientContainer().flagMouseModule == Flag.MouseNotOver) {
+        if (this.settingContainer.flagMouse == Flag.MOUSE_NOT_OVER && this.flagMouse == Flag.MOUSE_NOT_OVER && this.frame.flagMouseResize == Flag.MOUSE_NOT_OVER && this.container.isModuleOpen() && this.isLocked && this.frame.getClientContainer().flagMouseModule == Flag.MOUSE_NOT_OVER) {
             this.container.resetWidget();
         }
 
-        if (this.flagMouse == Flag.MouseOver) {
+        if (this.flagMouse == Flag.MOUSE_OVER) {
             if (button == 0) {
                 // The double click button up to enable module.
                 if (!this.doubleClickTick.isPassedMS(500)) {
@@ -234,7 +234,7 @@ public class ModuleWidget extends Widget {
 
     @Override
     public void onRender() {
-        this.flagMouse = Flag.MouseNotOver;
+        this.flagMouse = Flag.MOUSE_NOT_OVER;
 
         this.settingContainer.onRender();
     }
@@ -247,16 +247,16 @@ public class ModuleWidget extends Widget {
         // The animation.
         this.offsetY = TurokMath.lerp(this.offsetY, this.animationY, this.master.getPartialTicks());
 
-        if (this.container.flagMouse == Flag.MouseOver) {
-            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+        if (this.container.flagMouse == Flag.MOUSE_OVER) {
+            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
         } else {
-            this.flagMouse = Flag.MouseNotOver;
+            this.flagMouse = Flag.MOUSE_NOT_OVER;
         }
 
         this.rect.setWidth(this.container.getRect().getWidth() - 4);
         this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
 
-        this.alphaEffectHighlight = (int) (this.flagMouse == Flag.MouseOver ? TurokMath.lerp(this.alphaEffectHighlight, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : TurokMath.lerp(this.alphaEffectHighlight, 0, this.master.getPartialTicks()));
+        this.alphaEffectHighlight = (int) (this.flagMouse == Flag.MOUSE_OVER ? TurokMath.lerp(this.alphaEffectHighlight, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : TurokMath.lerp(this.alphaEffectHighlight, 0, this.master.getPartialTicks()));
 
         TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetHighlight[0], Rocan.getWrapperGUI().colorWidgetHighlight[1], Rocan.getWrapperGUI().colorWidgetHighlight[2], this.alphaEffectHighlight);
         TurokRenderGL.drawOutlineRect(this.rect);
@@ -280,13 +280,13 @@ public class ModuleWidget extends Widget {
         } else {
             // The fun animation is here, so set the selected when mouse over with flag.
             // OBS: this make mixed the settings sometimes but is pretty cool!
-            if (this.flagMouse == Flag.MouseOver && this.container.isModuleOpen() == false) {
+            if (this.flagMouse == Flag.MOUSE_OVER && this.container.isModuleOpen() == false) {
                 // We need get one current list when mouse is over, to make readable if one module is open.
                 // So we can set the isModuleOpen in container, to do not glitch with container client.
                 this.container.resetWidget(false);
 
                 // Set over.
-                this.frame.getClientContainer().flagMouseModule = Flag.MouseOver;
+                this.frame.getClientContainer().flagMouseModule = Flag.MOUSE_OVER;
 
                 this.isSelected = true;
             } else {

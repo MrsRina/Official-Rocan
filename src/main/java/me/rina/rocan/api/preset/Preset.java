@@ -25,7 +25,7 @@ public class Preset implements ISLClass {
         this.data = data;
         this.path = Rocan.PATH_CONFIG + "/preset/" + name + ".zip";
 
-        this.state = PresetState.NotOperable;
+        this.state = PresetState.INOPERABLE;
     }
 
     public void setName(String name) {

@@ -72,8 +72,8 @@ public class SettingStringWidget extends Widget {
 
     private ValueString setting;
 
-    public Flag flagMouse = Flag.MouseNotOver;
-    public Flag flagMouseEntry = Flag.MouseNotOver;
+    public Flag flagMouse = Flag.MOUSE_NOT_OVER;
+    public Flag flagMouseEntry = Flag.MOUSE_NOT_OVER;
 
     public SettingStringWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer moduleContainer, ModuleWidget widgetModule, SettingContainer settingContainer, ValueString setting) {
         super(setting.getName());
@@ -270,7 +270,7 @@ public class SettingStringWidget extends Widget {
 
     @Override
     public void onCustomMouseReleased(int button) {
-        if (this.flagMouseEntry == Flag.MouseOver) {
+        if (this.flagMouseEntry == Flag.MOUSE_OVER) {
             if (this.isMouseClickedLeft) {
                 this.isMouseClickedLeft = false;
             }
@@ -281,7 +281,7 @@ public class SettingStringWidget extends Widget {
 
     @Override
     public void onMouseClicked(int button) {
-        if (this.flagMouseEntry == Flag.MouseNotOver && this.isFocused) {
+        if (this.flagMouseEntry == Flag.MOUSE_NOT_OVER && this.isFocused) {
             this.cancelSet();
 
             if (this.master.isCanceledCloseGUI()) {
@@ -292,7 +292,7 @@ public class SettingStringWidget extends Widget {
 
     @Override
     public void onCustomMouseClicked(int button) {
-        if (this.flagMouseEntry == Flag.MouseOver) {
+        if (this.flagMouseEntry == Flag.MOUSE_OVER) {
             this.isAllSelected = false;
 
             if (button == 0) {
@@ -326,17 +326,17 @@ public class SettingStringWidget extends Widget {
         this.rectEntryBox.setWidth(this.rect.getWidth() - (offsetEntryBox * 2));
         this.rectEntryBox.setHeight(this.rect.getHeight() - (offsetEntryBox * 2));
 
-        this.alphaEffectHighlightEntryBox = this.flagMouseEntry == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightEntryBox, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightEntryBox, 0, this.master.getPartialTicks());
-        this.alphaEffectHighlightRect = this.flagMouse == Flag.MouseOver ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
+        this.alphaEffectHighlightEntryBox = this.flagMouseEntry == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffectHighlightEntryBox, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightEntryBox, 0, this.master.getPartialTicks());
+        this.alphaEffectHighlightRect = this.flagMouse == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
 
         float offsetSpace = 1.0f;
 
-        if (this.settingContainer.flagMouseRealRect == Flag.MouseOver) {
-            this.flagMouseEntry = this.rectEntryBox.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
-            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+        if (this.settingContainer.flagMouseRealRect == Flag.MOUSE_OVER) {
+            this.flagMouseEntry = this.rectEntryBox.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
+            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
         } else {
-            this.flagMouseEntry = Flag.MouseNotOver;
-            this.flagMouse = Flag.MouseNotOver;
+            this.flagMouseEntry = Flag.MOUSE_NOT_OVER;
+            this.flagMouse = Flag.MOUSE_NOT_OVER;
         }
 
         // The outline rect effect.
@@ -351,16 +351,16 @@ public class SettingStringWidget extends Widget {
         TurokRenderGL.color(255, 255, 255, this.alphaEffectPressed);
         TurokRenderGL.drawSolidRect(this.rectEntryBox);
 
-        // We push the scissor.
-        TurokShaderGL.pushScissorMatrix();
-        TurokShaderGL.drawScissor(this.rectEntryBox.getX() + 0.5f, this.rectEntryBox.getY(), this.rectEntryBox.getWidth() - (0.5f), this.rectEntryBox.getHeight());
-
         // The selected solid effect.
         TurokRenderGL.color(0, 0, 255, this.isAllSelected ? this.alphaEffectPressed : 0);
         TurokRenderGL.drawSolidRect(this.rectEntryBox.getX(), this.rectEntryBox.getY(), offsetSpace + TurokFontManager.getStringWidth(Rocan.getWrapperGUI().fontSmallWidget, this.cacheType.getValue()), this.rectEntryBox.getHeight());
 
         this.stringPositionX = TurokMath.lerp(this.stringPositionX, this.rectEntryBox.getX() + offsetSpace + this.offsetPositionTextX, this.master.getPartialTicks());
         this.stringPositionY = this.rectEntryBox.getY() + (this.rectEntryBox.getHeight() / 2 - (TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontSmallWidget, "AaBbCc") / 2));
+
+        // We push the scissor.
+        TurokShaderGL.pushScissorAttrib();
+        TurokShaderGL.drawScissor(this.rectEntryBox.getX() + 0.5f, this.rectEntryBox.getY(), this.rectEntryBox.getWidth() - (0.5f), this.rectEntryBox.getHeight());
 
         if (this.isFocused) {
             this.master.setCanceledCloseGUI(true);
@@ -385,14 +385,14 @@ public class SettingStringWidget extends Widget {
 
             String currentFormat = this.setting.getValue().isEmpty() ? this.setting.getFormat() : this.setting.getValue();
 
-            if (this.flagMouseEntry == Flag.MouseOver) {
+            if (this.flagMouseEntry == Flag.MOUSE_OVER) {
                 TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.setting.getValue(), this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255));
             } else {
                 TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag() + " " + currentFormat, this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255, 100));
             }
         }
 
-        TurokShaderGL.popScissorMatrix();
+        TurokShaderGL.popScissorAttrib();
 
         this.isTyping = false;
 
@@ -403,7 +403,7 @@ public class SettingStringWidget extends Widget {
 
         boolean isScrollLimit = stringWidth + offsetSpace >= this.rectEntryBox.getWidth();
 
-        if (this.isFocused && this.flagMouseEntry == Flag.MouseOver && this.master.getMouse().hasWheel() && isScrollLimit) {
+        if (this.isFocused && this.flagMouseEntry == Flag.MOUSE_OVER && this.master.getMouse().hasWheel() && isScrollLimit) {
             this.offsetPositionTextX += this.master.getMouse().getScroll();
         }
 
@@ -415,10 +415,10 @@ public class SettingStringWidget extends Widget {
             this.offsetPositionTextX = maximumPositionText;
         }
 
-        if (this.flagMouse == Flag.MouseOver) {
+        if (this.flagMouse == Flag.MOUSE_OVER) {
             this.settingContainer.getDescriptionLabel().setText(this.setting.getDescription());
 
-            this.settingContainer.flagDescription = Flag.MouseOver;
+            this.settingContainer.flagDescription = Flag.MOUSE_OVER;
         }
     }
 

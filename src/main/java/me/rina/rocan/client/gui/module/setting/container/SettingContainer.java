@@ -53,9 +53,9 @@ public class SettingContainer extends Container {
     private TurokRect scrollRect = new TurokRect("I will go to canada and forget everything make me bad.", 0, 0);
     private TurokRect realRect = new TurokRect("Real rect", 0, 0);
 
-    public Flag flagMouse = Flag.MouseNotOver;
-    public Flag flagMouseRealRect = Flag.MouseNotOver;
-    public Flag flagDescription = Flag.MouseNotOver;
+    public Flag flagMouse = Flag.MOUSE_NOT_OVER;
+    public Flag flagMouseRealRect = Flag.MOUSE_NOT_OVER;
+    public Flag flagDescription = Flag.MOUSE_NOT_OVER;
 
     public SettingContainer(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer container, ModuleWidget widgetModule) {
         super(widgetModule.getModule().getTag());
@@ -572,8 +572,8 @@ public class SettingContainer extends Container {
         int offsetFixOutline = 1;
 
         if (this.widgetModule.isSelected()) {
-            this.flagMouseRealRect = this.realRect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
-            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MouseOver : Flag.MouseNotOver;
+            this.flagMouseRealRect = this.realRect.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
+            this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
 
             // Background of container.
             TurokRenderGL.color(Rocan.getWrapperGUI().colorContainerBackground[0], Rocan.getWrapperGUI().colorContainerBackground[1], Rocan.getWrapperGUI().colorContainerBackground[2], Rocan.getWrapperGUI().colorContainerBackground[3]);
@@ -588,7 +588,7 @@ public class SettingContainer extends Container {
 
             boolean isScrollLimit = this.scrollRect.getY() + this.scrollRect.getHeight() >= this.rect.getY() + this.rect.getHeight() - realScrollHeight - 3;
 
-            if (this.flagMouseRealRect == Flag.MouseOver && this.master.getMouse().hasWheel() && isScrollLimit) {
+            if (this.flagMouseRealRect == Flag.MOUSE_OVER && this.master.getMouse().hasWheel() && isScrollLimit) {
                 this.offsetY -= this.master.getMouse().getScroll();
             }
 
@@ -645,16 +645,16 @@ public class SettingContainer extends Container {
                 }
             }
         } else {
-            this.flagMouseRealRect = Flag.MouseNotOver;
+            this.flagMouseRealRect = Flag.MOUSE_NOT_OVER;
         }
 
         TurokShaderGL.popScissorMatrix();
 
-        if (this.flagDescription == Flag.MouseNotOver) {
+        if (this.flagDescription == Flag.MOUSE_NOT_OVER) {
             this.descriptionLabel.setText(this.widgetModule.getModule().getDescription());
         }
 
-        this.flagDescription = Flag.MouseNotOver;
+        this.flagDescription = Flag.MOUSE_NOT_OVER;
     }
 
     @Override

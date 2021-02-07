@@ -12,7 +12,7 @@ public class SendEventPacket extends Event {
     private Packet<?> packet;
 
     public SendEventPacket(Packet<?> packet) {
-        super(EventStage.Post);
+        super(EventStage.POST);
 
         this.packet = packet;
     }
