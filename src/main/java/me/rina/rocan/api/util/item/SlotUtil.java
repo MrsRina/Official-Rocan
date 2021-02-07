@@ -4,6 +4,10 @@ import me.rina.rocan.Rocan;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
+import net.minecraft.network.play.client.CPacketHeldItemChange;
+
+import static me.rina.rocan.Rocan.MC;
 
 /**
  * @author SrRina
@@ -11,13 +15,13 @@ import net.minecraft.item.ItemStack;
  **/
 public class SlotUtil {
     public static int getCurrentItemSlotHotBar() {
-        int slot = Rocan.MC.player.inventory.currentItem;
+        int slot = MC.player.inventory.currentItem;
 
         return slot;
     }
 
     public static Item getCurrentItemHotBar() {
-        Item item = Rocan.MC.player.inventory.getStackInSlot(Rocan.MC.player.inventory.currentItem).getItem();
+        Item item = MC.player.inventory.getStackInSlot(MC.player.inventory.currentItem).getItem();
 
         return item;
     }
@@ -26,7 +30,7 @@ public class SlotUtil {
         int slot = -1;
 
         for (int i = 0; i < 45; i++) {
-            Item items = Rocan.MC.player.inventory.getStackInSlot(i).getItem();
+            Item items = MC.player.inventory.getStackInSlot(i).getItem();
 
             if (items == item) {
                 slot = i;
@@ -40,7 +44,7 @@ public class SlotUtil {
         int slot = -1;
 
         for (int i = 0; i < 36; i++) {
-            Item items = Rocan.MC.player.inventory.getStackInSlot(i).getItem();
+            Item items = MC.player.inventory.getStackInSlot(i).getItem();
 
             if (items == item) {
                 if (i < 9) {
@@ -58,7 +62,7 @@ public class SlotUtil {
         int slot = -1;
 
         for (int i = 0; i < 9; i++) {
-            Item items = Rocan.MC.player.inventory.getStackInSlot(i).getItem();
+            Item items = MC.player.inventory.getStackInSlot(i).getItem();
 
             if (items == item) {
                 slot = i;
