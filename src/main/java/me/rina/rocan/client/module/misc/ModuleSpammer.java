@@ -7,8 +7,7 @@ import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.api.setting.value.ValueString;
-import me.rina.rocan.api.util.chat.ChatUtil;
-import me.rina.rocan.api.util.client.FlagUtil;
+import me.rina.rocan.api.util.client.FlagBoolUtil;
 import me.rina.rocan.api.util.client.KeyUtil;
 import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.api.util.entity.PlayerUtil;
@@ -25,10 +24,10 @@ public class ModuleSpammer extends Module {
     public static ValueNumber settingLimit = new ValueNumber("Limit", "Limit", "The limit of messages in queue.", 3, 1, 6);
     public static ValueBoolean settingAntiSpam = new ValueBoolean("Anti-Spam", "AntiSpam", "Make anti spam server crazy.", true);
 
-    public static ValueEnum settingWalk = new ValueEnum("Walk", "Walk", "Spam blocks walked.", FlagUtil.True);
+    public static ValueEnum settingWalk = new ValueEnum("Walk", "Walk", "Spam blocks walked.", FlagBoolUtil.TRUE);
     public static ValueString settingWalkText = new ValueString("Walk Text", "WalkText", "The custom text for spam.", "I just walked <blocks> blocks, thanks to Rocan!");
 
-    public static ValueEnum settingJump = new ValueEnum("Jump", "Jump", "Spam jump action.", FlagUtil.True);
+    public static ValueEnum settingJump = new ValueEnum("Jump", "Jump", "Spam jump action.", FlagBoolUtil.TRUE);
     public static ValueString settingJumpText = new ValueString("Jump Text", "JumpText", "The custom text for spam.", "I just jumped, thanks to Rocan!");
 
     private double[] lastWalkingPlayerPos;
@@ -43,8 +42,8 @@ public class ModuleSpammer extends Module {
         Rocan.getSpammerManager().setDelay(settingDelay.getValue().floatValue());
         Rocan.getSpammerManager().setLimit(settingLimit.getValue().intValue());
 
-        settingWalkText.setEnabled(settingWalk.getValue() == FlagUtil.True);
-        settingJumpText.setEnabled(settingJump.getValue() == FlagUtil.True);
+        settingWalkText.setEnabled(settingWalk.getValue() == FlagBoolUtil.TRUE);
+        settingJumpText.setEnabled(settingJump.getValue() == FlagBoolUtil.TRUE);
     }
 
     @Listener
@@ -63,6 +62,7 @@ public class ModuleSpammer extends Module {
     }
 
     public void verifyWalking() {
+        // Just to fix null action.
         if (this.lastWalkingPlayerPos == null) {
             this.lastWalkingPlayerPos = PlayerUtil.getLastTickPos();
         }
@@ -75,20 +75,26 @@ public class ModuleSpammer extends Module {
             // x^2 + y^2 + z^2;
             int walkedBlocks = TurokMath.sqrt(x * x + y * y + z * z);
 
+            // I don't want "walked (1, 0) blocks".
             if (walkedBlocks >= 2) {
                 Rocan.getSpammerManager().send(settingWalkText.getValue().replaceAll("<blocks>", "" + walkedBlocks) + getRandom());
             }
         } else {
+            // Sync the last position.
             this.lastWalkingPlayerPos = PlayerUtil.getLastTickPos();
         }
     }
 
     public void verifyJump() {
+        // We can't send jump spam if we are sprinting or just jumping running, only if you are stop or not fast.
         if (KeyUtil.isJumping() && PlayerUtil.getBPS() <= 4 && mc.player.isInWater() == false) {
             Rocan.getSpammerManager().send(settingJumpText.getValue() + getRandom());
         }
     }
 
+    /*
+     * Get a random number to fuck any anti spam system.
+     */
     public String getRandom() {
         int min = 0;
         int max = 500;

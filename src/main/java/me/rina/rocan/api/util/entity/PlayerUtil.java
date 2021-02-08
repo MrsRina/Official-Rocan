@@ -9,6 +9,10 @@ import net.minecraft.util.math.BlockPos;
  * @since 28/01/2021 at 16:54
  **/
 public class PlayerUtil {
+    public enum Dimension {
+        WORLD, NETHER, END;
+    }
+
     public static BlockPos getBlockPos() {
         return new BlockPos(Rocan.MC.player.posX,  Rocan.MC.player.posY,  Rocan.MC.player.posZ);
     }
@@ -51,5 +55,32 @@ public class PlayerUtil {
         double z = position[2] - prevPosition[2];
 
         return TurokMath.sqrt(x * x + z * z) / (Rocan.MC.timer.tickLength / 1000.0d);
+    }
+
+    public static void setYaw(float yaw) {
+        Rocan.MC.player.rotationYaw = yaw;
+        Rocan.MC.player.rotationYawHead = yaw;
+    }
+
+    public static void setPitch(float pitch) {
+        Rocan.MC.player.rotationPitch = pitch;
+    }
+
+    public static Dimension getCurrentDimension() {
+        Dimension dimension = null;
+
+        if (Rocan.MC.player.dimension == -1) {
+            dimension = Dimension.NETHER;
+        }
+
+        if (Rocan.MC.player.dimension == 0) {
+            dimension = Dimension.WORLD;
+        }
+
+        if (Rocan.MC.player.dimension == 1) {
+            dimension = Dimension.END;
+        }
+
+        return dimension;
     }
 }

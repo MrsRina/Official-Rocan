@@ -12,6 +12,10 @@ public class KeyUtil {
             Rocan.MC.gameSettings.keyBindForward, Rocan.MC.gameSettings.keyBindBack, Rocan.MC.gameSettings.keyBindLeft, Rocan.MC.gameSettings.keyBindRight
     };
 
+    public static void press(KeyBinding keyBinding, boolean pressed) {
+        KeyBinding.setKeyBindState(keyBinding.getKeyCode(), pressed);
+    }
+
     public static boolean isMoving() {
         if (NullUtil.isPlayerWorld()) {
             return false;

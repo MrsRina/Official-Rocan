@@ -1,15 +1,11 @@
 package me.rina.rocan.client.module.render;
 
-import me.rina.rocan.Rocan;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
-import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.client.event.render.EnumHandSideEvent;
 import me.rina.turok.render.opengl.TurokGL;
 import net.minecraft.util.EnumHandSide;
-import org.jetbrains.annotations.NotNull;
-import org.lwjgl.opengl.GL11;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 public class ModuleViewModel extends Module {
@@ -29,6 +25,8 @@ public class ModuleViewModel extends Module {
 
     @Listener
     public void onEnumHandSideEvent(EnumHandSideEvent event) {
+        // Here we have TurokFramework in action!
+
         if (event.getHandSide() == EnumHandSide.RIGHT) {
             TurokGL.translate(Rightx.getValue().floatValue() / 100, Righty.getValue().floatValue() / 100, Rightz.getValue().floatValue() / 100);
             TurokGL.scale(Rights.getValue().floatValue() / 10, Rights.getValue().floatValue() / 10, Rights.getValue().floatValue() / 10);
@@ -37,5 +35,4 @@ public class ModuleViewModel extends Module {
             TurokGL.scale(Lefts.getValue().floatValue() / 10, Lefts.getValue().floatValue() / 10, Lefts.getValue().floatValue() / 10);
         }
     }
-
 }

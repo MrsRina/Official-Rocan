@@ -24,6 +24,7 @@ public class ModuleClickGUI extends Module {
 
     @Listener
     public void onListen(ClientTickEvent event) {
+        // Its my brain.
         if (mc.currentScreen != Rocan.getModuleClickGUI()) {
             mc.displayGuiScreen(Rocan.getModuleClickGUI());
         }
@@ -31,6 +32,7 @@ public class ModuleClickGUI extends Module {
 
     @Override
     public void onDisable() {
+        // Its my brain.
         if (mc.currentScreen == Rocan.getModuleClickGUI()) {
             Rocan.getModuleClickGUI().setOpened(false);
         }

@@ -78,11 +78,13 @@ public class ModuleBlockHighlight extends Module {
         Color color = new Color(renderRed.getValue().intValue(), renderGreen.getValue().intValue(), renderBlue.getValue().intValue(), renderAlpha.getValue().intValue());
         Color colorOutline = new Color(renderOutlineRed.getValue().intValue(), renderOutlineGreen.getValue().intValue(), renderOutlineBlue.getValue().intValue(), renderOutlineAlpha.getValue().intValue());
 
+        // Get the mouse object over split.
         RayTraceResult splitResult = mc.objectMouseOver;
 
         if (splitResult != null && splitResult.typeOfHit == RayTraceResult.Type.BLOCK) {
             BlockPos block = splitResult.getBlockPos();
 
+            // No air!
             if (mc.world.getBlockState(block).getBlock() != Blocks.AIR) {
                 Render3DUtil.render3DSolid(camera, block, color);
 

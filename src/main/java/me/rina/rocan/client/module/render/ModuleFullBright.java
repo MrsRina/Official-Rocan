@@ -19,6 +19,7 @@ public class ModuleFullBright extends Module {
 
     @Override
     public void onEnable() {
+        // Very hard module.
         mc.gameSettings.gammaSetting = 1000.6E9f;
     }
 

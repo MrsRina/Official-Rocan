@@ -93,6 +93,7 @@ public class ModuleHoleESP extends Module {
 
         List<BlockPos> sphereList = HoleUtil.getSphereList(PlayerUtil.getBlockPos(), r, r, false, true);
 
+        // Its not kami, is diff.
         for (BlockPos blocks : sphereList) {
             if (mc.world.getBlockState(blocks).getBlock() != Blocks.AIR) {
                 continue;
@@ -118,6 +119,7 @@ public class ModuleHoleESP extends Module {
                 }
             }
 
+            // Clean code!
             if (isHole) {
                 holes.add(blocks);
             }

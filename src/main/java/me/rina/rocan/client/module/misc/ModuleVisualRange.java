@@ -15,11 +15,10 @@ import java.util.List;
 import static me.rina.rocan.Rocan.MC;
 
 public class ModuleVisualRange extends Module {
-
     private List<String> people;
 
     public ModuleVisualRange() {
-        super("Visual Range","VisualRange","VisualRange", ModuleCategory.RENDER);
+        super("Visual Range", "VisualRange", "VisualRange", ModuleCategory.RENDER);
     }
 
     @Override
@@ -32,6 +31,7 @@ public class ModuleVisualRange extends Module {
         if (mc.world == null | mc.world == null) {
             return;
         }
+
         List<String> players = new ArrayList<>();
         List<EntityPlayer> playerEntities = mc.world.playerEntities;
 
@@ -40,14 +40,14 @@ public class ModuleVisualRange extends Module {
             players.add(e.getName());
         }
 
+        // Jake stop skid from bubby client. (joke (joke (joke (joke (crystalinqq)))))
         if (players.size() > 0) {
             for (String name : players) {
                 if (!people.contains(name)) {
                     ChatUtil.print(ChatFormatting.GRAY + name + ChatFormatting.RESET + "Is now your visual range");
                     }
-                    people.add(name);
+                    people.add(name); // My son.
                 }
             }
         }
-
     }

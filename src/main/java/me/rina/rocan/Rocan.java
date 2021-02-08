@@ -3,6 +3,7 @@ package me.rina.rocan;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rina.rocan.api.command.management.CommandManager;
 import me.rina.rocan.api.event.management.EventManager;
+import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.management.ModuleManager;
 import me.rina.rocan.api.preset.management.PresetManager;
 import me.rina.rocan.api.social.management.SocialManager;
@@ -14,10 +15,8 @@ import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.manager.chat.SpammerManager;
 import me.rina.rocan.client.module.exploit.ModuleFastUse;
 import me.rina.rocan.client.module.exploit.ModuleXCarry;
-import me.rina.rocan.client.module.misc.ModuleAutoFish;
-import me.rina.rocan.client.module.misc.ModuleAutoRespawn;
-import me.rina.rocan.client.module.misc.ModuleChatSuffix;
-import me.rina.rocan.client.module.misc.ModuleSpammer;
+import me.rina.rocan.client.module.misc.*;
+import me.rina.rocan.client.module.movement.ModuleAutoWalk;
 import me.rina.rocan.client.module.render.ModuleBlockHighlight;
 import me.rina.rocan.client.module.render.ModuleHoleESP;
 import net.minecraft.client.Minecraft;
@@ -25,6 +24,9 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import team.stiff.pomelo.impl.annotated.AnnotatedEventManager;
+
+import java.util.Collections;
+import java.util.Comparator;
 
 /**
  * @author SrRina
@@ -81,14 +83,21 @@ public class Rocan {
         this.moduleManager.registry(new ModuleAutoFish());
         this.moduleManager.registry(new ModuleChatSuffix());
         this.moduleManager.registry(new ModuleSpammer());
+        this.moduleManager.registry(new ModuleAntiAFK());
 
         // Exploit.
         this.moduleManager.registry(new ModuleXCarry());
         this.moduleManager.registry(new ModuleFastUse());
 
+        // Movement
+        this.moduleManager.registry(new ModuleAutoWalk());
+
         // Commands.
         this.commandManager.registry(new CommandPrefix());
         this.commandManager.registry(new CommandToggle());
+
+        // We organize it to alphabetical order.
+        Collections.sort(this.moduleManager.getModuleList(), Comparator.comparing(Module::getName));
     }
 
     /**
