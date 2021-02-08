@@ -18,7 +18,6 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  * @since 07/02/2021 at 15:57
  **/
 public class ModuleAntiAFK extends Module {
-    public static ValueNumber settingSpeed = new ValueNumber("Speed", "Speed", "Speed delay of movement.", 500, 10, 1000);
     public static ValueBoolean settingRotate = new ValueBoolean("Rotate", "Rotate", "Rotate camera.", true);
 
     private TurokTick tick = new TurokTick();
@@ -35,7 +34,7 @@ public class ModuleAntiAFK extends Module {
         }
 
         // @everyone
-        float ms = (float) settingSpeed.getValue().intValue();
+        float ms = 2000f;
 
         // Math skill.
         if (tick.isPassedMS(ms / 2)) {

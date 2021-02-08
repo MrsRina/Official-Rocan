@@ -56,7 +56,7 @@ public class ModuleAutoRespawn extends Module {
                 if (this.hasSentMessage) {
                     this.print("You died at " + this.getColorBasedDimension() + position);
 
-                    // Don't repeat the fucking message.
+                    // Don't fucking repeat the fucking message.
                     this.hasSentMessage = false;
                 }
             }
