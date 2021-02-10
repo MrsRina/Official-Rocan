@@ -7,6 +7,7 @@ import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.module.registry.Registry;
 import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueNumber;
+import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.api.util.entity.PlayerUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
@@ -65,21 +66,21 @@ public class ModuleAutoRespawn extends Module {
 
     // Based.
     public String getColorBasedDimension() {
-        StringBuilder color = new StringBuilder();
+        String string = null;
 
         if (PlayerUtil.getCurrentDimension() == PlayerUtil.Dimension.WORLD) {
-            color.append("" + ChatFormatting.BLUE);
+            string = ("" + ChatFormatting.GREEN);
         }
 
         if (PlayerUtil.getCurrentDimension() == PlayerUtil.Dimension.NETHER) {
-            color.append("" + ChatFormatting.RED);
+            string = ("" + ChatFormatting.RED);
         }
 
-        if (PlayerUtil.getCurrentDimension() == PlayerUtil.Dimension.NETHER) {
-            color.append("" + ChatFormatting.DARK_BLUE);
+        if (PlayerUtil.getCurrentDimension() == PlayerUtil.Dimension.END) {
+            string = ("" + ChatFormatting.BLUE);
         }
 
         // Can't speak.
-        return color.toString();
+        return string;
     }
 }

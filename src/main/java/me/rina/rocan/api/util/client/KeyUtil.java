@@ -2,6 +2,7 @@ package me.rina.rocan.api.util.client;
 
 import me.rina.rocan.Rocan;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraftforge.client.settings.KeyConflictContext;
 
 /**
  * @author SrRina
@@ -9,10 +10,14 @@ import net.minecraft.client.settings.KeyBinding;
  **/
 public class KeyUtil {
     public static final KeyBinding[] ALL_MOVEMENT_KEY_BIND = {
-            Rocan.MC.gameSettings.keyBindForward, Rocan.MC.gameSettings.keyBindBack, Rocan.MC.gameSettings.keyBindLeft, Rocan.MC.gameSettings.keyBindRight
+            Rocan.MC.gameSettings.keyBindForward, Rocan.MC.gameSettings.keyBindBack, Rocan.MC.gameSettings.keyBindLeft, Rocan.MC.gameSettings.keyBindRight, Rocan.MC.gameSettings.keyBindJump
     };
 
     public static void press(KeyBinding keyBinding, boolean pressed) {
+        if (keyBinding.getKeyConflictContext() != KeyConflictContext.UNIVERSAL) {
+            keyBinding.setKeyConflictContext(KeyConflictContext.UNIVERSAL);
+        }
+
         KeyBinding.setKeyBindState(keyBinding.getKeyCode(), pressed);
     }
 
