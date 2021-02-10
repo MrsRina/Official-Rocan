@@ -16,7 +16,7 @@ import java.util.Objects;
 public class ModuleFullBright extends Module {
     @Override
     public void onEnable() {
-        mc.gameSettings.gammaSetting = 999.0f;
+        mc.gameSettings.gammaSetting = 100f;
     }
 
     @Override
