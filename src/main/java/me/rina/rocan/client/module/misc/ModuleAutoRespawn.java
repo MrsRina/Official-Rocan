@@ -4,6 +4,7 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rina.rocan.Rocan;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
+import me.rina.rocan.api.module.registry.Registry;
 import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.api.util.client.NullUtil;
@@ -17,17 +18,13 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  * @author SrRina
  * @since 02/02/2021 at 00:07
  **/
+@Registry(name = "Auto-Respawn", tag = "AutoRespawn", description = "Automatically respawn after you die.", category = ModuleCategory.MISC)
 public class ModuleAutoRespawn extends Module {
     public static ValueNumber settingDelay = new ValueNumber("Delay", "Delay", "The seconds delay for respawn.", 0, 0, 10);
     public static ValueBoolean settingDeathPosition = new ValueBoolean("Death Position", "DeathPosition", "Send the last position client side message after you die.", true);
 
     private boolean hasSentMessage;
-
     private TurokTick tick = new TurokTick();
-
-    public ModuleAutoRespawn() {
-        super("Auto-Respawn", "AutoRespawn", "Automatically respawn after you die.", ModuleCategory.MISC);
-    }
 
     @Listener
     public void onListen(ClientTickEvent event) {

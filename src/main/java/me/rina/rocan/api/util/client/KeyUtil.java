@@ -27,4 +27,8 @@ public class KeyUtil {
     public static boolean isJumping() {
         return Rocan.MC.gameSettings.keyBindJump.isKeyDown();
     }
+
+    public static boolean isPressed(KeyBinding keyBinding) {
+        return keyBinding.isKeyDown();
+    }
 }

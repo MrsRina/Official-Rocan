@@ -3,6 +3,7 @@ package me.rina.rocan.client.module.combat;
 import me.rina.rocan.api.event.impl.EventStage;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
+import me.rina.rocan.api.module.registry.Registry;
 import me.rina.rocan.api.util.item.ItemUtil;
 import me.rina.rocan.api.util.item.SlotUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
@@ -12,13 +13,9 @@ import net.minecraft.inventory.ClickType;
 import net.minecraft.item.Item;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
-// Koltin!!
+@Registry(name = "Auto Armour", tag = "AutoArmour", description = "Automatically places armour on.", category = ModuleCategory.COMBAT)
 public class ModuleAutoArmour extends Module {
   private TurokTick timer = new TurokTick();
-
-  public ModuleAutoArmour() {
-    super("Auto Armour", "AutoArmour", "Automatically places armour on.", ModuleCategory.COMBAT);
-  }
 
   @Listener
   public void onTick(ClientTickEvent event) {

@@ -3,6 +3,7 @@ package me.rina.rocan.client.module.misc;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
+import me.rina.rocan.api.module.registry.Registry;
 import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.api.tracker.Tracker;
 import me.rina.rocan.api.tracker.impl.RightMouseClickTracker;
@@ -21,6 +22,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  * @author SrRina
  * @since 02/02/2021 at 13:28
  **/
+@Registry(name = "Auto-Fish", tag = "AutoFish", description = "Automatically fish to you.", category = ModuleCategory.MISC)
 public class ModuleAutoFish extends Module {
     public static ValueNumber settingSplashDelay = new ValueNumber("Splash Delay", "SplashDelay", "The MS delay after the event sound splash.", 750, 1, 3000);
     public static ValueNumber settingPacketDelay = new ValueNumber("Packet Delay", "PacketDelay", "The MS delay for send packet.", 500, 0, 3000);
@@ -28,14 +30,7 @@ public class ModuleAutoFish extends Module {
     private Flag flag = Flag.NoFishing;
     private TurokTick tick = new TurokTick();
 
-    private Tracker tracker;
-
-    public ModuleAutoFish() {
-        super("Auto-Fish", "AutoFish", "Automatically fish to you.", ModuleCategory.MISC);
-
-        this.tracker = new Tracker("AutoFishTrack");
-        this.tracker.inject();
-    }
+    private Tracker tracker = new Tracker("AutoFishTrack").inject();
 
     @Override
     public void onSetting() {
@@ -78,7 +73,7 @@ public class ModuleAutoFish extends Module {
 
         if (this.flag == Flag.Splash) {
             // There is the delay to late splash.
-            if (tick.isPassedMS(settingSplashDelay.getValue().intValue())) {
+            if (this.tick.isPassedMS(settingSplashDelay.getValue().intValue())) {
                 this.print("You fish!");
 
                 // We skip queue and send.
@@ -92,7 +87,7 @@ public class ModuleAutoFish extends Module {
             }
         } else {
             // Reset the tick for not delay for the delay..
-            tick.reset();
+            this.tick.reset();
 
             // I don't know.
             if (this.flag == Flag.NoFishing && mc.gameSettings.keyBindUseItem.isKeyDown()) {

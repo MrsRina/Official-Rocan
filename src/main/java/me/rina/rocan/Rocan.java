@@ -13,11 +13,14 @@ import me.rina.rocan.client.command.CommandToggle;
 import me.rina.rocan.client.gui.GUI;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.manager.chat.SpammerManager;
+import me.rina.rocan.client.module.exploit.ModuleExtraSlots;
 import me.rina.rocan.client.module.exploit.ModuleFastUse;
-import me.rina.rocan.client.module.exploit.ModuleXCarry;
+import me.rina.rocan.client.module.exploit.ModuleBetterMine;
 import me.rina.rocan.client.module.misc.*;
 import me.rina.rocan.client.module.movement.ModuleAutoWalk;
+import me.rina.rocan.client.module.movement.ModuleMoveGUI;
 import me.rina.rocan.client.module.render.ModuleBlockHighlight;
+import me.rina.rocan.client.module.render.ModuleFullBright;
 import me.rina.rocan.client.module.render.ModuleHoleESP;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
@@ -77,6 +80,7 @@ public class Rocan {
         // Category Render.
         this.moduleManager.registry(new ModuleBlockHighlight());
         this.moduleManager.registry(new ModuleHoleESP());
+        this.moduleManager.registry(new ModuleFullBright());
 
         // Category Misc.
         this.moduleManager.registry(new ModuleAutoRespawn());
@@ -86,11 +90,13 @@ public class Rocan {
         this.moduleManager.registry(new ModuleAntiAFK());
 
         // Exploit.
-        this.moduleManager.registry(new ModuleXCarry());
+        this.moduleManager.registry(new ModuleExtraSlots());
         this.moduleManager.registry(new ModuleFastUse());
+        this.moduleManager.registry(new ModuleBetterMine());
 
         // Movement
         this.moduleManager.registry(new ModuleAutoWalk());
+        this.moduleManager.registry(new ModuleMoveGUI());
 
         // Commands.
         this.commandManager.registry(new CommandPrefix());
@@ -104,8 +110,6 @@ public class Rocan {
      * Method non-static to init the client.
      */
     public void onInitClient() {
-        this.presetManager.onLoad();
-
         // We start here the GUI, cause, all settings and modules are loaded.
         this.moduleClickGUI = new ModuleClickGUI();
         this.moduleClickGUI.init();

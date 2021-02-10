@@ -8,6 +8,9 @@ import net.minecraft.network.Packet;
  * @since 05/02/2021 at 12:53
  **/
 public class PacketUtil {
+    /**
+     * Its packet tracker technology, for we control the packet!
+     */
     public static class PacketTracker {
         private String name;
         private Packet<?> packet;

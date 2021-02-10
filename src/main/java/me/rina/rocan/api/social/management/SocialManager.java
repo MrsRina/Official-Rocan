@@ -121,7 +121,7 @@ public class SocialManager implements ISLClass {
 
             InputStream file = Files.newInputStream(Paths.get(pathFile));
 
-            JsonArray mainJson = new JsonParser().parse(new InputStreamReader(file)).getAsJsonArray();
+            JsonArray mainJson = JsonParser.parseReader(new InputStreamReader(file)).getAsJsonArray();
 
             for (JsonElement element : mainJson) {
                 JsonObject socialJson = element.getAsJsonObject();

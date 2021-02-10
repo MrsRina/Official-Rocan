@@ -5,6 +5,7 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rina.rocan.Rocan;
 import me.rina.rocan.api.ISLClass;
 import me.rina.rocan.api.module.impl.ModuleCategory;
+import me.rina.rocan.api.module.registry.Registry;
 import me.rina.rocan.api.setting.Setting;
 import me.rina.rocan.api.setting.value.*;
 import me.rina.rocan.api.util.chat.ChatUtil;
@@ -13,13 +14,11 @@ import me.rina.turok.util.TurokClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.culling.ICamera;
-import net.minecraftforge.common.MinecraftForge;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Locale;
 
 /**
  * @author SrRina
@@ -28,17 +27,19 @@ import java.util.Locale;
 public class Module implements ISLClass {
     public Minecraft mc = Rocan.MC;
 
-    private String name, tag, description;
-    private String infoHUDEnabledList;
+    private String name = getResgistry().name();
+    private String tag = getResgistry().tag();
 
-    private ModuleCategory category;
+    private String description = getResgistry().description();
+    private ModuleCategory category = getResgistry().category();
 
+    private String status;
     private ArrayList<Setting> settingList;
 
     private ValueBind keyBinding = new ValueBind("Key Bind", "KeyBind", "Key bind to active or disable module.", -1);
 
     private ValueBoolean showModuleEnableList = new ValueBoolean("Show Module Enabled List", "ShowModuleEnabledList", "Show in component Module Enabled List", true);
-    private ValueBoolean toggleMessage = new ValueBoolean("Toggle Message", "ToggleMessage", "Alert if is toggled.", true);
+    private ValueBoolean toggleMessage = new ValueBoolean("Toggle Message", "ToggleMessage", "Alert if is toggled.", false);
 
     public me.rina.rocan.mixin.interfaces.IMinecraft imc = (IMinecraft) Minecraft.getMinecraft();
 
@@ -47,15 +48,7 @@ public class Module implements ISLClass {
      */
     public ICamera camera = new Frustum();
 
-    public Module(String name, String tag, String description, ModuleCategory category) {
-        this.name = name;
-        this.tag = tag;
-
-        this.description = description;
-        this.infoHUDEnabledList = null;
-
-        this.category = category;
-
+    public Module() {
         // We need registry the currents pre settings at own Module class.
         this.registry(keyBinding);
         this.registry(showModuleEnableList);
@@ -86,12 +79,12 @@ public class Module implements ISLClass {
         return description;
     }
 
-    public void setInfoHUDEnabledList(String infoHUDEnabledList) {
-        this.infoHUDEnabledList = infoHUDEnabledList;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
-    public String getInfoHUDEnabledList() {
-        return infoHUDEnabledList;
+    public String getStatus() {
+        return status;
     }
 
     public void setCategory(ModuleCategory category) {
@@ -128,6 +121,16 @@ public class Module implements ISLClass {
 
     public ArrayList<Setting> getSettingList() {
         return settingList;
+    }
+
+    public Registry getResgistry() {
+        Registry details = null;
+
+        if (getClass().isAnnotationPresent(Registry.class)) {
+            details = getClass().getAnnotation(Registry.class);
+        }
+
+        return details;
     }
 
     public void registry(Setting setting) {
@@ -320,7 +323,7 @@ public class Module implements ISLClass {
 
             InputStream file = Files.newInputStream(Paths.get(pathFile));
 
-            JsonObject mainJson = new JsonParser().parse(new InputStreamReader(file)).getAsJsonObject();
+            JsonObject mainJson = JsonParser.parseReader(new InputStreamReader(file)).getAsJsonObject();
 
             if (mainJson.get("settings") != null) {
                 JsonObject jsonSettingList = mainJson.get("settings").getAsJsonObject();

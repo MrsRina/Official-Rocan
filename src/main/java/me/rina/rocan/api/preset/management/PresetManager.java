@@ -83,10 +83,6 @@ public class PresetManager implements ISLClass {
     }
 
     public static void reload() {
-        if (INSTANCE.currentPreset != null) {
-            INSTANCE.currentPreset.onLoad();
-        }
-
         Rocan.getModuleManager().onLoad();
         Rocan.getSocialManager().onLoad();
     }
@@ -111,6 +107,7 @@ public class PresetManager implements ISLClass {
             }
 
             JsonObject mainJson = new JsonObject();
+            JsonArray mainJsonArray = new JsonArray();
 
             mainJson.add("current", new JsonPrimitive(this.currentPreset.getName()));
 
@@ -121,8 +118,10 @@ public class PresetManager implements ISLClass {
                 presetJson.add("data", new JsonPrimitive(presets.getData()));
                 presetJson.add("path", new JsonPrimitive(presets.getData()));
 
-                mainJson.add(presets.getName(), presetJson);
+                mainJsonArray.add(presetJson);
             }
+
+            mainJson.add("presets", mainJsonArray);
 
             String stringJson = gsonBuilder.toJson(new JsonParser().parse(mainJson.toString()));
 
@@ -147,12 +146,15 @@ public class PresetManager implements ISLClass {
 
             InputStream file = Files.newInputStream(Paths.get(pathFile));
 
-            if (new JsonParser().parse(new InputStreamReader(file)) == null) {
+            JsonObject mainJson = JsonParser.parseReader(new InputStreamReader(file)).getAsJsonObject();
+
+            if (mainJson.get("presets") == null) {
+                file.close();
+
                 return;
             }
 
-            JsonObject mainJson = new JsonParser().parse(new InputStreamReader(file)).getAsJsonObject();
-            JsonArray mainJsonArray = new JsonParser().parse(new InputStreamReader(file)).getAsJsonArray();
+            JsonArray mainJsonArray = mainJson.get("presets").getAsJsonArray();
 
             String currentPresetName = "";
 

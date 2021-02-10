@@ -2,6 +2,7 @@ package me.rina.rocan.api.util.item;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import org.omg.CORBA.PUBLIC_MEMBER;
 
 /**
  * @author SrRina
@@ -23,4 +24,24 @@ public class ItemUtil {
     public static final Item[] ALL_BOOTS = {
             Items.DIAMOND_BOOTS, Items.IRON_BOOTS, Items.GOLDEN_BOOTS, Items.CHAINMAIL_BOOTS, Items.LEATHER_BOOTS
     };
+
+    public static final Item[] ALL_PICKAXES = {
+            Items.DIAMOND_PICKAXE, Items.IRON_PICKAXE, Items.GOLDEN_PICKAXE, Items.STONE_PICKAXE, Items.WOODEN_PICKAXE
+    };
+
+    public static boolean contains(Item[] list, Item item) {
+        boolean contains = false;
+
+        for (int i = 0; i < list.length; i++) {
+            Item items = list[i];
+
+            if (items == item) {
+                contains = true;
+
+                break;
+            }
+        }
+
+        return contains;
+    }
 }

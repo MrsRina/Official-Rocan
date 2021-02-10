@@ -3,6 +3,7 @@ package me.rina.rocan.client.module.misc;
 import me.rina.rocan.Rocan;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
+import me.rina.rocan.api.module.registry.Registry;
 import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
@@ -19,6 +20,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  * @author SrRina
  * @since 04/02/2021 at 20:28
  **/
+@Registry(name = "Spammer", tag = "Spammer", description = "Send a lot messages on chat.", category = ModuleCategory.MISC)
 public class ModuleSpammer extends Module {
     public static ValueNumber settingDelay = new ValueNumber("Delay", "Delay", "Seconds delay to send message.", 0.5f, 0.5f, 10.0f);
     public static ValueNumber settingLimit = new ValueNumber("Limit", "Limit", "The limit of messages in queue.", 3, 1, 6);
@@ -32,10 +34,6 @@ public class ModuleSpammer extends Module {
 
     private double[] lastWalkingPlayerPos;
     private String current;
-
-    public ModuleSpammer() {
-        super("Spammer", "Spammer", "Send a lot messages on chat.", ModuleCategory.MISC);
-    }
 
     @Override
     public void onSetting() {

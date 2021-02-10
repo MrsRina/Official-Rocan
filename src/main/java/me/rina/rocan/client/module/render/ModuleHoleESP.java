@@ -3,6 +3,7 @@ package me.rina.rocan.client.module.render;
 import me.rina.rocan.Rocan;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
+import me.rina.rocan.api.module.registry.Registry;
 import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
@@ -25,6 +26,7 @@ import java.util.List;
  * @author SrRina
  * @since 28/01/2021 at 13:38
  **/
+@Registry(name = "Hole ESP", tag = "HoleESP", description = "Draws holes to help visibility at crystal pvp.", category = ModuleCategory.RENDER)
 public class ModuleHoleESP extends Module {
     private ValueNumber settingRange = new ValueNumber("Range", "Range", "Maximum distance to render.", 6f, 0.1f, 10f);
     private ValueNumber settingOffsetY = new ValueNumber("Offset Y", "OffsetY", "Offset y block render.", 25, 0, 100);
@@ -39,7 +41,7 @@ public class ModuleHoleESP extends Module {
     /*
      * Outline config;
      */
-    public static ValueEnum settingOutline = new ValueEnum("Outline", "Outline", "Outline effect.", ModuleBlockHighlight.RenderOutline.Enabled);
+    public static ValueEnum settingOutline = new ValueEnum("Outline", "Outline", "Outline effect.", RenderOutline.Enabled);
 
     enum RenderOutline {
         Enabled, Disabled;
@@ -55,18 +57,14 @@ public class ModuleHoleESP extends Module {
 
     private ArrayList<BlockPos> holes = new ArrayList<>();
 
-    public ModuleHoleESP() {
-        super("Hole ESP", "HoleESP", "Draw the holes to help visibility.", ModuleCategory.RENDER);
-    }
-
     @Override
     public void onSetting() {
-        settingOutlineLineSize.setEnabled(settingOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled);
-        settingOutlineRed.setEnabled(settingOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled);
-        settingOutlineGreen.setEnabled(settingOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled);
-        settingOutlineBlue.setEnabled(settingOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled);
-        settingOutlineAlpha.setEnabled(settingOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled);
-        settingOutlineRGB.setEnabled(settingOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled);
+        settingOutlineLineSize.setEnabled(settingOutline.getValue() == RenderOutline.Enabled);
+        settingOutlineRed.setEnabled(settingOutline.getValue() == RenderOutline.Enabled);
+        settingOutlineGreen.setEnabled(settingOutline.getValue() == RenderOutline.Enabled);
+        settingOutlineBlue.setEnabled(settingOutline.getValue() == RenderOutline.Enabled);
+        settingOutlineAlpha.setEnabled(settingOutline.getValue() == RenderOutline.Enabled);
+        settingOutlineRGB.setEnabled(settingOutline.getValue() == RenderOutline.Enabled);
 
         if (settingRGB.getValue()) {
             settingRed.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[0]);

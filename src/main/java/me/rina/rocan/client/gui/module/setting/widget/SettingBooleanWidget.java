@@ -136,6 +136,7 @@ public class SettingBooleanWidget extends Widget {
         if (this.flagMouse == Flag.MOUSE_OVER) {
             if (this.isMouseClickedLeft) {
                 this.setting.setValue(!(boolean) this.setting.getValue());
+                this.settingContainer.onRefreshWidget();
 
                 this.isMouseClickedLeft = false;
             }

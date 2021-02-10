@@ -82,12 +82,14 @@ public class Tracker {
     /**
      * Inject in constructor it in any class you will use the tracker.
      */
-    public void inject() {
+    public Tracker inject() {
         if (Rocan.getTrackerManager() == null) {
-            return;
+            return this;
         }
 
         Rocan.getTrackerManager().registry(this);
+
+        return this;
     }
 
     public void register() {

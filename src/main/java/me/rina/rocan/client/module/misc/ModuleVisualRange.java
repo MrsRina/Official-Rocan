@@ -3,6 +3,7 @@ package me.rina.rocan.client.module.misc;
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
+import me.rina.rocan.api.module.registry.Registry;
 import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import net.minecraft.entity.Entity;
@@ -14,12 +15,9 @@ import java.util.List;
 
 import static me.rina.rocan.Rocan.MC;
 
+@Registry(name = "Visual Range", tag = "VisualRange", description = "Get players on visual range.", category = ModuleCategory.RENDER)
 public class ModuleVisualRange extends Module {
     private List<String> people;
-
-    public ModuleVisualRange() {
-        super("Visual Range", "VisualRange", "VisualRange", ModuleCategory.RENDER);
-    }
 
     @Override
     public void onEnable() {
