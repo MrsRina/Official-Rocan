@@ -143,6 +143,10 @@ public class SettingBindWidget extends Widget {
                 case Keyboard.KEY_ESCAPE: {
                     this.isListening = false;
 
+                    if (this.master.isCanceledCloseGUI()) {
+                        this.master.setCanceledCloseGUI(false);
+                    }
+
                     break;
                 }
 
@@ -152,6 +156,10 @@ public class SettingBindWidget extends Widget {
 
                     this.isListening = false;
 
+                    if (this.master.isCanceledCloseGUI()) {
+                        this.master.setCanceledCloseGUI(false);
+                    }
+
                     break;
                 }
 
@@ -159,6 +167,10 @@ public class SettingBindWidget extends Widget {
                     this.setting.setKeyCode(key);
 
                     this.isListening = false;
+
+                    if (this.master.isCanceledCloseGUI()) {
+                        this.master.setCanceledCloseGUI(false);
+                    }
 
                     break;
                 }

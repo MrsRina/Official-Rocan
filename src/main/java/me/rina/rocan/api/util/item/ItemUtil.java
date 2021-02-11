@@ -29,6 +29,10 @@ public class ItemUtil {
             Items.DIAMOND_PICKAXE, Items.IRON_PICKAXE, Items.GOLDEN_PICKAXE, Items.STONE_PICKAXE, Items.WOODEN_PICKAXE
     };
 
+    public static final Item[] ALL_CLIENT_OFFHAND_ITEMS_USABLE =  {
+            Items.TOTEM_OF_UNDYING, Items.GOLDEN_APPLE, Items.END_CRYSTAL, Items.BOW
+    };
+
     public static boolean contains(Item[] list, Item item) {
         boolean contains = false;
 

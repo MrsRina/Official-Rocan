@@ -26,7 +26,7 @@ public class SlotUtil {
         return item;
     }
 
-    public static int findItemSlot(Item item) {
+    public static int findItemSlotFromInventory(Item item) {
         int slot = -1;
 
         for (int i = 0; i < 45; i++) {
@@ -40,7 +40,7 @@ public class SlotUtil {
         return slot;
     }
 
-    public static int findItemSlotFromInventory(Item item) {
+    public static int findItemSlot(Item item) {
         int slot = -1;
 
         for (int i = 0; i < 36; i++) {
