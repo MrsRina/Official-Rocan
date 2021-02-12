@@ -28,11 +28,9 @@ public class PlayerAbortBreakBlockTracker extends PacketUtil.PacketTracker {
 
     @Override
     public void onPre() {
-
     }
 
     @Override
     public void onPost() {
-
     }
 }

@@ -34,6 +34,5 @@ public class PlayerStopBreakBlockTracker extends PacketUtil.PacketTracker {
 
     @Override
     public void onPost() {
-
     }
 }

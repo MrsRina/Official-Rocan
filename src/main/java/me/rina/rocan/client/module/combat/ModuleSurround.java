@@ -4,6 +4,7 @@ import jdk.nashorn.internal.ir.Block;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.module.registry.Registry;
+import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.api.tracker.Tracker;
 import me.rina.rocan.api.tracker.impl.RightMouseClickOnBlockTracker;
@@ -12,6 +13,7 @@ import me.rina.rocan.api.util.crystal.BlockUtil;
 import me.rina.rocan.api.util.crystal.HoleUtil;
 import me.rina.rocan.api.util.entity.PlayerUtil;
 import me.rina.rocan.api.util.item.SlotUtil;
+import me.rina.rocan.api.util.math.PosUtil;
 import me.rina.rocan.api.util.network.PacketUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.turok.util.TurokTick;
@@ -20,6 +22,7 @@ import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import scala.tools.reflect.quasiquotes.Holes;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
@@ -30,6 +33,8 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public class ModuleSurround extends Module {
     public static ValueNumber settingToggleDelay = new ValueNumber("Toggle Delay", "ToggleDelay", "Delay for disable module.", 2000, 0, 3000);
     public static ValueNumber settingPacketDelay = new ValueNumber("Packet Delay", "PacketDelay", "The MS delay for sending packet", 250, 0, 3000);
+    public static ValueBoolean settingSwingAnimation = new ValueBoolean("Swing Animation", "SwingAnimation", "Enable swing animation.", true);
+
 
     private Tracker tracker = new Tracker("Surround Packet").inject();
     private TurokTick tick = new TurokTick();
@@ -64,12 +69,17 @@ public class ModuleSurround extends Module {
 
         BlockPos playerPos = PlayerUtil.getBlockPos();
 
+        int count = 0;
+
         for (BlockPos offsetPos : HoleUtil.SURROUND) {
-            if (BlockUtil.isAir(playerPos.add(offsetPos)) == false) {
-                continue;
+            if (count <= HoleUtil.SURROUND.length) {
+                this.doPlace(playerPos.add(offsetPos));
+            } else {
+                this.print("debug - toggled in main surround for.");
+                this.setDisabled();
             }
 
-            this.doPlace(playerPos.add(offsetPos));
+            count++;
         }
     }
 
@@ -105,6 +115,42 @@ public class ModuleSurround extends Module {
     }
 
     public void doPlace(BlockPos pos) {
-        this.tracker.send(new RightMouseClickOnBlockTracker(pos, EnumFacing.UP, EnumHand.MAIN_HAND, 0f, 0f, 0f));
+        if (BlockUtil.isAir(pos) == false) {
+            return;
+        }
+
+        if (mc.player.getHeldItemMainhand().getItem() != Item.getItemFromBlock(Blocks.OBSIDIAN)) {
+            mc.player.inventory.currentItem = this.slot;
+        }
+
+        /*
+         * Verify if is air in all holes at block,
+         * but we need remove the player position block
+         * to cancel the place.
+         */
+        boolean isCanceled = false;
+
+        /*
+         * So, need count if the offset blocks to verify if not air.
+         */
+        int countOffset = 0;
+
+        for (BlockPos offsetPos : HoleUtil.SURROUND) {
+            BlockPos offsetPositions = pos.add(offsetPos);
+
+            if (BlockUtil.isAir(offsetPositions) == false) {
+                countOffset++;
+            }
+
+            if (countOffset == 0) {
+                isCanceled = true;
+            }
+        }
+
+        if (isCanceled) {
+            return;
+        }
+
+        this.tracker.send(new RightMouseClickOnBlockTracker(pos, EnumFacing.UP, settingSwingAnimation.getValue() ? EnumHand.MAIN_HAND : null, 0f, 0f, 0f));
     }
 }

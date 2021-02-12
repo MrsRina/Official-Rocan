@@ -40,11 +40,12 @@ public class PlayerStartBreakBlockTracker extends PacketUtil.PacketTracker {
 
     @Override
     public void onPre() {
-        Rocan.MC.player.swingArm(hand);
     }
 
     @Override
     public void onPost() {
-
+        if (this.hand != null) {
+            Rocan.MC.player.swingArm(this.hand);
+        }
     }
 }
