@@ -24,8 +24,8 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  **/
 @Registry(name = "Auto-Fish", tag = "AutoFish", description = "Automatically fish to you.", category = ModuleCategory.MISC)
 public class ModuleAutoFish extends Module {
-    public static ValueNumber settingSplashDelay = new ValueNumber("Splash Delay", "SplashDelay", "The MS delay after the event sound splash.", 750, 1, 3000);
-    public static ValueNumber settingPacketDelay = new ValueNumber("Packet Delay", "PacketDelay", "The MS delay for send packet.", 500, 0, 3000);
+    public static ValueNumber settingSplashDelay = new ValueNumber("Splash Delay", "SplashDelay", "The MS delay after the sound splash event.", 750, 1, 3000);
+    public static ValueNumber settingPacketDelay = new ValueNumber("Packet Delay", "PacketDelay", "The MS delay for sending packet.", 500, 0, 3000);
 
     private Flag flag = Flag.NoFishing;
     private TurokTick tick = new TurokTick();
@@ -86,7 +86,7 @@ public class ModuleAutoFish extends Module {
                 this.flag = Flag.Fishing;
             }
         } else {
-            // Reset the tick for not delay for the delay..
+            // Reset the tick for no delay for the delay..
             this.tick.reset();
 
             // I don't know.

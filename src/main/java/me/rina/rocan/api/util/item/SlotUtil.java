@@ -73,4 +73,8 @@ public class SlotUtil {
 
         return slot;
     }
+
+    public static ItemStack getItemStack(int slot) {
+        return MC.player.inventory.getStackInSlot(slot);
+    }
 }

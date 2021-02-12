@@ -13,8 +13,8 @@ import net.minecraft.inventory.ClickType;
 import net.minecraft.item.Item;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
-@Registry(name = "Auto Armour", tag = "AutoArmour", description = "Automatically places armour on.", category = ModuleCategory.COMBAT)
-public class ModuleAutoArmour extends Module {
+@Registry(name = "Auto Armor", tag = "AutoArmor", description = "Automatically places armour on.", category = ModuleCategory.COMBAT)
+public class ModuleAutoArmor extends Module {
   private TurokTick timer = new TurokTick();
 
   @Listener

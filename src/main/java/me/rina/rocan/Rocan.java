@@ -13,8 +13,9 @@ import me.rina.rocan.client.command.CommandToggle;
 import me.rina.rocan.client.gui.GUI;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.manager.chat.SpammerManager;
-import me.rina.rocan.client.module.combat.ModuleAutoArmour;
+import me.rina.rocan.client.module.combat.ModuleAutoArmor;
 import me.rina.rocan.client.module.combat.ModuleOffhand;
+import me.rina.rocan.client.module.combat.ModuleSurround;
 import me.rina.rocan.client.module.exploit.ModuleExtraSlots;
 import me.rina.rocan.client.module.exploit.ModuleFastUse;
 import me.rina.rocan.client.module.exploit.ModuleBetterMine;
@@ -81,7 +82,8 @@ public class Rocan {
 
         // Category Combat.
         this.moduleManager.registry(new ModuleOffhand());
-        this.moduleManager.registry(new ModuleAutoArmour());
+        this.moduleManager.registry(new ModuleAutoArmor());
+        this.moduleManager.registry(new ModuleSurround());
 
         // Category Render.
         this.moduleManager.registry(new ModuleBlockHighlight());
@@ -108,7 +110,7 @@ public class Rocan {
         this.commandManager.registry(new CommandPrefix());
         this.commandManager.registry(new CommandToggle());
 
-        // We organize it to alphabetical order.
+        // We organize module list to alphabetical order.
         Collections.sort(this.moduleManager.getModuleList(), Comparator.comparing(Module::getName));
     }
 
@@ -116,7 +118,7 @@ public class Rocan {
      * Method non-static to init the client.
      */
     public void onInitClient() {
-        // We start here the GUI, cause, all settings and modules are loaded.
+        // We start here the GUI, because, all settings and modules are loaded.
         this.moduleClickGUI = new ModuleClickGUI();
         this.moduleClickGUI.init();
 
