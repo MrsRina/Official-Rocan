@@ -18,6 +18,18 @@ public class HoleUtil {
             new BlockPos(0, 0, -1)
     };
 
+    public static final BlockPos[] FULL_SURROUND = {
+            new BlockPos(0, -1, 0),
+            new BlockPos(1, 0, 0),
+            new BlockPos(0, 0, 1),
+            new BlockPos(-1, 0, 0),
+            new BlockPos(0, 0, -1),
+            new BlockPos(1, 0, 1),
+            new BlockPos(-1, 0, 1),
+            new BlockPos(-1, 0, -1),
+            new BlockPos(1, 0, -1)
+    };
+
     public static List<BlockPos> getSphereList(BlockPos blockPos, float r, int h, boolean hollow, boolean sphere) {
         List<BlockPos> sphereList = new ArrayList<>();
 
