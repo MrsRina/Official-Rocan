@@ -5,6 +5,7 @@ import me.rina.turok.util.TurokMath;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
@@ -49,6 +50,10 @@ public class BlockUtil {
         return blockState.getBlockHardness(Rocan.MC.world, pos);
     }
 
+    public static IBlockState getState(BlockPos pos) {
+        return Rocan.MC.world.getBlockState(pos);
+    }
+
     public static int getDistanceI(BlockPos pos, Entity entity) {
         int x = (int) (pos.x - entity.posX);
         int y = (int) (pos.y - entity.posY);
@@ -63,5 +68,9 @@ public class BlockUtil {
         double z = (pos.z - entity.posZ);
 
         return TurokMath.sqrt(x * x + y * y + z * z);
+    }
+
+    public static EnumFacing getFacing(BlockPos pos, EntityLivingBase entityLivingBase) {
+        return EnumFacing.getDirectionFromEntityLiving(pos, entityLivingBase);
     }
 }

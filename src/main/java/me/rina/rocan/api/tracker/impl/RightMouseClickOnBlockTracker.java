@@ -21,7 +21,7 @@ public class RightMouseClickOnBlockTracker extends PacketUtil.PacketTracker {
     private float facingZ;
 
     public RightMouseClickOnBlockTracker(BlockPos pos, EnumFacing facing, EnumHand hand, float facingX, float facingY, float facingZ) {
-        super("Right Mouse Click On Block Tracker", new CPacketPlayerTryUseItemOnBlock(pos, facing, hand, facingX, facingY, facingZ));
+        super("Right Mouse Click On Block Tracker", new CPacketPlayerTryUseItemOnBlock(pos, facing, hand == null ? EnumHand.MAIN_HAND : hand, facingX, facingY, facingZ));
 
         this.pos = pos;
         this.facing = facing;

@@ -4,6 +4,7 @@ import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.module.registry.Registry;
 import me.rina.rocan.api.setting.value.ValueBoolean;
+import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.api.tracker.Tracker;
 import me.rina.rocan.api.tracker.impl.RightMouseClickOnBlockTracker;
@@ -12,6 +13,7 @@ import me.rina.rocan.api.util.crystal.BlockUtil;
 import me.rina.rocan.api.util.crystal.HoleUtil;
 import me.rina.rocan.api.util.entity.PlayerUtil;
 import me.rina.rocan.api.util.item.SlotUtil;
+import me.rina.rocan.api.util.math.PosUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.turok.util.TurokTick;
 import net.minecraft.init.Blocks;
@@ -19,6 +21,8 @@ import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
@@ -27,19 +31,21 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  **/
 @Registry(name = "Surround", tag = "Surround", description = "Automatically places block around of you.", category = ModuleCategory.COMBAT)
 public class ModuleSurround extends Module {
-    public static ValueNumber settingMaximumBlocks = new ValueNumber("Maximum Blocks", "MaximumBlocks", "Maximum of blocks placed around of you.", 4, 4, 9);
-    public static ValueNumber settingPacketDelay = new ValueNumber("Packet Delay", "PacketDelay", "The MS delay for sending packet", 250, 0, 3000);
+    public static ValueNumber settingMaximumTime = new ValueNumber("Maximum Time", "MaximumTime", "Time out ticks to disable module.", 1000,  250, 3000);
+    public static ValueEnum settingMode = new ValueEnum("Mode", "Mode", "Modes to place blocks.", Mode.SURROUND);
     public static ValueBoolean settingSwingAnimation = new ValueBoolean("Swing Animation", "SwingAnimation", "Enable swing animation.", true);
 
-    private Tracker tracker = new Tracker("Surround Packet").inject();
     private TurokTick tick = new TurokTick();
 
     private int slot;
     private int oldSlot;
 
-    @Override
-    public void onSetting() {
-        this.tracker.setDelay(settingPacketDelay.getValue().intValue());
+    public enum Mode {
+        HOLE, SURROUND;
+    }
+
+    public enum Flag {
+        PLACED, STUCK, AIR;
     }
 
     @Listener
@@ -54,26 +60,38 @@ public class ModuleSurround extends Module {
             return;
         }
 
-        mc.player.inventory.currentItem = this.slot;
-
-        if (this.tick.isPassedMS(settingMaximumBlocks.getValue().intValue())) {
+        if (this.tick.isPassedMS(settingMaximumTime.getValue().intValue())) {
             this.setDisabled();
-
             this.tick.reset();
         }
 
         BlockPos playerPos = PlayerUtil.getBlockPos();
 
-        int count = 0;
+        int placed = 0;
+        int stuck = 0;
+        int air = 0;
 
-        BlockPos[] currentSurround = settingMaximumBlocks.getValue().intValue() != settingMaximumBlocks.getMaximum().intValue() ? HoleUtil.FULL_SURROUND : HoleUtil.SURROUND;
+        BlockPos[] currentSurround = settingMode.getValue() == Mode.HOLE ? HoleUtil.SURROUND : HoleUtil.FULL_SURROUND;
 
         for (BlockPos offsetPos : currentSurround) {
-            if (this.doPlace(playerPos.add(offsetPos))) {
-                count++;
+            Flag flag = this.doPlace(playerPos.add(offsetPos));
+
+            if (flag == Flag.AIR) {
+                air++;
             }
 
-            if (count >= settingMaximumBlocks.getValue().intValue()) {
+            if (flag == Flag.STUCK) {
+                stuck++;
+
+                continue;
+            }
+
+            if (flag == Flag.PLACED) {
+                placed++;
+            }
+
+            if (placed + air >= currentSurround.length) {
+                this.tick.reset();
                 this.setDisabled();
             }
         }
@@ -81,8 +99,6 @@ public class ModuleSurround extends Module {
 
     @Override
     public void onEnable() {
-        this.tracker.register();
-
         if (NullUtil.isPlayer()) {
             return;
         }
@@ -95,14 +111,10 @@ public class ModuleSurround extends Module {
         if (SlotUtil.getItemStack(this.oldSlot).getItem() != itemObsidian) {
             this.slot = SlotUtil.findItemSlotFromHotBar(itemObsidian);
         }
-
-        mc.player.inventory.currentItem = this.slot;
     }
 
     @Override
     public void onDisable() {
-        this.tracker.unregister();
-
         if (NullUtil.isPlayer()) {
             return;
         }
@@ -110,45 +122,49 @@ public class ModuleSurround extends Module {
         mc.player.inventory.currentItem = this.oldSlot;
     }
 
-    public boolean doPlace(BlockPos pos) {
+    public Flag doPlace(BlockPos pos) {
         if (BlockUtil.isAir(pos) == false) {
-            return true;
+            return Flag.AIR;
         }
+
+        /*
+         * Cancel if there is air in all surround of block.
+         */
+        boolean isCanceled = true;
+
+        /*
+         * The offset pos to place block.
+         */
+        BlockPos offset = pos;
+
+        for (BlockPos offsetPos : HoleUtil.SURROUND) {
+            BlockPos offsetPosition = pos.add(offsetPos);
+
+            if (BlockUtil.isAir(offsetPosition) == false) {
+                offset = offsetPosition;
+                isCanceled = false;
+
+                break;
+            }
+        }
+
+        if (isCanceled) {
+            return Flag.STUCK;
+        }
+
+        EnumFacing facing = BlockUtil.getFacing(offset, mc.player);
+        Vec3d hit = PosUtil.getHit(offset, facing);
 
         if (mc.player.getHeldItemMainhand().getItem() != Item.getItemFromBlock(Blocks.OBSIDIAN)) {
             mc.player.inventory.currentItem = this.slot;
         }
 
-        /*
-         * Verify if is air in all holes at block,
-         * but we need remove the player position block
-         * to cancel the place.
-         */
-        boolean isCanceled = false;
-
-        /*
-         * So, need count if the offset blocks to verify if not air.
-         */
-        int countOffset = 0;
-
-        for (BlockPos offsetPos : HoleUtil.SURROUND) {
-            BlockPos offsetPositions = pos.add(offsetPos);
-
-            if (BlockUtil.isAir(offsetPositions) == false) {
-                countOffset++;
-            }
-
-            if (countOffset == 0) {
-                isCanceled = true;
-            }
+        if (settingSwingAnimation.getValue()) {
+            mc.player.swingArm(EnumHand.MAIN_HAND);
         }
 
-        if (isCanceled) {
-            return true;
-        }
+        mc.playerController.processRightClickBlock(mc.player, mc.world, offset, facing, hit, EnumHand.MAIN_HAND);
 
-        this.tracker.send(new RightMouseClickOnBlockTracker(pos, EnumFacing.UP, settingSwingAnimation.getValue() ? EnumHand.MAIN_HAND : null, 0f, 0f, 0f));
-
-        return true;
+        return Flag.PLACED;
     }
 }

@@ -14,7 +14,7 @@ public class RightMouseClickTracker extends PacketUtil.PacketTracker {
     private EnumHand hand;
 
     public RightMouseClickTracker(EnumHand hand) {
-        super("Right Mouse Click Tracker", new CPacketPlayerTryUseItem(hand));
+        super("Right Mouse Click Tracker", new CPacketPlayerTryUseItem(hand == null ? EnumHand.MAIN_HAND : hand));
 
         this.hand = hand;
     }

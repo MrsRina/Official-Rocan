@@ -28,7 +28,6 @@ public abstract class MixinMinecraft implements IMinecraft {
         Rocan.onEndClient();
     }
 
-
     @Redirect(at = @At(
         value = "INVOKE",
         target = "Lorg/lwjgl/opengl/Display;setTitle(Ljava/lang/String;)V"),
