@@ -56,6 +56,7 @@ public class ModuleSurround extends Module {
      * Make player center before start place blocks.
      */
     private boolean isCentered;
+    private boolean isEventCentered;
 
     public enum Mode {
         HOLE, SURROUND;
@@ -137,9 +138,15 @@ public class ModuleSurround extends Module {
 
     @Override
     public void onEnable() {
+        // Clear blocks.
         this.blocks.clear();
+
+        // Reset ticks.
         this.tickTimeOut.reset();
         this.tickQueue.reset();
+
+        // We need set because, anti spam position so the anti cheat don't make player backs to last position.
+        this.isEventCentered = true;
 
         if (NullUtil.isPlayer()) {
             return;
@@ -158,8 +165,11 @@ public class ModuleSurround extends Module {
     @Override
     public void onDisable() {
         this.blocks.clear();
+
         this.tickTimeOut.reset();
         this.tickQueue.reset();
+
+        this.isEventCentered = true;
 
         if (NullUtil.isPlayer()) {
             return;
@@ -169,7 +179,13 @@ public class ModuleSurround extends Module {
     }
 
     public void onQueue() {
-        this.isCentered = settingAutoCenter.getValue() ? this.doCenterPosition() : true;
+        /*
+         * No spam position, so the player does not back to last position.
+         */
+        if (this.isEventCentered) {
+            this.isCentered = settingAutoCenter.getValue() ? this.doCenterPosition() : true;
+            this.isEventCentered = false;
+        }
 
         if (this.isCentered == false) {
             return;
@@ -190,22 +206,16 @@ public class ModuleSurround extends Module {
     }
 
     public boolean doCenterPosition() {
-        boolean isCurrentCentered = false;
+        BlockPos pos = PlayerUtil.getBlockPos();
+        Vec3d center = PositionUtil.toVec(pos).add(0.5, 0, 0.5);
 
-        if (settingAutoCenter.getValue()) {
-            BlockPos pos = PlayerUtil.getBlockPos();
-            Vec3d center = PositionUtil.toVec(pos).add(0.5, 0, 0.5);
-
-            if (settingSmoothCenter.getValue()) {
-                PlayerPositionUtil.smooth(center, Rocan.getClientEventManager().getCurrentRender2DPartialTicks());
-            } else {
-                PlayerPositionUtil.teleportation(center);
-            }
-
-            isCurrentCentered = true;
+        if (settingSmoothCenter.getValue()) {
+            PlayerPositionUtil.smooth(center, Rocan.getClientEventManager().getCurrentRender2DPartialTicks());
+        } else {
+            PlayerPositionUtil.teleportation(center);
         }
 
-        return isCurrentCentered;
+        return true;
     }
 
     public Flag doPlace(BlockPos pos) {
@@ -243,6 +253,10 @@ public class ModuleSurround extends Module {
 
         if (mc.player.getHeldItemMainhand().getItem() != Item.getItemFromBlock(Blocks.OBSIDIAN)) {
             this.slot = SlotUtil.findItemSlotFromHotBar(Item.getItemFromBlock(Blocks.OBSIDIAN));
+
+            if (this.slot == -1) {
+                this.setDisabled();
+            }
 
             mc.player.inventory.currentItem = this.slot;
         }
