@@ -22,6 +22,7 @@ import me.rina.rocan.client.module.exploit.ModuleBetterMine;
 import me.rina.rocan.client.module.misc.*;
 import me.rina.rocan.client.module.movement.ModuleAutoWalk;
 import me.rina.rocan.client.module.movement.ModuleMoveGUI;
+import me.rina.rocan.client.module.movement.ModuleVelocity;
 import me.rina.rocan.client.module.render.ModuleBlockHighlight;
 import me.rina.rocan.client.module.render.ModuleFullBright;
 import me.rina.rocan.client.module.render.ModuleHoleESP;
@@ -107,6 +108,7 @@ public class Rocan {
         // Movement
         this.moduleManager.registry(new ModuleAutoWalk());
         this.moduleManager.registry(new ModuleMoveGUI());
+        this.moduleManager.registry(new ModuleVelocity());
 
         // Commands.
         this.commandManager.registry(new CommandPrefix());

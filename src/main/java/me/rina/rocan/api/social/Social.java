@@ -12,7 +12,7 @@ public class Social {
 
     public Social(String name) {
         this.name = name;
-        this.type = SocialType.Unknown;
+        this.type = SocialType.UNKNOWN;
     }
 
     public Social(String name, SocialType type) {

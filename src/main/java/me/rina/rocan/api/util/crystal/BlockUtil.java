@@ -40,8 +40,14 @@ public class BlockUtil {
         return Rocan.MC.world.getBlockState(pos).getBlock();
     }
 
+    /**
+     * For all air blocks type, the tall grass and snow is considered air.
+     *
+     * @param pos
+     * @return
+     */
     public static boolean isAir(BlockPos pos) {
-        return Rocan.MC.world.getBlockState(pos).getBlock() == Blocks.AIR;
+        return Rocan.MC.world.getBlockState(pos).getBlock() == Blocks.AIR || Rocan.MC.world.getBlockState(pos).getBlock() == Blocks.SNOW_LAYER || Rocan.MC.world.getBlockState(pos).getBlock() == Blocks.TALLGRASS;
     }
 
     public static float getHardness(BlockPos pos) {

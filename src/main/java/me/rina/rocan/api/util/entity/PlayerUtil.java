@@ -1,8 +1,10 @@
 package me.rina.rocan.api.util.entity;
 
+import jdk.nashorn.internal.ir.Block;
 import me.rina.rocan.Rocan;
 import me.rina.turok.util.TurokMath;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 /**
  * @author SrRina
@@ -14,7 +16,11 @@ public class PlayerUtil {
     }
 
     public static BlockPos getBlockPos() {
-        return new BlockPos(Rocan.MC.player.posX,  Rocan.MC.player.posY,  Rocan.MC.player.posZ);
+        return new BlockPos(Math.floor(Rocan.MC.player.posX),  Math.floor(Rocan.MC.player.posY),  Math.floor(Rocan.MC.player.posZ));
+    }
+
+    public static Vec3d getVec() {
+        return new Vec3d(Rocan.MC.player.posX, Rocan.MC.player.posY, Rocan.MC.player.posZ);
     }
 
     public static double[] getPos() {
@@ -55,6 +61,10 @@ public class PlayerUtil {
         double z = position[2] - prevPosition[2];
 
         return TurokMath.sqrt(x * x + z * z) / (Rocan.MC.timer.tickLength / 1000.0d);
+    }
+
+    public static void setPosition(double x, double y, double z) {
+        Rocan.MC.player.setPosition(x, y, z);
     }
 
     public static void setYaw(float yaw) {

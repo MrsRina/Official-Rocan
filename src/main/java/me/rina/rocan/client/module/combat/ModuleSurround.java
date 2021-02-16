@@ -1,22 +1,23 @@
 package me.rina.rocan.client.module.combat;
 
-import ibxm.Player;
+import me.rina.rocan.Rocan;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.module.registry.Registry;
 import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
-import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.api.util.crystal.BlockUtil;
 import me.rina.rocan.api.util.crystal.HoleUtil;
+import me.rina.rocan.api.util.entity.PlayerPositionUtil;
 import me.rina.rocan.api.util.entity.PlayerRotationUtil;
 import me.rina.rocan.api.util.entity.PlayerUtil;
 import me.rina.rocan.api.util.item.SlotUtil;
-import me.rina.rocan.api.util.math.BlockPosUtil;
+import me.rina.rocan.api.util.math.PositionUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.turok.util.TurokTick;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
@@ -33,7 +34,11 @@ import java.util.ArrayList;
  **/
 @Registry(name = "Surround", tag = "Surround", description = "Automatically places block around of you.", category = ModuleCategory.COMBAT)
 public class ModuleSurround extends Module {
+    public static ValueBoolean settingOnGround = new ValueBoolean("On Ground", "OnGround", "Stay on ground only for places blocks.", true);
     public static ValueBoolean settingManualRotation = new ValueBoolean("Manual Rotation", "ManualRotation", "Player manually rotate.", false);
+    public static ValueBoolean settingSmoothRotation = new ValueBoolean("Smooth Rotation", "SmoothRotation", "Smooth camera rotation.", false);
+    public static ValueBoolean settingAutoCenter = new ValueBoolean("Auto-Center", "AutoCenter", "Set center position of player for start place blocks.", true);
+    public static ValueBoolean settingSmoothCenter = new ValueBoolean("Smooth Center", "SmoothCenter", "Smooth center movement.", false);
     public static ValueNumber settingTimeOut = new ValueNumber("Time Out", "TimeOut", "The time out for cancel everything.", 3000, 0, 3000);
     public static ValueNumber settingDelay = new ValueNumber("Delay", "Delay", "Delay for places blocks.", 250, 0, 500);
     public static ValueEnum settingMode = new ValueEnum("Mode", "Mode", "Modes to place blocks.", Mode.SURROUND);
@@ -47,6 +52,11 @@ public class ModuleSurround extends Module {
     private int oldSlot;
     private int length;
 
+    /**
+     * Make player center before start place blocks.
+     */
+    private boolean isCentered;
+
     public enum Mode {
         HOLE, SURROUND;
     }
@@ -55,9 +65,21 @@ public class ModuleSurround extends Module {
         PLACED, STUCK, AIR;
     }
 
+    @Override
+    public void onSetting() {
+        settingSmoothRotation.setEnabled(settingManualRotation.getValue());
+        settingSmoothCenter.setEnabled(settingAutoCenter.getValue());
+    }
+
     @Listener
     public void onListen(ClientTickEvent event) {
         if (NullUtil.isPlayerWorld()) {
+            return;
+        }
+
+        if (settingOnGround.getValue() && mc.player.onGround == false) {
+            this.setDisabled();
+
             return;
         }
 
@@ -88,6 +110,8 @@ public class ModuleSurround extends Module {
 
             if (countPlaces >= HoleUtil.SURROUND.length - 1) {
                 this.setDisabled();
+
+                countPlaces = 0;
             }
 
             countPlaces++;
@@ -114,6 +138,8 @@ public class ModuleSurround extends Module {
     @Override
     public void onEnable() {
         this.blocks.clear();
+        this.tickTimeOut.reset();
+        this.tickQueue.reset();
 
         if (NullUtil.isPlayer()) {
             return;
@@ -132,6 +158,8 @@ public class ModuleSurround extends Module {
     @Override
     public void onDisable() {
         this.blocks.clear();
+        this.tickTimeOut.reset();
+        this.tickQueue.reset();
 
         if (NullUtil.isPlayer()) {
             return;
@@ -141,6 +169,12 @@ public class ModuleSurround extends Module {
     }
 
     public void onQueue() {
+        this.isCentered = settingAutoCenter.getValue() ? this.doCenterPosition() : true;
+
+        if (this.isCentered == false) {
+            return;
+        }
+
         if (this.blocks.isEmpty()) {
             this.tickQueue.reset();
         }
@@ -153,6 +187,25 @@ public class ModuleSurround extends Module {
                 this.tickQueue.reset();
             }
         }
+    }
+
+    public boolean doCenterPosition() {
+        boolean isCurrentCentered = false;
+
+        if (settingAutoCenter.getValue()) {
+            BlockPos pos = PlayerUtil.getBlockPos();
+            Vec3d center = PositionUtil.toVec(pos).add(0.5, 0, 0.5);
+
+            if (settingSmoothCenter.getValue()) {
+                PlayerPositionUtil.smooth(center, Rocan.getClientEventManager().getCurrentRender2DPartialTicks());
+            } else {
+                PlayerPositionUtil.teleportation(center);
+            }
+
+            isCurrentCentered = true;
+        }
+
+        return isCurrentCentered;
     }
 
     public Flag doPlace(BlockPos pos) {
@@ -186,9 +239,11 @@ public class ModuleSurround extends Module {
         }
 
         EnumFacing facing = BlockUtil.getFacing(offset, mc.player);
-        Vec3d hit = BlockPosUtil.hit(offset, facing);
+        Vec3d hit = PositionUtil.hit(offset, facing);
 
         if (mc.player.getHeldItemMainhand().getItem() != Item.getItemFromBlock(Blocks.OBSIDIAN)) {
+            this.slot = SlotUtil.findItemSlotFromHotBar(Item.getItemFromBlock(Blocks.OBSIDIAN));
+
             mc.player.inventory.currentItem = this.slot;
         }
 
@@ -197,7 +252,11 @@ public class ModuleSurround extends Module {
 
         // Rotate.
         if (settingManualRotation.getValue()) {
-            PlayerRotationUtil.manual(hit);
+            if (settingSmoothRotation.getValue()) {
+                PlayerRotationUtil.manual(hit, Rocan.getClientEventManager().getCurrentRender2DPartialTicks());
+            } else {
+                PlayerRotationUtil.manual(hit);
+            }
         } else {
             PlayerRotationUtil.packet(hit);
         }

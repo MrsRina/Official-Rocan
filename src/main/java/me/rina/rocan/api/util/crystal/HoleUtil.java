@@ -21,12 +21,13 @@ public class HoleUtil {
     public static final BlockPos[] FULL_SURROUND = {
             new BlockPos(0, -1, 0),
             new BlockPos(1, -1, 0),
-            new BlockPos(1, 0, 0),
             new BlockPos(0, -1, 1),
-            new BlockPos(0, 0, 1),
             new BlockPos(-1, -1, 0),
-            new BlockPos(-1, 0, 0),
             new BlockPos(0, -1, -1),
+
+            new BlockPos(1, 0, 0),
+            new BlockPos(0, 0, 1),
+            new BlockPos(-1, 0, 0),
             new BlockPos(0, 0, -1)
     };
 

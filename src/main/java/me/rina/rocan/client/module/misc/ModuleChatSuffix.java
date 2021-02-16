@@ -43,6 +43,8 @@ public class ModuleChatSuffix extends Module {
             for (String prefixes : settingIgnoredPrefixes.getValue().split(" ")) {
                 if (message.startsWith(prefixes)) {
                     isContinuable = false;
+
+                    break;
                 }
             }
         }
