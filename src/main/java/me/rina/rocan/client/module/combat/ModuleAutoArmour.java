@@ -71,6 +71,7 @@ public class ModuleAutoArmour extends Module {
 
                 this.isSwap = false;
                 this.tick.reset();
+                this.currentArmourSlot = -1;
             }
         }
     }
