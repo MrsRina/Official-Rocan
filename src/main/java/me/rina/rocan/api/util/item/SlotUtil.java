@@ -2,7 +2,9 @@ package me.rina.rocan.api.util.item;
 
 import me.rina.rocan.Rocan;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.network.play.client.CPacketHeldItemChange;
@@ -14,6 +16,34 @@ import static me.rina.rocan.Rocan.MC;
  * @since 02/02/2021 at 13:31
  **/
 public class SlotUtil {
+    public static void swap(int window, int slot) {
+        MC.playerController.windowClick(window, slot, 0, ClickType.SWAP, MC.player);
+    }
+
+    public static void pickup(int window, int slot) {
+        MC.playerController.windowClick(window, slot, 0, ClickType.PICKUP, MC.player);
+    }
+
+    public static Item getArmourItem(int slot) {
+        return MC.player.inventory.armorItemInSlot(slot).getItem();
+    }
+
+    public static ItemStack getArmourItemStack(int slot) {
+        return MC.player.inventory.armorItemInSlot(slot);
+    }
+
+    public static ItemArmor getArmourItemArmor(int slot) {
+        return (ItemArmor) MC.player.inventory.armorItemInSlot(slot).getItem();
+    }
+
+    public static boolean isAir(int slot) {
+        return MC.player.inventory.getStackInSlot(slot).getItem() == Items.AIR;
+    }
+
+    public static boolean isArmourSlotAir(int slot) {
+        return MC.player.inventory.armorItemInSlot(slot).getItem() == Items.AIR;
+    }
+
     public static int getCurrentItemSlotHotBar() {
         int slot = MC.player.inventory.currentItem;
 

@@ -40,7 +40,7 @@ public class ModuleSurround extends Module {
     public static ValueBoolean settingAutoCenter = new ValueBoolean("Auto-Center", "AutoCenter", "Set center position of player for start place blocks.", true);
     public static ValueBoolean settingSmoothCenter = new ValueBoolean("Smooth Center", "SmoothCenter", "Smooth center movement.", false);
     public static ValueNumber settingTimeOut = new ValueNumber("Time Out", "TimeOut", "The time out for cancel everything.", 3000, 0, 3000);
-    public static ValueNumber settingDelay = new ValueNumber("Delay", "Delay", "Delay for places blocks.", 250, 0, 500);
+    public static ValueNumber settingDelay = new ValueNumber("Delay", "Delay", "MS delay for places blocks.", 250, 0, 500);
     public static ValueEnum settingMode = new ValueEnum("Mode", "Mode", "Modes to place blocks.", Mode.SURROUND);
 
     private ArrayList<BlockPos> blocks = new ArrayList<>();
