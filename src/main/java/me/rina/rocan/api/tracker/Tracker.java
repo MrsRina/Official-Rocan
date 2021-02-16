@@ -92,6 +92,10 @@ public class Tracker {
         return this;
     }
 
+    public void clear() {
+        this.queue.clear();
+    }
+
     public void register() {
         this.isRegistry = true;
 

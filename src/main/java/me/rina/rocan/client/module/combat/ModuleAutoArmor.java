@@ -13,6 +13,9 @@ import net.minecraft.inventory.ClickType;
 import net.minecraft.item.Item;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
+/**
+ * Jake, im going to rewrite it, but its all ok!
+ */
 @Registry(name = "Auto Armor", tag = "AutoArmor", description = "Automatically places armour on.", category = ModuleCategory.COMBAT)
 public class ModuleAutoArmor extends Module {
   private TurokTick timer = new TurokTick();
@@ -25,7 +28,7 @@ public class ModuleAutoArmor extends Module {
       if (timer.isPassedMS((long) 100.69420)) {
         if (mc.player.inventory.armorItemInSlot(2).getItem() == Items.AIR) {
           for (Item item : ItemUtil.ALL_CHEST_PLATES) {
-            int slotId = SlotUtil.findItemSlotFromHotBar(item);
+            int slotId = SlotUtil.findItemSlotFromInventory(item);
             if (slotId != -1) {
               selectedSlotId = slotId;
             }
@@ -34,7 +37,7 @@ public class ModuleAutoArmor extends Module {
 
         if (mc.player.inventory.armorItemInSlot(1).getItem() == Items.AIR) {
           for (Item item : ItemUtil.ALL_LEGGINGS) {
-            int slotId = SlotUtil.findItemSlotFromHotBar(item);
+            int slotId = SlotUtil.findItemSlotFromInventory(item);
             if (slotId != -1) {
               selectedSlotId = slotId;
             }
@@ -43,7 +46,7 @@ public class ModuleAutoArmor extends Module {
 
         if (mc.player.inventory.armorItemInSlot(0).getItem() == Items.AIR) {
           for (Item item : ItemUtil.ALL_BOOTS) {
-            int slotId = SlotUtil.findItemSlotFromHotBar(item);
+            int slotId = SlotUtil.findItemSlotFromInventory(item);
             if (slotId != -1) {
               selectedSlotId = slotId;
             }
@@ -52,7 +55,7 @@ public class ModuleAutoArmor extends Module {
 
         if (mc.player.inventory.armorItemInSlot(3).getItem() == Items.AIR) {
           for (Item item : ItemUtil.ALL_HELMETS) {
-            int slotId = SlotUtil.findItemSlotFromHotBar(item);
+            int slotId = SlotUtil.findItemSlotFromInventory(item);
             if (slotId != -1) {
               selectedSlotId = slotId;
             }

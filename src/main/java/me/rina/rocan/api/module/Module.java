@@ -322,7 +322,6 @@ public class Module implements ISLClass {
             }
 
             InputStream file = Files.newInputStream(Paths.get(pathFile));
-
             JsonObject mainJson = JsonParser.parseReader(new InputStreamReader(file)).getAsJsonObject();
 
             if (mainJson.get("settings") != null) {

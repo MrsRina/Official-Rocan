@@ -8,6 +8,7 @@ import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.api.util.client.NullUtil;
+import me.rina.rocan.api.util.crystal.BlockUtil;
 import me.rina.rocan.api.util.crystal.HoleUtil;
 import me.rina.rocan.api.util.entity.PlayerUtil;
 import me.rina.rocan.api.util.render.Render3DUtil;
@@ -47,7 +48,7 @@ public class ModuleHoleESP extends Module {
         Enabled, Disabled;
     }
 
-    public static ValueNumber settingOutlineLineSize = new ValueNumber("Outline Line Size", "OutlineLineSize", "Line size.", 1.0f, 0.1f, 3.0f);
+    public static ValueNumber settingOutlineLineSize = new ValueNumber("Outline Line Size", "OutlineLineSize", "Line size.", 1.0f, 1f, 3.0f);
     public static ValueBoolean settingOutlineRGB = new ValueBoolean("Outline RGB", "OutlineRGB", "360 color range.", false);
 
     public static ValueNumber settingOutlineRed = new ValueNumber("Outline Red", "OutlineRed", "Color line range red.", 255, 0, 255);
@@ -93,15 +94,15 @@ public class ModuleHoleESP extends Module {
 
         // Its not kami, is diff.
         for (BlockPos blocks : sphereList) {
-            if (mc.world.getBlockState(blocks).getBlock() != Blocks.AIR) {
+            if (BlockUtil.isAir(blocks) == false) {
                 continue;
             }
 
-            if (mc.world.getBlockState(blocks.add(0, 1, 0)).getBlock() != Blocks.AIR) {
+            if (BlockUtil.isAir(blocks.add(0, 1, 0)) == false) {
                 continue;
             }
 
-            if (mc.world.getBlockState(blocks.add(0, 2, 0)).getBlock() != Blocks.AIR) {
+            if (BlockUtil.isAir(blocks.add(0, 2, 0)) == false) {
                 continue;
             }
 
@@ -134,7 +135,7 @@ public class ModuleHoleESP extends Module {
             
             Render3DUtil.render3DSolid(camera, blocks.x, blocks.y, blocks.z, 1, offsetY, 1, color);
 
-            if (settingOutline.getValue() == ModuleBlockHighlight.RenderOutline.Enabled) {
+            if (settingOutline.getValue() == RenderOutline.Enabled) {
                 float line = settingOutlineLineSize.getValue().floatValue();
 
                 Render3DUtil.render3DOutline(camera, blocks.x, blocks.y, blocks.z, 1, offsetY, 1, line, colorOutline);

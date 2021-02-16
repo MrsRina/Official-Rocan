@@ -33,9 +33,7 @@ import java.util.ArrayList;
  **/
 @Registry(name = "Surround", tag = "Surround", description = "Automatically places block around of you.", category = ModuleCategory.COMBAT)
 public class ModuleSurround extends Module {
-    public static ValueBoolean settingSwingAnimation = new ValueBoolean("Swing Animation", "SwingAnimation", "Hand swing animation.", true);
     public static ValueBoolean settingManualRotation = new ValueBoolean("Manual Rotation", "ManualRotation", "Player manually rotate.", false);
-
     public static ValueNumber settingTimeOut = new ValueNumber("Time Out", "TimeOut", "The time out for cancel everything.", 3000, 0, 3000);
     public static ValueNumber settingDelay = new ValueNumber("Delay", "Delay", "Delay for places blocks.", 250, 0, 500);
     public static ValueEnum settingMode = new ValueEnum("Mode", "Mode", "Modes to place blocks.", Mode.SURROUND);
@@ -194,9 +192,8 @@ public class ModuleSurround extends Module {
             mc.player.inventory.currentItem = this.slot;
         }
 
-        if (settingSwingAnimation.getValue()) {
-            mc.player.swingArm(EnumHand.MAIN_HAND);
-        }
+        // Send swing anim to server.
+        mc.player.swingArm(EnumHand.MAIN_HAND);
 
         // Rotate.
         if (settingManualRotation.getValue()) {

@@ -45,7 +45,7 @@ public class Rocan {
     public static Rocan INSTANCE;
 
     public static final String NAME        = "Rocan";
-    public static final String VERSION     = "0.1.7";
+    public static final String VERSION     = "0.2.0";
     public static final String PATH_CONFIG = "Rocan/";
     public static final String CHAT        = ChatFormatting.GRAY + "Rocan " + ChatFormatting.WHITE;
 
@@ -124,9 +124,12 @@ public class Rocan {
         this.moduleClickGUI = new ModuleClickGUI();
         this.moduleClickGUI.init();
 
-        // Reload method to refresh states and values.
+        // Load all managers file.
         Rocan.getModuleManager().onLoad();
         Rocan.getSocialManager().onLoad();
+
+        // Refresh and reload managers.
+        ModuleManager.reload();
     }
 
     /**
