@@ -79,7 +79,7 @@ public class EventManager {
             return;
         }
 
-        Rocan.getSpammerManager().onUpdate();
+        Rocan.getSpammerManager().onUpdateAll();
         Rocan.getTrackerManager().onUpdateAll();
 
         this.setCurrentRender2DPartialTicks(event.getPartialTicks());
@@ -124,7 +124,7 @@ public class EventManager {
 
         this.setCurrentRender3DPartialTicks(event.getPartialTicks());
 
-        /**
+        /*
          * Basically the ticks are more smooth in event RenderWorldLastEvent;
          * This make any color update as the color fully smooth.
          * And we update the colors of the GUI too.
@@ -159,7 +159,7 @@ public class EventManager {
 
             String[] args = Rocan.getCommandManager().split(message);
 
-            boolean notCommand = true;
+            boolean isCommand = false;
 
             for (Command commands : Rocan.getCommandManager().getCommandList()) {
                 Command commandRequested = CommandManager.get(args[0]);
@@ -167,14 +167,14 @@ public class EventManager {
                 if (commandRequested != null) {
                     commandRequested.onCommand(args);
 
-                    notCommand = false;
+                    isCommand = true;
 
                     break;
                 }
             }
 
-            if (notCommand) {
-                ChatUtil.print(ChatFormatting.RED + "Unknown command.");
+            if (isCommand == false) {
+                ChatUtil.print(Rocan.CHAT + ChatFormatting.RED + "Unknown command. Try help for a list commands");
             }
         }
     }

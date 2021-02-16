@@ -36,6 +36,6 @@ public class CommandCoords extends Command {
     StringSelection stringSelection = new StringSelection(coords);
     Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
     clipboard.setContents(stringSelection, null);
-    this.print("Coords copied to clipboard.");
+    this.print("Coordinates copied to clipboard");
   }
 }

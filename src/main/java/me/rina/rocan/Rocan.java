@@ -25,6 +25,7 @@ import me.rina.rocan.client.module.movement.ModuleMoveGUI;
 import me.rina.rocan.client.module.render.ModuleBlockHighlight;
 import me.rina.rocan.client.module.render.ModuleFullBright;
 import me.rina.rocan.client.module.render.ModuleHoleESP;
+import me.rina.rocan.client.module.render.ModuleViewModel;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -89,6 +90,7 @@ public class Rocan {
         this.moduleManager.registry(new ModuleBlockHighlight());
         this.moduleManager.registry(new ModuleHoleESP());
         this.moduleManager.registry(new ModuleFullBright());
+        this.moduleManager.registry(new ModuleViewModel());
 
         // Category Misc.
         this.moduleManager.registry(new ModuleAutoRespawn());
@@ -123,8 +125,8 @@ public class Rocan {
         this.moduleClickGUI.init();
 
         // Reload method to refresh states and values.
-        PresetManager.reload();
-        ModuleManager.reload();
+        Rocan.getModuleManager().onLoad();
+        Rocan.getSocialManager().onLoad();
     }
 
     /**
@@ -141,8 +143,6 @@ public class Rocan {
         // Finish the preset saving all.
         Rocan.getModuleManager().onSave();
         Rocan.getSocialManager().onSave();
-
-        PresetManager.INSTANCE.onSave();
     }
 
     @Mod.EventHandler

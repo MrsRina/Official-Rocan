@@ -49,7 +49,7 @@ public class CommandToggle extends Command {
         ValueBoolean toggleMessage = (ValueBoolean) module.get("ToggleMessage");
 
         if (toggleMessage.getValue() == false) {
-            this.print("Module has been update to " + Boolean.toString(module.isEnabled()) + ".");
+            this.print("Module has been update to " + module.isEnabled());
         }
     }
 }

@@ -203,7 +203,7 @@ public class Module implements ISLClass {
         this.keyBinding.setState(true);
 
         if (toggleMessage.getValue()) {
-            this.print("Enabled.");
+            this.print(ChatFormatting.GREEN + "Enabled");
         }
 
         this.onEnable();
@@ -215,7 +215,7 @@ public class Module implements ISLClass {
         this.keyBinding.setState(false);
 
         if (toggleMessage.getValue()) {
-            this.print("Disabled.");
+            this.print(ChatFormatting.RED + "Disabled");
         }
 
         this.onDisable();

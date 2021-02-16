@@ -2,6 +2,7 @@ package me.rina.rocan.api.util.network;
 
 import me.rina.rocan.Rocan;
 import net.minecraft.network.Packet;
+import net.minecraft.network.play.client.CPacketPlayer;
 
 /**
  * @author SrRina
@@ -48,10 +49,6 @@ public class PacketUtil {
     }
 
     public static void send(Packet<?> packet) {
-        if (Rocan.MC.player == null) {
-            return;
-        }
-
         Rocan.MC.player.connection.sendPacket(packet);
     }
 }

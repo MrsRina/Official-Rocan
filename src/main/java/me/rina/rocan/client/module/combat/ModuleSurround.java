@@ -1,19 +1,20 @@
 package me.rina.rocan.client.module.combat;
 
+import ibxm.Player;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.module.registry.Registry;
 import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
-import me.rina.rocan.api.tracker.Tracker;
-import me.rina.rocan.api.tracker.impl.RightMouseClickOnBlockTracker;
+import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.api.util.crystal.BlockUtil;
 import me.rina.rocan.api.util.crystal.HoleUtil;
+import me.rina.rocan.api.util.entity.PlayerRotationUtil;
 import me.rina.rocan.api.util.entity.PlayerUtil;
 import me.rina.rocan.api.util.item.SlotUtil;
-import me.rina.rocan.api.util.math.PosUtil;
+import me.rina.rocan.api.util.math.BlockPosUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.turok.util.TurokTick;
 import net.minecraft.init.Blocks;
@@ -21,9 +22,10 @@ import net.minecraft.item.Item;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
+
+import java.util.ArrayList;
 
 /**
  * @author SrRina
@@ -31,14 +33,21 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  **/
 @Registry(name = "Surround", tag = "Surround", description = "Automatically places block around of you.", category = ModuleCategory.COMBAT)
 public class ModuleSurround extends Module {
-    public static ValueNumber settingMaximumTime = new ValueNumber("Maximum Time", "MaximumTime", "Time out ticks to disable module.", 1000,  250, 3000);
-    public static ValueEnum settingMode = new ValueEnum("Mode", "Mode", "Modes to place blocks.", Mode.SURROUND);
-    public static ValueBoolean settingSwingAnimation = new ValueBoolean("Swing Animation", "SwingAnimation", "Enable swing animation.", true);
+    public static ValueBoolean settingSwingAnimation = new ValueBoolean("Swing Animation", "SwingAnimation", "Hand swing animation.", true);
+    public static ValueBoolean settingManualRotation = new ValueBoolean("Manual Rotation", "ManualRotation", "Player manually rotate.", false);
 
-    private TurokTick tick = new TurokTick();
+    public static ValueNumber settingTimeOut = new ValueNumber("Time Out", "TimeOut", "The time out for cancel everything.", 3000, 0, 3000);
+    public static ValueNumber settingDelay = new ValueNumber("Delay", "Delay", "Delay for places blocks.", 250, 0, 500);
+    public static ValueEnum settingMode = new ValueEnum("Mode", "Mode", "Modes to place blocks.", Mode.SURROUND);
+
+    private ArrayList<BlockPos> blocks = new ArrayList<>();
+
+    private TurokTick tickQueue = new TurokTick();
+    private TurokTick tickTimeOut = new TurokTick();
 
     private int slot;
     private int oldSlot;
+    private int length;
 
     public enum Mode {
         HOLE, SURROUND;
@@ -60,45 +69,54 @@ public class ModuleSurround extends Module {
             return;
         }
 
-        if (this.tick.isPassedMS(settingMaximumTime.getValue().intValue())) {
+        if (this.tickTimeOut.isPassedMS(settingTimeOut.getValue().intValue())) {
             this.setDisabled();
-            this.tick.reset();
+            this.tickTimeOut.reset();
         }
 
         BlockPos playerPos = PlayerUtil.getBlockPos();
-
-        int placed = 0;
-        int stuck = 0;
-        int air = 0;
-
         BlockPos[] currentSurround = settingMode.getValue() == Mode.HOLE ? HoleUtil.SURROUND : HoleUtil.FULL_SURROUND;
 
-        for (BlockPos offsetPos : currentSurround) {
-            Flag flag = this.doPlace(playerPos.add(offsetPos));
+        this.length = currentSurround.length;
 
-            if (flag == Flag.AIR) {
-                air++;
-            }
+        int countPlaces = 0;
 
-            if (flag == Flag.STUCK) {
-                stuck++;
+        for (BlockPos offsetPos : HoleUtil.SURROUND) {
+            BlockPos offset = playerPos.add(offsetPos);
 
+            if (BlockUtil.isAir(offset)) {
                 continue;
             }
 
-            if (flag == Flag.PLACED) {
-                placed++;
-            }
-
-            if (placed + air >= currentSurround.length) {
-                this.tick.reset();
+            if (countPlaces >= HoleUtil.SURROUND.length - 1) {
                 this.setDisabled();
             }
+
+            countPlaces++;
         }
+
+        for (BlockPos offsetPos : currentSurround) {
+            BlockPos offset = playerPos.add(offsetPos);
+
+            if (BlockUtil.isAir(offset) == false) {
+                continue;
+            }
+
+            if (this.blocks.contains(offset) == false) {
+                this.blocks.add(offset);
+            }
+        }
+
+        /*
+         * A queue to place blocks, its cool to preserve ghost blocks.
+         */
+        this.onQueue();
     }
 
     @Override
     public void onEnable() {
+        this.blocks.clear();
+
         if (NullUtil.isPlayer()) {
             return;
         }
@@ -115,11 +133,28 @@ public class ModuleSurround extends Module {
 
     @Override
     public void onDisable() {
+        this.blocks.clear();
+
         if (NullUtil.isPlayer()) {
             return;
         }
 
         mc.player.inventory.currentItem = this.oldSlot;
+    }
+
+    public void onQueue() {
+        if (this.blocks.isEmpty()) {
+            this.tickQueue.reset();
+        }
+
+        for (BlockPos pos : new ArrayList<>(this.blocks)) {
+            if (this.tickQueue.isPassedMS(settingDelay.getValue().intValue())) {
+                Flag flag = this.doPlace(pos);
+
+                this.blocks.remove(pos);
+                this.tickQueue.reset();
+            }
+        }
     }
 
     public Flag doPlace(BlockPos pos) {
@@ -153,7 +188,7 @@ public class ModuleSurround extends Module {
         }
 
         EnumFacing facing = BlockUtil.getFacing(offset, mc.player);
-        Vec3d hit = PosUtil.getHit(offset, facing);
+        Vec3d hit = BlockPosUtil.hit(offset, facing);
 
         if (mc.player.getHeldItemMainhand().getItem() != Item.getItemFromBlock(Blocks.OBSIDIAN)) {
             mc.player.inventory.currentItem = this.slot;
@@ -161,6 +196,13 @@ public class ModuleSurround extends Module {
 
         if (settingSwingAnimation.getValue()) {
             mc.player.swingArm(EnumHand.MAIN_HAND);
+        }
+
+        // Rotate.
+        if (settingManualRotation.getValue()) {
+            PlayerRotationUtil.manual(hit);
+        } else {
+            PlayerRotationUtil.packet(hit);
         }
 
         mc.playerController.processRightClickBlock(mc.player, mc.world, offset, facing, hit, EnumHand.MAIN_HAND);

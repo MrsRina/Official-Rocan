@@ -16,7 +16,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ItemRenderer.class)
 public class MixinItemRenderer {
-
     @Inject(method = "transformSideFirstPerson", at = @At("HEAD"))
     public void transformSideFirstPerson(EnumHandSide hand, float p_187459_2_, CallbackInfo ci) {
         EnumHandSideEvent event = new EnumHandSideEvent(hand);

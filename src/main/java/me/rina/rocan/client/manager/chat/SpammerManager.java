@@ -90,7 +90,8 @@ public class SpammerManager extends Manager {
         }
     }
 
-    public void onUpdate() {
+    @Override
+    public void onUpdateAll() {
         if (this.queue.size() >= limit) {
             this.queue.clear();
         }

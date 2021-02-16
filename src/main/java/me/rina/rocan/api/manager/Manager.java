@@ -1,10 +1,12 @@
 package me.rina.rocan.api.manager;
 
+import me.rina.rocan.api.manager.impl.ManageStructure;
+
 /**
  * @author SrRina
  * @since 04/02/2021 at 19:07
  **/
-public class Manager {
+public class Manager implements ManageStructure {
     private String name;
     private String description;
 
@@ -27,5 +29,10 @@ public class Manager {
 
     public String getDescription() {
         return description;
+    }
+
+    @Override
+    public void onUpdateAll() {
+
     }
 }
