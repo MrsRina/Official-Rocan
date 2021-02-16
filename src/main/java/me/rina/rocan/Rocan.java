@@ -25,7 +25,7 @@ import me.rina.rocan.client.module.movement.ModuleMoveGUI;
 import me.rina.rocan.client.module.render.ModuleBlockHighlight;
 import me.rina.rocan.client.module.render.ModuleFullBright;
 import me.rina.rocan.client.module.render.ModuleHoleESP;
-import me.rina.rocan.client.module.render.ModuleViewModel;
+import me.rina.rocan.client.module.render.ModuleCustomFov;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -90,7 +90,7 @@ public class Rocan {
         this.moduleManager.registry(new ModuleBlockHighlight());
         this.moduleManager.registry(new ModuleHoleESP());
         this.moduleManager.registry(new ModuleFullBright());
-        this.moduleManager.registry(new ModuleViewModel());
+        this.moduleManager.registry(new ModuleCustomFov());
 
         // Category Misc.
         this.moduleManager.registry(new ModuleAutoRespawn());

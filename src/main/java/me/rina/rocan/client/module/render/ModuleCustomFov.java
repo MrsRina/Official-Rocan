@@ -15,8 +15,8 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  *
  * Sorry jake, I have update the module.
  **/
-@Registry(name = "Item Fov", tag = "ItemFov", description = "Changes the fov of the item held in your hand.", category = ModuleCategory.RENDER)
-public class ModuleViewModel extends Module {
+@Registry(name = "Custom Fov", tag = "CustomFov", description = "Changes the fov of the item held in your hand.", category = ModuleCategory.RENDER)
+public class ModuleCustomFov extends Module {
     public static ValueNumber settingRightX = new ValueNumber("Right X", "RightX", "Changes the x value.", 0.0, -50.0, 50.0);
     public static ValueNumber settingRightY = new ValueNumber("Right Y", "RightY", "Changes the y value.", 0.0, -50.0, 50.0);
     public static ValueNumber settingRightZ = new ValueNumber("Right Z", "RightZ", "Changes the z value.", 0.0, -50.0, 50.0);
