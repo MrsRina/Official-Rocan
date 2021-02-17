@@ -24,6 +24,10 @@ public class SlotUtil {
         MC.playerController.windowClick(window, slot, 0, ClickType.PICKUP, MC.player);
     }
 
+    public static void quickMove(int window, int slot) {
+        MC.playerController.windowClick(window, slot, 0, ClickType.QUICK_MOVE, MC.player);
+    }
+
     public static Item getArmourItem(int slot) {
         return MC.player.inventory.armorItemInSlot(slot).getItem();
     }
@@ -34,6 +38,14 @@ public class SlotUtil {
 
     public static ItemArmor getArmourItemArmor(int slot) {
         return (ItemArmor) MC.player.inventory.armorItemInSlot(slot).getItem();
+    }
+
+    public static Item getItem(int slot) {
+        return MC.player.inventory.getStackInSlot(slot).getItem();
+    }
+
+    public static ItemStack getItemStack(int slot) {
+        return MC.player.inventory.getStackInSlot(slot);
     }
 
     public static boolean isAir(int slot) {
@@ -102,9 +114,5 @@ public class SlotUtil {
         }
 
         return slot;
-    }
-
-    public static ItemStack getItemStack(int slot) {
-        return MC.player.inventory.getStackInSlot(slot);
     }
 }

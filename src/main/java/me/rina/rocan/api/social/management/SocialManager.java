@@ -98,8 +98,7 @@ public class SocialManager implements ISLClass {
                 mainJson.add(socialJson);
             }
 
-            String stringJson = gsonBuilder.toJson(new JsonParser().parse(mainJson.toString()));
-
+            String stringJson = gsonBuilder.toJson(JsonParser.parseString(mainJson.toString()));
             OutputStreamWriter fileOutputStream = new OutputStreamWriter(new FileOutputStream(pathFile), "UTF-8");
 
             fileOutputStream.write(stringJson);

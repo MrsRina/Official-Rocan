@@ -26,16 +26,9 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 @Registry(name = "Auto Armour", tag = "AutoArmour", description = "Auto set slot armour, and no, its not in bri ish.", category = ModuleCategory.COMBAT)
 public class ModuleAutoArmour extends Module {
     public static ValueNumber settingDelay = new ValueNumber("Delay", "Delay", "MS delay for next amour find.", 100, 0, 500);
-    public static ValueBoolean settingPriority = new ValueBoolean("Priority", "Priority", "Place the best armour.", true);
-    public static ValueEnum settingFindMode = new ValueEnum("Find Mode", "FindMode", "Find mode to armours.", Mode.INVENTORY);
 
     private TurokTick tick = new TurokTick();
-    private int currentArmourSlot = -1;
-    private boolean isSwap;
-
-    public enum Mode {
-        INVENTORY, HOT_BAR;
-    }
+    private int foundSlot = -1;
 
     @Listener
     public void onListen(ClientTickEvent event) {
@@ -44,93 +37,55 @@ public class ModuleAutoArmour extends Module {
         }
 
         if (this.tick.isPassedMS(settingDelay.getValue().intValue())) {
-            if (SlotUtil.getArmourItem(3) == Items.AIR || settingPriority.getValue()) {
-                if (SlotUtil.getArmourItem(3) != Items.AIR) {
-                    int slot = getArmourSlot(SlotUtil.getArmourItem(3), ItemUtil.ALL_HELMETS, 3);
+            if (SlotUtil.getArmourItem(3) == Items.AIR) {
+                for (Item helmets : ItemUtil.ALL_HELMETS) {
+                    int slot = SlotUtil.findItemSlotFromInventory(helmets);
 
                     if (slot != -1) {
-                        currentArmourSlot = slot;
-
-                        this.isSwap = true;
+                        this.foundSlot = slot;
                     }
-                } else {
-                    int slot = getArmourSlot(SlotUtil.getArmourItem(3), ItemUtil.ALL_HELMETS, 3);
-
-                    this.isSwap = false;
-                    this.currentArmourSlot = slot;
                 }
             }
 
-            if (this.currentArmourSlot != -1) {
-                if (this.isSwap) {
-                    SlotUtil.swap(mc.player.inventoryContainer.windowId, this.currentArmourSlot);
-                    SlotUtil.swap(mc.player.inventoryContainer.windowId, 3);
-                } else {
-                    SlotUtil.pickup(0, this.currentArmourSlot);
+            if (SlotUtil.getArmourItem(2) == Items.AIR) {
+                for (Item helmets : ItemUtil.ALL_CHEST_PLATES) {
+                    int slot = SlotUtil.findItemSlotFromInventory(helmets);
+
+                    if (slot != -1) {
+                        this.foundSlot = slot;
+                    }
+                }
+            }
+
+            if (SlotUtil.getArmourItem(1) == Items.AIR) {
+                for (Item helmets : ItemUtil.ALL_LEGGINGS) {
+                    int slot = SlotUtil.findItemSlotFromInventory(helmets);
+
+                    if (slot != -1) {
+                        this.foundSlot = slot;
+                    }
+                }
+            }
+
+            if (SlotUtil.getArmourItem(0) == Items.AIR) {
+                for (Item helmets : ItemUtil.ALL_BOOTS) {
+                    int slot = SlotUtil.findItemSlotFromInventory(helmets);
+
+                    if (slot != -1) {
+                        this.foundSlot = slot;
+                    }
+                }
+            }
+
+            if (this.foundSlot != -1) {
+                if (this.foundSlot < 9) {
+                    this.foundSlot += 36;
                 }
 
-                this.isSwap = false;
+                SlotUtil.quickMove(0, this.foundSlot);
+
                 this.tick.reset();
-                this.currentArmourSlot = -1;
             }
         }
-    }
-
-    public int getArmourSlot(Item item, Item[] list, int flag) {
-        int find = -1;
-
-        for (Item items : list) {
-            int slot = findSlot(items);
-
-            if (slot == -1) {
-                continue;
-            }
-
-            ItemStack itemStack = SlotUtil.getItemStack(slot);
-
-            if (itemStack.isEmpty()) {
-                continue;
-            }
-
-            if (settingPriority.getValue()) {
-                if (itemStack.getItem() instanceof ItemArmor) {
-                    ItemArmor armor = (ItemArmor) itemStack.getItem();
-
-                    int flagDamage = armor.damageReduceAmount;
-                    int flagEnchant = EnchantmentHelper.getEnchantmentLevel(Enchantments.PROTECTION, itemStack);
-
-                    int flagCurrentDamage = SlotUtil.getArmourItemArmor(flag).damageReduceAmount;
-                    int flagCurrentEnchant = EnchantmentHelper.getEnchantmentLevel(Enchantments.PROTECTION, SlotUtil.getArmourItemStack(flag));
-
-                    if (flagCurrentDamage + flagCurrentEnchant <= flagDamage + flagEnchant) {
-                        find = slot;
-
-                        break;
-                    }
-                }
-            } else {
-                if (itemStack.getItem() instanceof ItemArmor) {
-                    find = slot;
-
-                    break;
-                }
-            }
-        }
-
-        return find;
-    }
-
-    public int findSlot(Item item) {
-        int slot = -1;
-
-        if (settingFindMode.getValue() == Mode.INVENTORY) {
-            slot = SlotUtil.findItemSlotFromInventory(item);
-        }
-
-        if (settingFindMode.getValue() == Mode.HOT_BAR) {
-            slot = SlotUtil.findItemSlotFromHotBar(item);
-        }
-
-        return slot;
     }
 }

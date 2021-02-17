@@ -78,6 +78,8 @@ public class SettingContainer extends Container {
             this.loadedWidgetList.clear();
         }
 
+        this.widgetModule.getModule().onSetting();
+
         this.descriptionLabel = new LabelWidget(this.master, this.frame, this.widgetCategory, this.container, this.widgetModule, this, this.widgetModule.getModule().getDescription());
         this.descriptionLabel.setScroll(false);
 

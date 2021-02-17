@@ -123,8 +123,7 @@ public class PresetManager implements ISLClass {
 
             mainJson.add("presets", mainJsonArray);
 
-            String stringJson = gsonBuilder.toJson(new JsonParser().parse(mainJson.toString()));
-
+            String stringJson = gsonBuilder.toJson(JsonParser.parseString(mainJson.toString()));
             OutputStreamWriter fileOutputStream = new OutputStreamWriter(new FileOutputStream(pathFile), "UTF-8");
 
             fileOutputStream.write(stringJson);
