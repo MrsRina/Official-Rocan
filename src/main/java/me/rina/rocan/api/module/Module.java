@@ -176,7 +176,7 @@ public class Module implements ISLClass {
             if (settings instanceof ValueBind) {
                 ValueBind settingValueBind = (ValueBind) settings;
 
-                if (settingValueBind.getKeyCode() == key) {
+                if (settingValueBind.isEnabled() && settingValueBind.getKeyCode() == key) {
                     settingValueBind.setState(!settingValueBind.getState());
 
                     if (settingValueBind.getClass() == this.keyBinding.getClass()) {

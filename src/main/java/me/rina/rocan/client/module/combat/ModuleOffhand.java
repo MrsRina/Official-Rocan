@@ -31,6 +31,11 @@ public class ModuleOffhand extends Module {
     public static ValueBind settingGoldenApple = new ValueBind("Golden Apple", "GoldenApple", "Set golden apple at hand.", -1);
     public static ValueBind settingBow = new ValueBind("Bow", "Bow", "Set bow at hand.", -1);
 
+    private boolean isTotem;
+    private boolean isEndCrystal;
+    private boolean isGoldenApple;
+    private boolean isBow;
+
     private Item item;
 
     @Listener
@@ -72,54 +77,78 @@ public class ModuleOffhand extends Module {
 
     public void doFind() {
         if (settingTotem.getState()) {
+            settingEndCrystal.setState(false);
+            settingGoldenApple.setState(false);
+            settingBow.setState(false);
+
             if (this.item != Items.TOTEM_OF_UNDYING) {
                 this.print("Offhand totem is enabled.");
+                this.setStatus("T");
 
-                settingEndCrystal.setState(false);
-                settingGoldenApple.setState(false);
-                settingBow.setState(false);
+                this.isTotem = true;
+                this.isEndCrystal = false;
+                this.isGoldenApple = false;
+                this.isBow = false;
             }
 
             this.item = Items.TOTEM_OF_UNDYING;
         }
 
         if (settingEndCrystal.getState()) {
+            settingTotem.setState(false);
+            settingGoldenApple.setState(false);
+            settingBow.setState(false);
+
             if (this.item != Items.END_CRYSTAL) {
                 this.print("Offhand end crystal is enabled.");
+                this.setStatus("C");
 
-                settingTotem.setState(false);
-                settingGoldenApple.setState(false);
-                settingBow.setState(false);
+                this.isTotem = false;
+                this.isEndCrystal = true;
+                this.isGoldenApple = false;
+                this.isBow = false;
             }
 
             this.item = Items.END_CRYSTAL;
         }
 
         if (settingGoldenApple.getState()) {
+            settingTotem.setState(false);
+            settingEndCrystal.setState(false);
+            settingBow.setState(false);
+
             if (this.item != Items.GOLDEN_APPLE) {
                 this.print("Offhand golden apple is enabled.");
+                this.setStatus("G");
 
-                settingTotem.setState(false);
-                settingEndCrystal.setState(false);
-                settingBow.setState(false);
+                this.isTotem = false;
+                this.isEndCrystal = false;
+                this.isGoldenApple = true;
+                this.isBow = false;
             }
 
             this.item = Items.GOLDEN_APPLE;
         }
 
         if (settingBow.getState()) {
+            settingTotem.setState(false);
+            settingEndCrystal.setState(false);
+            settingGoldenApple.setState(false);
+
             if (this.item != Items.BOW) {
                 this.print("Offhand bow is enabled.");
+                this.setStatus("B");
 
-                settingTotem.setState(false);
-                settingEndCrystal.setState(false);
-                settingGoldenApple.setState(false);
+                this.isTotem = false;
+                this.isEndCrystal = false;
+                this.isGoldenApple = false;
+                this.isBow = true;
             }
 
             this.item = Items.BOW;
         }
 
-        if ((settingSmartTotem.getValue().floatValue() != 0f && mc.player.getHealth() <= settingSmartTotem.getValue().floatValue()) || (settingAutoTotem.getValue() && (settingTotem.getState() && settingEndCrystal.getState() && settingEndCrystal.getState() && settingBow.getState()) == false)) {
+        if ((settingSmartTotem.getValue().floatValue() != 0f && mc.player.getHealth() <= settingSmartTotem.getValue().floatValue()) || (settingAutoTotem.getValue() && (this.isEndCrystal || this.isGoldenApple || this.isBow) == false)) {
             settingTotem.setState(true);
         }
     }
