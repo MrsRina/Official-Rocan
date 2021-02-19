@@ -18,16 +18,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
  */
 @Mixin(Minecraft.class)
 public abstract class MixinMinecraft implements IMinecraft {
-    @Inject(method = "shutdown", at = @At("HEAD"))
-    public void onShutdown(CallbackInfo callbackInfo) {
-        Rocan.onEndClient();
-    }
-
-    @Redirect(method = "run", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/Minecraft;displayCrashReport(Lnet/minecraft/crash/CrashReport;)V"))
-    public void onRun(Minecraft minecraft, CrashReport crashReport) {
-        Rocan.onEndClient();
-    }
-
     @Redirect(at = @At(
         value = "INVOKE",
         target = "Lorg/lwjgl/opengl/Display;setTitle(Ljava/lang/String;)V"),

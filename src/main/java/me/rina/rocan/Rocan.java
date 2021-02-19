@@ -8,11 +8,14 @@ import me.rina.rocan.api.module.management.ModuleManager;
 import me.rina.rocan.api.preset.management.PresetManager;
 import me.rina.rocan.api.social.management.SocialManager;
 import me.rina.rocan.api.tracker.management.TrackerManager;
+import me.rina.rocan.client.command.CommandCoords;
 import me.rina.rocan.client.command.CommandPrefix;
+import me.rina.rocan.client.command.CommandSocial;
 import me.rina.rocan.client.command.CommandToggle;
 import me.rina.rocan.client.gui.GUI;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.manager.chat.SpammerManager;
+import me.rina.rocan.client.manager.network.PlayerServerManager;
 import me.rina.rocan.client.module.combat.ModuleAutoArmour;
 import me.rina.rocan.client.module.combat.ModuleKillAura;
 import me.rina.rocan.client.module.combat.ModuleOffhand;
@@ -72,6 +75,7 @@ public class Rocan {
 
     /* Not API managers. */
     private SpammerManager spammerManager;
+    private PlayerServerManager playerServerManager;
 
     /* Gui screen stuff. */
     private ModuleClickGUI moduleClickGUI;
@@ -117,6 +121,8 @@ public class Rocan {
         // Commands.
         this.commandManager.registry(new CommandPrefix());
         this.commandManager.registry(new CommandToggle());
+        this.commandManager.registry(new CommandCoords());
+        this.commandManager.registry(new CommandSocial());
 
         // We organize module list to alphabetical order.
         Collections.sort(this.moduleManager.getModuleList(), Comparator.comparing(Module::getName));
@@ -163,6 +169,7 @@ public class Rocan {
         this.socialManager = new SocialManager();
         this.presetManager = new PresetManager();
         this.spammerManager = new SpammerManager();
+        this.playerServerManager = new PlayerServerManager();
 
         this.wrapperGUI = new GUI();
 
@@ -171,6 +178,16 @@ public class Rocan {
 
         this.onRegistry();
         this.onInitClient();
+
+        /*
+         * Mixin is bad.
+         */
+        Runtime.getRuntime().addShutdownHook(new Thread("Rocan Shutdown Hook") {
+            @Override
+            public void run() {
+                Rocan.onEndClient();
+            }
+        });
     }
 
     public static team.stiff.pomelo.EventManager getPomeloEventManager() {
@@ -203,6 +220,10 @@ public class Rocan {
 
     public static SpammerManager getSpammerManager() {
         return INSTANCE.spammerManager;
+    }
+
+    public static PlayerServerManager getPlayerServerManager() {
+        return INSTANCE.playerServerManager;
     }
 
     public static GUI getWrapperGUI() {

@@ -48,6 +48,20 @@ public class Command {
         ChatUtil.print(Rocan.CHAT + message);
     }
 
+    public boolean verify(String argument, String... possibles) {
+        boolean isVerified = false;
+
+        for (String strings : possibles) {
+            if (argument.equalsIgnoreCase(strings)) {
+                isVerified = true;
+
+                break;
+            }
+        }
+
+        return isVerified;
+    }
+
     /*
      * Overrides.
      */

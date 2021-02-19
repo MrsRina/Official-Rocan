@@ -16,12 +16,12 @@ import java.awt.datatransfer.StringSelection;
  */
 public class CommandCoords extends Command {
   public CommandCoords() {
-    super(new String[] {"c", "coords"}, "Copies your coordinates to the clipboard");
+    super(new String[] {"coords", "c"}, "Copies your coordinates to the clipboard");
   }
 
   @Override
   public String setSyntax() {
-    return "coords";
+    return "coords/c";
   }
 
   @Override

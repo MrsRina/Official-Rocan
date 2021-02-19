@@ -7,12 +7,12 @@ package me.rina.turok.util;
 public class TurokClass {
     public static Enum getEnumByName(Enum _enum, String name) {
         for (Enum enums : _enum.getClass().getEnumConstants()) {
-            if (_enum.name().equals(name)) {
-                return _enum;
+            if (enums.name().equals(name)) {
+                return enums;
             }
         }
 
-        return null;
+        return _enum;
     }
 
     public static boolean isAnnotationPreset(Class clazz, Class clazz1) {

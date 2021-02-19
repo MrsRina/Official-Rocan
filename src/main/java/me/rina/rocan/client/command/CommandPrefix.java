@@ -17,7 +17,7 @@ public class CommandPrefix extends Command {
 
     @Override
     public String setSyntax() {
-        return "prefix <char>";
+        return "prefix/p <char>";
     }
 
     @Override

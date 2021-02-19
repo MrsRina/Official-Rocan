@@ -214,6 +214,11 @@ public class SettingBindWidget extends Widget {
     public void onCustomMouseClicked(int button) {
         if (this.flagMouse == Flag.MOUSE_OVER) {
             this.isMouseClickedLeft = button == 0;
+
+            if (button == 1) {
+                this.setting.setState(!this.setting.getState());
+                this.widgetModule.getModule().onReload();
+            }
         } else {
             if (this.isListening) {
                 this.isListening = false;

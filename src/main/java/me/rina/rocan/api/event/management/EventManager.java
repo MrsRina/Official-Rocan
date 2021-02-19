@@ -81,6 +81,7 @@ public class EventManager {
 
         Rocan.getSpammerManager().onUpdateAll();
         Rocan.getTrackerManager().onUpdateAll();
+        Rocan.getPlayerServerManager().onUpdateAll();
 
         this.setCurrentRender2DPartialTicks(event.getPartialTicks());
 
