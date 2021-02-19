@@ -12,6 +12,7 @@ import me.rina.rocan.client.event.client.ClientTickEvent;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
@@ -40,6 +41,9 @@ public class ModuleOffhand extends Module {
 
     @Listener
     public void onListen(ClientTickEvent event) {
+    }
+
+    public void doOffhand(Item item) {
         if (NullUtil.isPlayerWorld()) {
             return;
         }
@@ -48,108 +52,23 @@ public class ModuleOffhand extends Module {
             return;
         }
 
-        // Find the item offhand.
-        this.doFind();
+        if (item != Items.TOTEM_OF_UNDYING && settingSmartTotem.getValue().floatValue() != 0f && mc.player.getHealth() <= settingSmartTotem.getValue().floatValue()) {
+            settingTotem.setEnabled(true);
 
-        // Set the item in offhand.
-        if (this.item == null) {
             return;
         }
 
-        if (mc.player.getHeldItemOffhand().getItem() == this.item) {
+        if (mc.player.getHeldItemOffhand().getItem() == item) {
             return;
         }
 
-        int slot = SlotUtil.findItemSlot(this.item);
+        int slot = SlotUtil.findItemSlotFromInventory(item);
 
-        if (slot == -1) {
-            return;
-        }
-
-        /*
-         * We click at slot, pick, pick again at offhand (45) and for end unpick and update the controller.
-         */
-        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, 0, ClickType.PICKUP, mc.player);
-        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 45, 0, ClickType.PICKUP, mc.player);
-        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, 0, ClickType.PICKUP, mc.player);
-        mc.playerController.updateController();
-    }
-
-    public void doFind() {
-        if (settingTotem.getState()) {
-            settingEndCrystal.setState(false);
-            settingGoldenApple.setState(false);
-            settingBow.setState(false);
-
-            if (this.item != Items.TOTEM_OF_UNDYING) {
-                this.print("Offhand totem is enabled.");
-                this.setStatus("T");
-
-                this.isTotem = true;
-                this.isEndCrystal = false;
-                this.isGoldenApple = false;
-                this.isBow = false;
-            }
-
-            this.item = Items.TOTEM_OF_UNDYING;
-        }
-
-        if (settingEndCrystal.getState()) {
-            settingTotem.setState(false);
-            settingGoldenApple.setState(false);
-            settingBow.setState(false);
-
-            if (this.item != Items.END_CRYSTAL) {
-                this.print("Offhand end crystal is enabled.");
-                this.setStatus("C");
-
-                this.isTotem = false;
-                this.isEndCrystal = true;
-                this.isGoldenApple = false;
-                this.isBow = false;
-            }
-
-            this.item = Items.END_CRYSTAL;
-        }
-
-        if (settingGoldenApple.getState()) {
-            settingTotem.setState(false);
-            settingEndCrystal.setState(false);
-            settingBow.setState(false);
-
-            if (this.item != Items.GOLDEN_APPLE) {
-                this.print("Offhand golden apple is enabled.");
-                this.setStatus("G");
-
-                this.isTotem = false;
-                this.isEndCrystal = false;
-                this.isGoldenApple = true;
-                this.isBow = false;
-            }
-
-            this.item = Items.GOLDEN_APPLE;
-        }
-
-        if (settingBow.getState()) {
-            settingTotem.setState(false);
-            settingEndCrystal.setState(false);
-            settingGoldenApple.setState(false);
-
-            if (this.item != Items.BOW) {
-                this.print("Offhand bow is enabled.");
-                this.setStatus("B");
-
-                this.isTotem = false;
-                this.isEndCrystal = false;
-                this.isGoldenApple = false;
-                this.isBow = true;
-            }
-
-            this.item = Items.BOW;
-        }
-
-        if ((settingSmartTotem.getValue().floatValue() != 0f && mc.player.getHealth() <= settingSmartTotem.getValue().floatValue()) || (settingAutoTotem.getValue() && (this.isEndCrystal || this.isGoldenApple || this.isBow) == false)) {
-            settingTotem.setState(true);
+        if (slot != -1) {
+            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, 0, ClickType.PICKUP, mc.player);
+            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 45, 0, ClickType.PICKUP, mc.player);
+            mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, 0, ClickType.PICKUP, mc.player);
+            mc.playerController.updateController();
         }
     }
 }
