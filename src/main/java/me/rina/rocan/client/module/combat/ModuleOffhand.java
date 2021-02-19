@@ -41,6 +41,21 @@ public class ModuleOffhand extends Module {
 
     @Listener
     public void onListen(ClientTickEvent event) {
+        if (settingTotem.getState()) {
+            this.isEndCrystal = false;
+            this.isGoldenApple = false;
+            this.isBow = false;
+
+            if (this.isTotem == false) {
+                settingEndCrystal.setState(false);
+                settingGoldenApple.setState(false);
+                settingBow.setState(false);
+
+                this.print("Totem Of Undying");
+
+                this.isTotem = true;
+            }
+        }
     }
 
     public void doOffhand(Item item) {
