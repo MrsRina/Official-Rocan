@@ -15,6 +15,22 @@ import net.minecraft.util.math.BlockPos;
  * @since 08/02/2021 at 14:42
  **/
 public class BlockUtil {
+    public static float[] ONE_BLOCK_HEIGHT = {
+            0.42f, 0.75f
+    };
+
+    public static float[] TWO_BLOCKS_HEIGHT = {
+            0.4f, 0.75f, 0.5f, 0.41f, 0.83f, 1.16f, 1.41f, 1.57f, 1.58f, 1.42f
+    };
+
+    public static float[] THREE_BLOCKS_HEIGHT = {
+            0.42f, 0.78f, 0.63f, 0.51f, 0.9f, 1.21f, 1.45f, 1.43f, 1.78f, 1.63f, 1.51f, 1.9f, 2.21f, 2.45f, 2.43f
+    };
+
+    public static float[] FOUR_BLOCKS_HEIGHT = {
+            0.42f, 0.78f, 0.63f, 0.51f, 0.9f, 1.21f, 1.45f, 1.43f, 1.78f, 1.63f, 1.51f, 1.9f, 2.21f, 2.45f, 2.43f, 2.78f, 2.63f, 2.51f, 2.9f, 3.21f, 3.45f, 3.43f
+    };
+
     /**
      * We create a custom block damage to help at some modules.
      */

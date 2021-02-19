@@ -5,6 +5,7 @@ import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.module.registry.Registry;
 import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueNumber;
+import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.api.util.network.PacketUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
@@ -26,7 +27,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  **/
 @Registry(name = "Kill Aura", tag = "KillAura", description = "Make you hit any entity close of you.", category = ModuleCategory.COMBAT)
 public class ModuleKillAura extends Module {
-    public static ValueNumber settingRange = new ValueNumber("Range", "Range", "Range for target.", 5f, 1f, 5f);
+    public static ValueNumber settingRange = new ValueNumber("Range", "Range", "Range for target.", 4f, 1f, 5f);
     public static ValueBoolean settingPlayer = new ValueBoolean("Player", "Player", "Hit entity players.", true);
     public static ValueBoolean settingMob = new ValueBoolean("Mob", "Mob", "Hit entity mobs.", true);
     public static ValueBoolean settingAnimal = new ValueBoolean("Animal", "Animal", "Hit entity animal.", true);
@@ -51,19 +52,21 @@ public class ModuleKillAura extends Module {
                 continue;
             }
 
-            this.target = entityLivingBase;
+            if (mc.player.getDistance(entityLivingBase) <= settingRange.getValue().floatValue()) {
+                this.target = entityLivingBase;
+            }
+        }
 
-            if (entityLivingBase.getDistance(mc.player) >= settingRange.getValue().floatValue()) {
+        if (this.target != null) {
+            if (mc.player.getDistance(this.target) >= settingRange.getValue().floatValue()) {
                 this.target = null;
-
-                continue;
             }
 
-            if (entityLivingBase.isDead) {
+            if (this.target.isDead) {
                 this.target = null;
-
-                continue;
             }
+
+            this.setStatus(target.getName());
 
             if (mc.player.getCooledAttackStrength(0) >= 1) {
                 ItemStack currentOffhandItem = mc.player.getHeldItemOffhand();
@@ -72,13 +75,9 @@ public class ModuleKillAura extends Module {
                     PacketUtil.send(new CPacketPlayerDigging(CPacketPlayerDigging.Action.RELEASE_USE_ITEM, BlockPos.ORIGIN, mc.player.getHorizontalFacing()));
                 }
 
-                mc.playerController.attackEntity(mc.player, entityLivingBase);
+                mc.playerController.attackEntity(mc.player, this.target);
                 mc.player.swingArm(EnumHand.MAIN_HAND);
             }
-        }
-
-        if (this.target != null) {
-            this.setStatus(target.getName());
         }
     }
 
