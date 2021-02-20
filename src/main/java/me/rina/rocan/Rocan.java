@@ -16,6 +16,7 @@ import me.rina.rocan.client.gui.GUI;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.manager.chat.SpammerManager;
 import me.rina.rocan.client.manager.network.PlayerServerManager;
+import me.rina.rocan.client.module.client.ModuleDeveloper;
 import me.rina.rocan.client.module.combat.ModuleAutoArmour;
 import me.rina.rocan.client.module.combat.ModuleKillAura;
 import me.rina.rocan.client.module.combat.ModuleOffhand;
@@ -87,6 +88,7 @@ public class Rocan {
     public void onRegistry() {
         // Category Client.
         this.moduleManager.registry(new me.rina.rocan.client.module.client.ModuleClickGUI());
+        this.moduleManager.registry(new ModuleDeveloper());
 
         // Category Combat.
         this.moduleManager.registry(new ModuleOffhand());
@@ -106,6 +108,7 @@ public class Rocan {
         this.moduleManager.registry(new ModuleChatSuffix());
         this.moduleManager.registry(new ModuleSpammer());
         this.moduleManager.registry(new ModuleAntiAFK());
+        this.moduleManager.registry(new ModuleAutoEat());
 
         // Exploit.
         this.moduleManager.registry(new ModuleExtraSlots());

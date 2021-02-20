@@ -30,8 +30,6 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
-import javax.swing.plaf.IconUIResource;
-
 /**
  * @author SrRina
  * @since 17/02/2021 at 13:30
@@ -83,7 +81,7 @@ public class ModuleKillAura extends Module {
                 }
             }
 
-            this.setStatus(settingStatus.getValue() ? this.target.getName() : "");
+            this.status(settingStatus.getValue() ? this.target.getName() : "");
 
             if (mc.player.getCooledAttackStrength(0) >= 1 && flag) {
                 final ItemStack offhand = mc.player.getHeldItemOffhand();

@@ -27,11 +27,11 @@ import java.util.ArrayList;
 public class Module implements ISLClass {
     public Minecraft mc = Rocan.MC;
 
-    private String name = getResgistry().name();
-    private String tag = getResgistry().tag();
+    private String name = getRegistry().name();
+    private String tag = getRegistry().tag();
 
-    private String description = getResgistry().description();
-    private ModuleCategory category = getResgistry().category();
+    private String description = getRegistry().description();
+    private ModuleCategory category = getRegistry().category();
 
     private String status;
     private ArrayList<Setting> settingList;
@@ -123,7 +123,7 @@ public class Module implements ISLClass {
         return settingList;
     }
 
-    public Registry getResgistry() {
+    public Registry getRegistry() {
         Registry details = null;
 
         if (getClass().isAnnotationPresent(Registry.class)) {
@@ -221,6 +221,10 @@ public class Module implements ISLClass {
         this.onDisable();
 
         Rocan.getPomeloEventManager().removeEventListener(this);
+    }
+
+    public void status(String status) {
+        this.status = status;
     }
 
     public void print(String message) {

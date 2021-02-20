@@ -71,12 +71,14 @@ public class SlotUtil {
     public static int findItemSlotFromInventory(Item item) {
         int slot = -1;
 
-        for (int i = 0; i < 45; i++) {
+        for (int i = 9; i < 36; i++) {
             Item items = MC.player.inventory.getStackInSlot(i).getItem();
 
             if (items == item) {
                 slot = i;
             }
+
+            break;
         }
 
         return slot;
@@ -94,6 +96,8 @@ public class SlotUtil {
                 }
 
                 slot = i;
+
+                break;
             }
         }
 
@@ -107,6 +111,8 @@ public class SlotUtil {
             Item items = MC.player.inventory.getStackInSlot(i).getItem();
 
             if (items == item) {
+                i += 36;
+
                 slot = i;
 
                 break;

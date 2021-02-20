@@ -132,10 +132,13 @@ public class SocialManager implements ISLClass {
                 Social social = new Social(socialJson.get("name").getAsString());
 
                 if (socialJson.get("user") != null) {
-                    SocialType enumRequested = (SocialType) TurokClass.getEnumByName(SocialType.FRIEND, socialJson.get("user").getAsString());
+                    SocialType enumRequested = (SocialType) TurokClass.getEnumByName(SocialType.UNKNOWN, socialJson.get("user").getAsString());
 
                     // Set type using the enum.name().
                     social.setType(enumRequested != null ? enumRequested : SocialType.UNKNOWN);
+
+                    // Add in social list!
+                    Rocan.getSocialManager().registry(social);
                 }
             }
 
