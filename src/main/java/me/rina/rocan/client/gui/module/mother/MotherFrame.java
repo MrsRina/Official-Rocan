@@ -320,7 +320,7 @@ public class MotherFrame extends Frame {
         this.scaleWidth = TurokMath.lerp(this.scaleWidth, (TurokMath.clamp(this.size, (minimumWidth + 1) * this.loadedWidgetList.size(), (maximumWidth + 1) * this.loadedWidgetList.size())), this.master.getPartialTicks());
 
         // Background of frame.
-        TurokRenderGL.color(Rocan.getWrapperGUI().colorFrameBackground[0], Rocan.getWrapperGUI().colorFrameBackground[1], Rocan.getWrapperGUI().colorFrameBackground[2], Rocan.getWrapperGUI().colorFrameBackground[3]);
+        TurokRenderGL.color(Rocan.getWrapper().colorFrameBackground[0], Rocan.getWrapper().colorFrameBackground[1], Rocan.getWrapper().colorFrameBackground[2], Rocan.getWrapper().colorFrameBackground[3]);
         TurokRenderGL.drawSolidRect(this.rect);
 
         /*
@@ -342,7 +342,7 @@ public class MotherFrame extends Frame {
         }
 
         // Selected category effect.
-        TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetSelected[0], Rocan.getWrapperGUI().colorWidgetSelected[1], Rocan.getWrapperGUI().colorWidgetSelected[2], Rocan.getWrapperGUI().colorWidgetSelected[3]);
+        TurokRenderGL.color(Rocan.getWrapper().colorWidgetSelected[0], Rocan.getWrapper().colorWidgetSelected[1], Rocan.getWrapper().colorWidgetSelected[2], Rocan.getWrapper().colorWidgetSelected[3]);
         TurokRenderGL.drawOutlineRect(this.rectWidgetSelected);
 
         if (this.isDragging && this.master.isOpened()) {

@@ -50,7 +50,7 @@ public class LabelWidget extends Widget {
         this.settingContainer = settingContainer;
 
         this.rect.setWidth(this.settingContainer.getRect().getWidth());
-        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
+        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapper().fontNormalWidget, this.rect.getTag()) + 5);
     }
 
     public void setText(String text) {
@@ -112,14 +112,14 @@ public class LabelWidget extends Widget {
             this.rect.setWidth(this.settingContainer.getRect().getWidth());
         }
 
-        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
+        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapper().fontNormalWidget, this.rect.getTag()) + 5);
 
         float onTopPositionY = this.isScroll ? this.settingContainer.getScrollRect().getY() : this.settingContainer.getRect().getY();
 
         this.rect.setX(this.settingContainer.getScrollRect().getX() + this.offsetX);
         this.rect.setY(onTopPositionY + this.offsetY);
 
-        TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag(), this.rect.getX() + 2, this.rect.getY() + 5, true, new Color(255, 255, 255));
+        TurokFontManager.render(Rocan.getWrapper().fontSmallWidget, this.rect.getTag(), this.rect.getX() + 2, this.rect.getY() + 5, true, new Color(255, 255, 255));
     }
 
     @Override

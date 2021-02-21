@@ -65,7 +65,7 @@ public class SettingEnumWidget extends Widget {
         this.setting = setting;
 
         this.rect.setWidth(this.settingContainer.getRect().getWidth());
-        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
+        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapper().fontNormalWidget, this.rect.getTag()) + 5);
 
         this.init();
     }
@@ -161,7 +161,7 @@ public class SettingEnumWidget extends Widget {
     @Override
     public void onRender() {
         this.rect.setWidth(this.settingContainer.getRect().getWidth());
-        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
+        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapper().fontNormalWidget, this.rect.getTag()) + 5);
 
         this.rect.setX(this.settingContainer.getScrollRect().getX() + this.offsetX);
         this.rect.setY(this.settingContainer.getScrollRect().getY() + this.offsetY);
@@ -173,7 +173,7 @@ public class SettingEnumWidget extends Widget {
         }
 
         // Where the smooth animation works.
-        this.alphaEffectHighlightRect = this.flagMouse == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
+        this.alphaEffectHighlightRect = this.flagMouse == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapper().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
 
         // We verify the current enum value at mode when we load the client.
         // Loop.
@@ -201,10 +201,10 @@ public class SettingEnumWidget extends Widget {
 
         String name = this.rect.getTag() + ": " + this.setting.getValue().name();
 
-        TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, name, this.rect.getX() + 2, this.rect.getY() + ((this.rect.getHeight() / 2) - (TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag()) / 2) - 1), true, new Color(255, 255, 255));
+        TurokFontManager.render(Rocan.getWrapper().fontSmallWidget, name, this.rect.getX() + 2, this.rect.getY() + ((this.rect.getHeight() / 2) - (TurokFontManager.getStringHeight(Rocan.getWrapper().fontSmallWidget, this.rect.getTag()) / 2) - 1), true, new Color(255, 255, 255));
 
         // Outline on rect render.
-        TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetHighlight[0], Rocan.getWrapperGUI().colorWidgetHighlight[1], Rocan.getWrapperGUI().colorWidgetHighlight[2], this.alphaEffectHighlightRect);
+        TurokRenderGL.color(Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightRect);
         TurokRenderGL.drawOutlineRect(this.rect);
     }
 

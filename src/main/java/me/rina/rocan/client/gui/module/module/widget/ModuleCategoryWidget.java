@@ -43,7 +43,7 @@ public class ModuleCategoryWidget extends Widget {
         this.category = category;
 
         this.rect.setWidth(75);
-        this.rect.setHeight(6 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontBigWidget, this.rect.getTag()) + 6);
+        this.rect.setHeight(6 + TurokFontManager.getStringHeight(Rocan.getWrapper().fontBigWidget, this.rect.getTag()) + 6);
 
         this.container = new ModuleContainer(this.master, this.frame, this, this.category);
         this.container.init();
@@ -175,14 +175,14 @@ public class ModuleCategoryWidget extends Widget {
         this.rect.setY(this.frame.getRect().getY() + this.offsetY);
 
         this.container.getRect().setWidth(this.container.getWidthScale());
-        this.rect.setHeight(6 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontBigWidget, this.rect.getTag()) + 6);
+        this.rect.setHeight(6 + TurokFontManager.getStringHeight(Rocan.getWrapper().fontBigWidget, this.rect.getTag()) + 6);
 
         this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
-        this.alphaEffect = this.flagMouse == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffect, 0, this.master.getPartialTicks());
+        this.alphaEffect = this.flagMouse == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffect, Rocan.getWrapper().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffect, 0, this.master.getPartialTicks());
 
-        TurokFontManager.render(Rocan.getWrapperGUI().fontBigWidget, this.rect.getTag(), this.rect.getX() + (this.rect.getWidth() / 2 - (TurokFontManager.getStringWidth(Rocan.getWrapperGUI().fontBigWidget, this.rect.getTag()) / 2)), this.rect.getY() + 6, true, new Color(255, 255, 255));
+        TurokFontManager.render(Rocan.getWrapper().fontBigWidget, this.rect.getTag(), this.rect.getX() + (this.rect.getWidth() / 2 - (TurokFontManager.getStringWidth(Rocan.getWrapper().fontBigWidget, this.rect.getTag()) / 2)), this.rect.getY() + 6, true, new Color(255, 255, 255));
 
-        TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetHighlight[0], Rocan.getWrapperGUI().colorWidgetHighlight[1], Rocan.getWrapperGUI().colorWidgetHighlight[2], this.alphaEffect);
+        TurokRenderGL.color(Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffect);
         TurokRenderGL.drawOutlineRect(this.rect);
 
         /*

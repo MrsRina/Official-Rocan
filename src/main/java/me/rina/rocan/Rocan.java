@@ -12,7 +12,7 @@ import me.rina.rocan.client.command.CommandCoords;
 import me.rina.rocan.client.command.CommandPrefix;
 import me.rina.rocan.client.command.CommandSocial;
 import me.rina.rocan.client.command.CommandToggle;
-import me.rina.rocan.client.gui.GUI;
+import me.rina.rocan.client.Wrapper;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.manager.chat.SpammerManager;
 import me.rina.rocan.client.manager.network.PlayerServerManager;
@@ -29,10 +29,7 @@ import me.rina.rocan.client.module.movement.ModuleAutoWalk;
 import me.rina.rocan.client.module.movement.ModuleMoveGUI;
 import me.rina.rocan.client.module.movement.ModuleStep;
 import me.rina.rocan.client.module.movement.ModuleVelocity;
-import me.rina.rocan.client.module.render.ModuleBlockHighlight;
-import me.rina.rocan.client.module.render.ModuleFullBright;
-import me.rina.rocan.client.module.render.ModuleHoleESP;
-import me.rina.rocan.client.module.render.ModuleCustomFov;
+import me.rina.rocan.client.module.render.*;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -80,7 +77,7 @@ public class Rocan {
 
     /* Gui screen stuff. */
     private ModuleClickGUI moduleClickGUI;
-    private GUI wrapperGUI;
+    private Wrapper wrapper;
 
     /**
      * Registry all components.
@@ -101,6 +98,7 @@ public class Rocan {
         this.moduleManager.registry(new ModuleHoleESP());
         this.moduleManager.registry(new ModuleFullBright());
         this.moduleManager.registry(new ModuleCustomFov());
+        this.moduleManager.registry(new ModuleNameTags());
 
         // Category Misc.
         this.moduleManager.registry(new ModuleAutoRespawn());
@@ -174,7 +172,7 @@ public class Rocan {
         this.spammerManager = new SpammerManager();
         this.playerServerManager = new PlayerServerManager();
 
-        this.wrapperGUI = new GUI();
+        this.wrapper = new Wrapper();
 
         MinecraftForge.EVENT_BUS.register(this.clientEventManager);
         MinecraftForge.EVENT_BUS.register(this.commandManager);
@@ -229,8 +227,8 @@ public class Rocan {
         return INSTANCE.playerServerManager;
     }
 
-    public static GUI getWrapperGUI() {
-        return INSTANCE.wrapperGUI;
+    public static Wrapper getWrapper() {
+        return INSTANCE.wrapper;
     }
 
     public static Minecraft getMinecraft() {

@@ -1,4 +1,4 @@
-package me.rina.rocan.client.gui;
+package me.rina.rocan.client;
 
 import me.rina.turok.render.font.TurokFont;
 
@@ -8,10 +8,11 @@ import java.awt.*;
  * @author SrRina
  * @since 07/12/20 at 02:58pm
  */
-public class GUI {
+public class Wrapper {
     public TurokFont fontBigWidget = new TurokFont(new Font("Whitney", 0, 18), true, true);
     public TurokFont fontNormalWidget = new TurokFont(new Font("Whitney", 0, 19), true, true);
     public TurokFont fontSmallWidget = new TurokFont(new Font("Whitney", 0, 16), true, true);
+    public TurokFont fontNameTags = new TurokFont(new Font("Whitney", 0, 16), true, true);
 
     public int[] colorFrameBackground = new int[] {
             0, 0, 0, 150

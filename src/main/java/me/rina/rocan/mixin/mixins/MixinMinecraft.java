@@ -1,6 +1,7 @@
 package me.rina.rocan.mixin.mixins;
 
 import me.rina.rocan.Rocan;
+import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.rocan.mixin.interfaces.IMinecraft;
 import net.minecraft.client.Minecraft;
 import net.minecraft.crash.CrashReport;
@@ -30,4 +31,9 @@ public abstract class MixinMinecraft implements IMinecraft {
     @Accessor
     @Override
     public abstract void setRightClickDelayTimer(int delay);
+
+    @Inject(method = "runTick", at = @At("HEAD"))
+    private void onTick(CallbackInfo callbackInfo) {
+        Rocan.getPomeloEventManager().dispatchEvent(new ClientTickEvent());
+    }
 }

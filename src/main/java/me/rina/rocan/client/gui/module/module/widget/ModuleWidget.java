@@ -73,7 +73,7 @@ public class ModuleWidget extends Widget {
         this.settingContainer = new SettingContainer(this.master, this.frame, this.widget, this.container, this);
 
         this.rect.setWidth(this.container.getRect().getWidth() - (this.offsetX * 2));
-        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
+        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapper().fontNormalWidget, this.rect.getTag()) + 5);
     }
 
     protected void setSettingContainer(SettingContainer settingContainer) {
@@ -254,20 +254,20 @@ public class ModuleWidget extends Widget {
         }
 
         this.rect.setWidth(this.container.getRect().getWidth() - 4);
-        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
+        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapper().fontNormalWidget, this.rect.getTag()) + 5);
 
-        this.alphaEffectHighlight = (int) (this.flagMouse == Flag.MOUSE_OVER ? TurokMath.lerp(this.alphaEffectHighlight, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : TurokMath.lerp(this.alphaEffectHighlight, 0, this.master.getPartialTicks()));
+        this.alphaEffectHighlight = (int) (this.flagMouse == Flag.MOUSE_OVER ? TurokMath.lerp(this.alphaEffectHighlight, Rocan.getWrapper().colorWidgetHighlight[3], this.master.getPartialTicks()) : TurokMath.lerp(this.alphaEffectHighlight, 0, this.master.getPartialTicks()));
 
-        TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetHighlight[0], Rocan.getWrapperGUI().colorWidgetHighlight[1], Rocan.getWrapperGUI().colorWidgetHighlight[2], this.alphaEffectHighlight);
+        TurokRenderGL.color(Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlight);
         TurokRenderGL.drawOutlineRect(this.rect);
 
-        TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetPressed[0], Rocan.getWrapperGUI().colorWidgetPressed[1], Rocan.getWrapperGUI().colorWidgetPressed[2], this.alphaEffectPressed);
+        TurokRenderGL.color(Rocan.getWrapper().colorWidgetPressed[0], Rocan.getWrapper().colorWidgetPressed[1], Rocan.getWrapper().colorWidgetPressed[2], this.alphaEffectPressed);
         TurokRenderGL.drawSolidRect(this.rect);
 
-        TurokFontManager.render(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag(), this.rect.getX() + 2, this.rect.getY() + 5, true, new Color(255, 255, 255));
+        TurokFontManager.render(Rocan.getWrapper().fontNormalWidget, this.rect.getTag(), this.rect.getX() + 2, this.rect.getY() + 5, true, new Color(255, 255, 255));
 
         if (this.module.isEnabled()) {
-            this.alphaEffectPressed = (int) TurokMath.lerp(this.alphaEffectPressed, Rocan.getWrapperGUI().colorWidgetPressed[3], this.master.getPartialTicks());
+            this.alphaEffectPressed = (int) TurokMath.lerp(this.alphaEffectPressed, Rocan.getWrapper().colorWidgetPressed[3], this.master.getPartialTicks());
         } else {
             this.alphaEffectPressed = (int) TurokMath.lerp(this.alphaEffectPressed, 0, this.master.getPartialTicks());
         }
@@ -294,12 +294,12 @@ public class ModuleWidget extends Widget {
             }
         }
 
-        TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetSelected[0], Rocan.getWrapperGUI().colorWidgetSelected[1], Rocan.getWrapperGUI().colorWidgetSelected[2], this.alphaEffectSelected);
+        TurokRenderGL.color(Rocan.getWrapper().colorWidgetSelected[0], Rocan.getWrapper().colorWidgetSelected[1], Rocan.getWrapper().colorWidgetSelected[2], this.alphaEffectSelected);
         TurokRenderGL.drawOutlineRect(this.rect);
 
         // If this is selected the current setting, we use lerp to set the sizes and if minimum 10 set the fully scaled width&height.
         if (this.isSelected) {
-            this.alphaEffectSelected = (int) TurokMath.lerp(this.alphaEffectSelected, Rocan.getWrapperGUI().colorWidgetSelected[3], this.master.getPartialTicks());
+            this.alphaEffectSelected = (int) TurokMath.lerp(this.alphaEffectSelected, Rocan.getWrapper().colorWidgetSelected[3], this.master.getPartialTicks());
 
             this.settingContainer.getRect().setWidth(TurokMath.lerp(this.settingContainer.getRect().getWidth(), this.settingContainer.getWidthScale(), this.master.getPartialTicks()));
 

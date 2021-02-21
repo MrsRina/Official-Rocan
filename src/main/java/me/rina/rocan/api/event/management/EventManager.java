@@ -7,10 +7,7 @@ import me.rina.rocan.api.command.management.CommandManager;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
-import me.rina.rocan.client.event.render.Render2DEvent;
-import me.rina.rocan.client.event.render.Render3DEvent;
 import me.rina.turok.render.opengl.TurokGL;
-import me.rina.turok.render.opengl.TurokRenderGL;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.ClientChatEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -62,15 +59,6 @@ public class EventManager {
     @SubscribeEvent
     public void onUpdate(LivingEvent.LivingUpdateEvent event) {
         if (event.isCanceled()) return;
-    }
-
-    @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent event) {
-        if (Rocan.MC.player == null) {
-            return;
-        }
-
-        Rocan.getPomeloEventManager().dispatchEvent(new ClientTickEvent());
     }
 
     @SubscribeEvent
@@ -130,7 +118,7 @@ public class EventManager {
          * This make any color update as the color fully smooth.
          * And we update the colors of the GUI too.
          */
-        Rocan.getWrapperGUI().onUpdateColor();
+        Rocan.getWrapper().onUpdateColor();
 
         for (Module modules : Rocan.getModuleManager().getModuleList()) {
             if (modules.isEnabled()) {

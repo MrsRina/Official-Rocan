@@ -6,17 +6,12 @@ import me.rina.rocan.api.module.registry.Registry;
 import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
-import me.rina.rocan.api.util.client.KeyUtil;
 import me.rina.rocan.api.util.client.NullUtil;
-import me.rina.rocan.api.util.item.SlotUtil;
-import me.rina.rocan.api.util.network.PacketUtil;
+import me.rina.rocan.api.util.item.SlotUtil;;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.play.client.CPacketPlayerTryUseItem;
-import net.minecraft.util.EnumHand;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
@@ -25,14 +20,14 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  **/
 @Registry(name = "Auto-Eat", tag = "AutoEat", description = "Find an food in hot bar if is hunger and automatically eat.", category = ModuleCategory.MISC)
 public class ModuleAutoEat extends Module {
-    public static ValueBoolean settingOnlyGoldenApple = new ValueBoolean("Only Golden Apple", "OnlyGoldenApple", "Only golden eat!", false);
     public static ValueEnum settingMode = new ValueEnum("Mode", "Mode", "Modes to verify if eats or no!", Mode.HEALTH);
 
-    public static ValueNumber settingFood = new ValueNumber("Food", "Food", "Food stats to start eat!", 10, 0, 20);
-    public static ValueNumber settingFoodFill = new ValueNumber("Fill", "FoodFill", "Stop eating in.", 20, 0, 20);
+    public static ValueNumber settingFood = new ValueNumber("Food", "Food", "Food stats to start eat!", 10, 1, 20);
+    public static ValueNumber settingFoodFill = new ValueNumber("Fill", "FoodFill", "Stop eating in.", 20, 1, 20);
 
-    public static ValueNumber settingHealth = new ValueNumber("Health", "Health", "Health to start eat.", 20, 0, 36);
-    public static ValueNumber settingHealthFill = new ValueNumber("Fill", "HealthFill", "Stop eating in.", 20, 0, 36);
+    public static ValueBoolean settingOnlyGoldenApple = new ValueBoolean("Only Golden Apple", "OnlyGoldenApple", "Only golden eat!", false);
+    public static ValueNumber settingHealth = new ValueNumber("Health", "Health", "Health to start eat.", 20, 1, 20);
+    public static ValueNumber settingHealthFill = new ValueNumber("Fill", "HealthFill", "Stop eating in.", 20, 1, 20);
 
     public enum Mode {
         HEALTH, FOOD;
@@ -51,6 +46,7 @@ public class ModuleAutoEat extends Module {
 
         settingHealth.setEnabled(settingMode.getValue() == Mode.HEALTH);
         settingHealthFill.setEnabled(settingMode.getValue() == Mode.HEALTH);
+        settingOnlyGoldenApple.setEnabled(settingMode.getValue() == Mode.HEALTH);
 
         if (settingHealthFill.getValue().intValue() <= settingHealth.getValue().intValue()) {
             settingHealthFill.setValue(settingHealth.getValue());
@@ -71,7 +67,7 @@ public class ModuleAutoEat extends Module {
             boolean flagO = this.newSlot == 40; // Offhand.
             boolean flagM = this.newSlot != 40; // Main hand.
 
-            if (settingMode.getValue() == Mode.HEALTH && mc.player.getFoodStats().getFoodLevel() == 20) {
+            if (settingMode.getValue() == Mode.HEALTH && ((settingOnlyGoldenApple.getValue() == false && mc.player.getFoodStats().getFoodLevel() == 20) | settingOnlyGoldenApple.getValue())) {
                 this.isToEat = false;
             }
 
@@ -84,7 +80,7 @@ public class ModuleAutoEat extends Module {
             if (flagO == false) {
                 Item item = SlotUtil.getItemStack(this.newSlot).getItem();
 
-                if (item instanceof ItemFood) {
+                if (this.doAccept(item)) {
                     mc.player.inventory.currentItem = this.newSlot;
 
                     this.doEat();
@@ -101,7 +97,7 @@ public class ModuleAutoEat extends Module {
             if (flagM == false) {
                 Item item = SlotUtil.getItemStack(this.newSlot).getItem();
 
-                if (item instanceof ItemFood) {
+                if (this.doAccept(item)) {
                     this.doEat();
                 } else {
                     // Last check to disable.
@@ -123,9 +119,11 @@ public class ModuleAutoEat extends Module {
         int slot = this.findFoodSlot();
 
         if (slot != -1) {
+            Item item = SlotUtil.getItem(slot);
+
             switch ((Mode) settingMode.getValue()) {
                 case HEALTH: {
-                    this.isToEat = mc.player.getHealth() <= settingHealth.getValue().intValue() && mc.player.getFoodStats().getFoodLevel() != 20;
+                    this.isToEat = mc.player.getHealth() <= settingHealth.getValue().intValue() && (mc.player.getFoodStats().getFoodLevel() != 20 || settingOnlyGoldenApple.getValue());
 
                     break;
                 }
@@ -146,23 +144,15 @@ public class ModuleAutoEat extends Module {
     public int findFoodSlot() {
         int slot = -1;
 
-        if (mc.player.getHeldItemOffhand().getItem() instanceof ItemFood) {
-            ItemFood flag = (ItemFood) mc.player.getHeldItemOffhand().getItem();
-
-            if (this.doAccept(flag)) {
-                return 40; // 40 is offhand slot!
-            }
+        if (this.doAccept(mc.player.getHeldItemOffhand().getItem())) {
+            return 40; // 40 is offhand slot!
         }
 
         for (int i = 0; i < 9; i++) {
             final Item items = mc.player.inventory.getStackInSlot(i).getItem();
 
-            if (items instanceof ItemFood) {
-                ItemFood flag = (ItemFood) items;
-
-                if (doAccept(flag)) {
-                    slot = i;
-                }
+            if (doAccept(items)) {
+                slot = i;
 
                 break;
             }
@@ -171,15 +161,13 @@ public class ModuleAutoEat extends Module {
         return slot;
     }
 
-    public boolean doAccept(ItemFood itemFood) {
+    public boolean doAccept(Item item) {
         boolean isAccepted = false;
 
-        if (itemFood == Items.GOLDEN_APPLE && settingOnlyGoldenApple.getValue()) {
+        if (item == Items.GOLDEN_APPLE && settingOnlyGoldenApple.isEnabled() && settingOnlyGoldenApple.getValue()) {
             isAccepted = true;
-        }
-
-        if (settingOnlyGoldenApple.getValue() == false) {
-            if (itemFood != Items.CHORUS_FRUIT || itemFood != Items.ROTTEN_FLESH || itemFood != Items.POISONOUS_POTATO || itemFood != Items.SPIDER_EYE) {
+        } else if (item instanceof ItemFood) {
+            if (item != Items.CHORUS_FRUIT || item != Items.ROTTEN_FLESH || item != Items.POISONOUS_POTATO || item != Items.SPIDER_EYE) {
                 isAccepted = true;
             }
         }

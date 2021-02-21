@@ -23,8 +23,16 @@ public class TurokGL {
         GL11.glTranslatef(x, y, z);
     }
 
+    public static void translate(double x, double y, double z) {
+        GL11.glTranslated(x, y, z);
+    }
+
     public static void translate(float x, float y) {
         GL11.glTranslatef(x, y, 0);
+    }
+
+    public static void translate(double x, double y) {
+        GL11.glTranslated(x, y, 0);
     }
 
     public static void rotate(float angle, float x, float y, float z) {
@@ -117,5 +125,9 @@ public class TurokGL {
 
     public static void popAttrib() {
         GL11.glPopAttrib();
+    }
+
+    public static void depthMask(boolean flag) {
+        GL11.glDepthMask(flag);
     }
 }

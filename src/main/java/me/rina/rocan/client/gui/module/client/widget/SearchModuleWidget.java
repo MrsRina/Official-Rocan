@@ -80,7 +80,7 @@ public class SearchModuleWidget extends Widget {
         this.clientContainer = clientContainer;
 
         this.rect.setWidth(this.clientContainer.getRect().getWidth());
-        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
+        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapper().fontNormalWidget, this.rect.getTag()) + 5);
     }
 
     public String removeLastChar(String string) {
@@ -210,10 +210,10 @@ public class SearchModuleWidget extends Widget {
                         exc.printStackTrace();
                     }
 
-                    boolean isScrollLimit = TurokFontManager.getStringWidth(Rocan.getWrapperGUI().fontSmallWidget, this.cacheType.getValue()) + 1f >= this.rectEntryBox.getWidth();
+                    boolean isScrollLimit = TurokFontManager.getStringWidth(Rocan.getWrapper().fontSmallWidget, this.cacheType.getValue()) + 1f >= this.rectEntryBox.getWidth();
 
                     if (isScrollLimit) {
-                        this.offsetPositionTextX = this.rectEntryBox.getWidth() - TurokFontManager.getStringWidth(Rocan.getWrapperGUI().fontSmallWidget, this.cacheType.getValue()) - 7;
+                        this.offsetPositionTextX = this.rectEntryBox.getWidth() - TurokFontManager.getStringWidth(Rocan.getWrapper().fontSmallWidget, this.cacheType.getValue()) - 7;
                     }
                 }
             } else if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_A)) {
@@ -268,10 +268,10 @@ public class SearchModuleWidget extends Widget {
                                 this.clientContainer.getModuleContainer().refreshSearchWidget(this.cacheType.getValue());
                             }
 
-                            boolean isScrollLimit = TurokFontManager.getStringWidth(Rocan.getWrapperGUI().fontSmallWidget, this.cacheType.getValue()) + 1f >= this.rectEntryBox.getWidth();
+                            boolean isScrollLimit = TurokFontManager.getStringWidth(Rocan.getWrapper().fontSmallWidget, this.cacheType.getValue()) + 1f >= this.rectEntryBox.getWidth();
 
                             if (isScrollLimit) {
-                                this.offsetPositionTextX = this.rectEntryBox.getWidth() - TurokFontManager.getStringWidth(Rocan.getWrapperGUI().fontSmallWidget, this.cacheType.getValue()) - 7;
+                                this.offsetPositionTextX = this.rectEntryBox.getWidth() - TurokFontManager.getStringWidth(Rocan.getWrapper().fontSmallWidget, this.cacheType.getValue()) - 7;
                             }
                         }
 
@@ -338,7 +338,7 @@ public class SearchModuleWidget extends Widget {
     @Override
     public void onRender() {
         this.rect.setWidth(this.clientContainer.getRect().getWidth());
-        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontNormalWidget, this.rect.getTag()) + 5);
+        this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapper().fontNormalWidget, this.rect.getTag()) + 5);
 
         this.rect.setX(this.clientContainer.getScrollRect().getX() + this.offsetX);
         this.rect.setY(this.clientContainer.getScrollRect().getY() + this.offsetY);
@@ -351,8 +351,8 @@ public class SearchModuleWidget extends Widget {
         this.rectEntryBox.setWidth(this.rect.getWidth() - (offsetEntryBox * 2));
         this.rectEntryBox.setHeight(this.rect.getHeight() - (offsetEntryBox * 2));
 
-        this.alphaEffectHighlightEntryBox = this.flagMouseEntry == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffectHighlightEntryBox, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightEntryBox, 0, this.master.getPartialTicks());
-        this.alphaEffectHighlightRect = this.flagMouse == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapperGUI().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
+        this.alphaEffectHighlightEntryBox = this.flagMouseEntry == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffectHighlightEntryBox, Rocan.getWrapper().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightEntryBox, 0, this.master.getPartialTicks());
+        this.alphaEffectHighlightRect = this.flagMouse == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapper().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
 
         float offsetSpace = 1.0f;
 
@@ -365,11 +365,11 @@ public class SearchModuleWidget extends Widget {
         }
 
         // The outline rect effect.
-        TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetHighlight[0], Rocan.getWrapperGUI().colorWidgetHighlight[1], Rocan.getWrapperGUI().colorWidgetHighlight[2], this.alphaEffectHighlightRect);
+        TurokRenderGL.color(Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightRect);
         TurokRenderGL.drawOutlineRect(this.rect);
 
         // The check box outline highlight.
-        TurokRenderGL.color(Rocan.getWrapperGUI().colorWidgetHighlight[0], Rocan.getWrapperGUI().colorWidgetHighlight[1], Rocan.getWrapperGUI().colorWidgetHighlight[2], this.alphaEffectHighlightEntryBox);
+        TurokRenderGL.color(Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightEntryBox);
         TurokRenderGL.drawOutlineRect(this.rectEntryBox);
 
         // The typing solid effect.
@@ -382,10 +382,10 @@ public class SearchModuleWidget extends Widget {
 
         // The selected solid effect.
         TurokRenderGL.color(0, 0, 255, this.isAllSelected ? this.alphaEffectPressed : 0);
-        TurokRenderGL.drawSolidRect(this.rectEntryBox.getX(), this.rectEntryBox.getY(), offsetSpace + TurokFontManager.getStringWidth(Rocan.getWrapperGUI().fontSmallWidget, this.cacheType.getValue()), this.rectEntryBox.getHeight());
+        TurokRenderGL.drawSolidRect(this.rectEntryBox.getX(), this.rectEntryBox.getY(), offsetSpace + TurokFontManager.getStringWidth(Rocan.getWrapper().fontSmallWidget, this.cacheType.getValue()), this.rectEntryBox.getHeight());
 
         this.stringPositionX = TurokMath.lerp(this.stringPositionX, this.rectEntryBox.getX() + offsetSpace + this.offsetPositionTextX, this.master.getPartialTicks());
-        this.stringPositionY = this.rectEntryBox.getY() + (this.rectEntryBox.getHeight() / 2 - (TurokFontManager.getStringHeight(Rocan.getWrapperGUI().fontSmallWidget, "AaBbCc") / 2));
+        this.stringPositionY = this.rectEntryBox.getY() + (this.rectEntryBox.getHeight() / 2 - (TurokFontManager.getStringHeight(Rocan.getWrapper().fontSmallWidget, "AaBbCc") / 2));
 
         if (this.isFocused) {
             this.master.setCanceledCloseGUI(true);
@@ -403,15 +403,15 @@ public class SearchModuleWidget extends Widget {
                 this.tickAnimationSplit.reset();
             }
 
-            TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.cacheType.getValue() + this.split, this.stringPositionX, this.stringPositionY, true, new Color(255, 255, 255));
+            TurokFontManager.render(Rocan.getWrapper().fontSmallWidget, this.cacheType.getValue() + this.split, this.stringPositionX, this.stringPositionY, true, new Color(255, 255, 255));
         } else {
             this.master.setCanceledCloseGUI(false);
             this.cacheType.setValue(this.rect.getTag());
 
             if (this.flagMouseEntry == Flag.MOUSE_OVER) {
-                TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, this.rect.getTag(), this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255));
+                TurokFontManager.render(Rocan.getWrapper().fontSmallWidget, this.rect.getTag(), this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255));
             } else {
-                TurokFontManager.render(Rocan.getWrapperGUI().fontSmallWidget, "Search " + this.rect.getTag(), this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255, 100));
+                TurokFontManager.render(Rocan.getWrapper().fontSmallWidget, "Search " + this.rect.getTag(), this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255, 100));
             }
 
             this.isAllSelected = false;
@@ -421,7 +421,7 @@ public class SearchModuleWidget extends Widget {
 
         this.isTyping = false;
 
-        float stringWidth = TurokFontManager.getStringWidth(Rocan.getWrapperGUI().fontSmallWidget, this.cacheType.getValue());
+        float stringWidth = TurokFontManager.getStringWidth(Rocan.getWrapper().fontSmallWidget, this.cacheType.getValue());
 
         float maximumPositionText = 0;
         float minimumPositionText = this.rectEntryBox.getWidth() - stringWidth - 7;
@@ -444,6 +444,6 @@ public class SearchModuleWidget extends Widget {
     @Override
     public void onCustomRender() {
         // We place here cause we need sync the focus animation clicks of entry box
-        this.alphaEffectPressed = this.isFocused ? (int) TurokMath.lerp(this.alphaEffectPressed, Rocan.getWrapperGUI().colorWidgetPressed[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectPressed, 0, this.master.getPartialTicks());
+        this.alphaEffectPressed = this.isFocused ? (int) TurokMath.lerp(this.alphaEffectPressed, Rocan.getWrapper().colorWidgetPressed[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectPressed, 0, this.master.getPartialTicks());
     }
 }
