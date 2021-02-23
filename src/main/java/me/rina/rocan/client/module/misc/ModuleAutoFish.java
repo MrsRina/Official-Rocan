@@ -9,7 +9,7 @@ import me.rina.rocan.api.tracker.Tracker;
 import me.rina.rocan.api.tracker.impl.RightMouseClickTracker;
 import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
-import me.rina.rocan.client.event.network.ReceiveEventPacket;
+import me.rina.rocan.client.event.network.PacketEvent;
 import me.rina.turok.util.TurokTick;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
@@ -42,7 +42,7 @@ public class ModuleAutoFish extends Module {
     }
 
     @Listener
-    public void onListen(ReceiveEventPacket event) {
+    public void onListen(PacketEvent.Receive event) {
         if ((event.getPacket() instanceof SPacketSoundEffect) == false) {
             return;
         }

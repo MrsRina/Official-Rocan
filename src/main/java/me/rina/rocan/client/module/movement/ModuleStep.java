@@ -17,9 +17,11 @@ import me.rina.rocan.api.util.math.PositionUtil;
 import me.rina.rocan.api.util.network.PacketUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.turok.util.TurokMath;
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
@@ -98,6 +100,8 @@ public class ModuleStep extends Module {
         if (mc.player.collidedHorizontally && mc.player.onGround) {
             this.packetSpam++;
         }
+
+        final AxisAlignedBB bb = mc.player.getEntityBoundingBox();
 
         if (mc.player.onGround && mc.player.isInsideOfMaterial(Material.WATER) == false && mc.player.isInsideOfMaterial(Material.LAVA) == false && mc.player.isInWeb == false && mc.player.collidedVertically && mc.player.fallDistance == 0f && KeyUtil.isPressed(mc.gameSettings.keyBindJump) == false && mc.player.collidedHorizontally && mc.player.isOnLadder() == false && this.packetSpam > stepHeight.length - 2) {
             Vec3d playerPosition = PlayerUtil.getVec();

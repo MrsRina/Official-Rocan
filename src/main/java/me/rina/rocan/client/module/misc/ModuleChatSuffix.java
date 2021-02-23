@@ -7,7 +7,7 @@ import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueString;
 import me.rina.rocan.api.util.chat.ChatSuffixUtil;
 import me.rina.rocan.api.util.client.FlagBoolUtil;
-import me.rina.rocan.client.event.network.SendEventPacket;
+import me.rina.rocan.client.event.network.PacketEvent;
 import net.minecraft.network.play.client.CPacketChatMessage;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
@@ -28,7 +28,7 @@ public class ModuleChatSuffix extends Module {
     }
 
     @Listener
-    public void onListen(SendEventPacket event) {
+    public void onListen(PacketEvent.Send event) {
         if ((event.getPacket() instanceof CPacketChatMessage) == false) {
             return;
         }

@@ -17,10 +17,7 @@ import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.manager.chat.SpammerManager;
 import me.rina.rocan.client.manager.network.PlayerServerManager;
 import me.rina.rocan.client.module.client.ModuleDeveloper;
-import me.rina.rocan.client.module.combat.ModuleAutoArmour;
-import me.rina.rocan.client.module.combat.ModuleKillAura;
-import me.rina.rocan.client.module.combat.ModuleOffhand;
-import me.rina.rocan.client.module.combat.ModuleSurround;
+import me.rina.rocan.client.module.combat.*;
 import me.rina.rocan.client.module.exploit.ModuleExtraSlots;
 import me.rina.rocan.client.module.exploit.ModuleFastUse;
 import me.rina.rocan.client.module.exploit.ModuleBetterMine;
@@ -92,6 +89,7 @@ public class Rocan {
         this.moduleManager.registry(new ModuleAutoArmour());
         this.moduleManager.registry(new ModuleSurround());
         this.moduleManager.registry(new ModuleKillAura());
+        this.moduleManager.registry(new ModuleCritical());
 
         // Category Render.
         this.moduleManager.registry(new ModuleBlockHighlight());

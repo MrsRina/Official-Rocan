@@ -4,8 +4,7 @@ import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.module.registry.Registry;
 import me.rina.rocan.api.setting.value.ValueBoolean;
-import me.rina.rocan.client.event.network.ReceiveEventPacket;
-import me.rina.rocan.client.event.network.SendEventPacket;
+import me.rina.rocan.client.event.network.PacketEvent;
 import net.minecraft.network.play.server.SPacketExplosion;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
@@ -18,7 +17,7 @@ public class ModuleVelocity extends Module {
     public static ValueBoolean settingCancelExplosion = new ValueBoolean("Cancel Explosion", "CancelExplosion", "Client cancel explosion packet event.", true);
 
     @Listener
-    public void onListen(ReceiveEventPacket event) {
+    public void onListen(PacketEvent.Receive event) {
         if (event.getPacket() instanceof SPacketExplosion && settingCancelExplosion.getValue()) {
             event.setCanceled(true);
         }

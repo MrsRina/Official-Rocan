@@ -22,9 +22,11 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public class ModuleAutoEat extends Module {
     public static ValueEnum settingMode = new ValueEnum("Mode", "Mode", "Modes to verify if eats or no!", Mode.HEALTH);
 
+    /* Food misc. */
     public static ValueNumber settingFood = new ValueNumber("Food", "Food", "Food stats to start eat!", 10, 1, 20);
     public static ValueNumber settingFoodFill = new ValueNumber("Fill", "FoodFill", "Stop eating in.", 20, 1, 20);
 
+    /* Health misc. */
     public static ValueBoolean settingOnlyGoldenApple = new ValueBoolean("Only Golden Apple", "OnlyGoldenApple", "Only golden eat!", false);
     public static ValueNumber settingHealth = new ValueNumber("Health", "Health", "Health to start eat.", 20, 1, 20);
     public static ValueNumber settingHealthFill = new ValueNumber("Fill", "HealthFill", "Stop eating in.", 20, 1, 20);
