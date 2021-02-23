@@ -36,10 +36,12 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  **/
 @Registry(name = "Kill Aura", tag = "KillAura", description = "Make you hit any entity close of you.", category = ModuleCategory.COMBAT)
 public class ModuleKillAura extends Module {
+    /* Misc. */
     public static ValueBoolean settingStatus = new ValueBoolean("Status", "Status", "Show target at status module.", false);
     public static ValueBoolean settingOnlySword = new ValueBoolean("Only Sword", "OnlySword", "Only sword to hit.", false);
     public static ValueBoolean settingFriendHit = new ValueBoolean("Friend Hit", "FriendHit", "Hit social friend.", true);
 
+    /* Entities accepted. */
     public static ValueBoolean settingPlayer = new ValueBoolean("Player", "Player", "Hit entity players.", true);
     public static ValueBoolean settingMob = new ValueBoolean("Mob", "Mob", "Hit entity mobs.", true);
     public static ValueBoolean settingAnimal = new ValueBoolean("Animal", "Animal", "Hit entity animal.", true);
@@ -47,6 +49,7 @@ public class ModuleKillAura extends Module {
     public static ValueBoolean settingProjectiles = new ValueBoolean("Projectile", "Projectile", "Hit entity projectiles.", true);
     public static ValueBoolean settingOffhandItem = new ValueBoolean("Offhand Item", "OffhandItem", "Enable use item while aura is hitting.", true);
 
+    /* Misc. */
     public static ValueNumber settingRange = new ValueNumber("Range", "Range", "Range for target.", 4f, 1f, 5f);
     public static ValueEnum settingTargetHitMode = new ValueEnum("Target Hit Mode", "TargetHitMode", "Target type to accept hit.", TargetHitMode.UNKNOWN);
     public static ValueEnum settingTargetMode = new ValueEnum("Target Mode", "TargetMode", "Modes for get target.", TargetMode.CLOSEST);

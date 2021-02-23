@@ -29,28 +29,26 @@ import java.util.List;
  **/
 @Registry(name = "Hole ESP", tag = "HoleESP", description = "Draws holes to help visibility at crystal pvp.", category = ModuleCategory.RENDER)
 public class ModuleHoleESP extends Module {
+    /* Misc hole ESP. */
     private ValueNumber settingRange = new ValueNumber("Range", "Range", "Maximum distance to render.", 6f, 0.1f, 10f);
     private ValueNumber settingOffsetY = new ValueNumber("Offset Y", "OffsetY", "Offset y block render.", 25, 0, 100);
-    
-    public static ValueBoolean settingRGB = new ValueBoolean("RGB", "RGB", "RGB effect.", false);
 
+    /* Color. */
+    public static ValueBoolean settingRGB = new ValueBoolean("RGB", "RGB", "RGB effect.", false);
     public static ValueNumber settingRed = new ValueNumber("Red", "Red", "Color line range red.", 255, 0, 255);
     public static ValueNumber settingGreen = new ValueNumber("Green", "Green", "Color line range green.", 0, 0, 255);
     public static ValueNumber settingBlue = new ValueNumber("Blue", "Blue", "Color line range blue.", 255, 0, 255);
     public static ValueNumber settingAlpha = new ValueNumber("Alpha", "Alpha", "Color line range alpha.", 255, 0, 255);
 
-    /*
-     * Outline config;
-     */
     public static ValueEnum settingOutline = new ValueEnum("Outline", "Outline", "Outline effect.", RenderOutline.Enabled);
 
     enum RenderOutline {
         Enabled, Disabled;
     }
 
+    /* Outline misc. */
     public static ValueNumber settingOutlineLineSize = new ValueNumber("Outline Line Size", "OutlineLineSize", "Line size.", 1.0f, 1f, 3.0f);
     public static ValueBoolean settingOutlineRGB = new ValueBoolean("Outline RGB", "OutlineRGB", "360 color range.", false);
-
     public static ValueNumber settingOutlineRed = new ValueNumber("Outline Red", "OutlineRed", "Color line range red.", 255, 0, 255);
     public static ValueNumber settingOutlineGreen = new ValueNumber("Outline Green", "OutlineGreen", "Color line range green.", 0, 0, 255);
     public static ValueNumber settingOutlineBlue = new ValueNumber("Outline Blue", "OutlineBlue", "Color line range blue.", 255, 0, 255);

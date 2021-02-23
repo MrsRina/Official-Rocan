@@ -17,12 +17,14 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  **/
 @Registry(name = "Custom Fov", tag = "CustomFov", description = "Changes the fov of the item held in your hand.", category = ModuleCategory.RENDER)
 public class ModuleCustomFov extends Module {
+    /* Misc right hand. */
     public static ValueNumber settingRightX = new ValueNumber("Right X", "RightX", "Changes the x value.", 0.0, -50.0, 50.0);
     public static ValueNumber settingRightY = new ValueNumber("Right Y", "RightY", "Changes the y value.", 0.0, -50.0, 50.0);
     public static ValueNumber settingRightZ = new ValueNumber("Right Z", "RightZ", "Changes the z value.", 0.0, -50.0, 50.0);
 
     public static ValueNumber settingScaleRight = new ValueNumber("Scale Right", "ScaleRight", "Changes the scale.", 10, 0, 50);
 
+    /* Misc left hand. */
     public static ValueNumber settingLeftX = new ValueNumber("Left X", "LeftX", "Changes the x value.", 0.0, -50.0, 50.0);
     public static ValueNumber settingLeftY = new ValueNumber("Left Y", "LeftY", "Changes the y value.", 0.0, -50.0, 50.0);
     public static ValueNumber settingLeftZ = new ValueNumber("Left Z", "LeftZ", "Changes the z value.", 0.0, -50.0, 50.0);

@@ -34,13 +34,17 @@ import java.util.ArrayList;
  **/
 @Registry(name = "Surround", tag = "Surround", description = "Automatically places block around of you.", category = ModuleCategory.COMBAT)
 public class ModuleSurround extends Module {
+    /* Misc utils. */
     public static ValueBoolean settingOnGround = new ValueBoolean("On Ground", "OnGround", "Stay on ground only for places blocks.", true);
     public static ValueBoolean settingManualRotation = new ValueBoolean("Manual Rotation", "ManualRotation", "Player manually rotate.", false);
     public static ValueBoolean settingSmoothRotation = new ValueBoolean("Smooth Rotation", "SmoothRotation", "Smooth camera rotation.", false);
     public static ValueBoolean settingAutoCenter = new ValueBoolean("Auto-Center", "AutoCenter", "Set center position of player for start place blocks.", true);
     public static ValueBoolean settingSmoothCenter = new ValueBoolean("Smooth Center", "SmoothCenter", "Smooth center movement.", false);
+
+    /* Misc. */
     public static ValueNumber settingTimeOut = new ValueNumber("Time Out", "TimeOut", "The time out for cancel everything.", 3000, 0, 3000);
     public static ValueNumber settingDelay = new ValueNumber("Delay", "Delay", "MS delay for places blocks.", 250, 0, 500);
+
     public static ValueEnum settingMode = new ValueEnum("Mode", "Mode", "Modes to place blocks.", Mode.SURROUND);
 
     private ArrayList<BlockPos> blocks = new ArrayList<>();

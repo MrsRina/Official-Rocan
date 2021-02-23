@@ -26,10 +26,12 @@ import java.util.HashMap;
  **/
 @Registry(name = "Offhand", tag = "Offhand", description = "Automatically set offhand item.", category = ModuleCategory.COMBAT)
 public class ModuleOffhand extends Module {
+    /* Misc. */
     public static ValueBoolean settingStatus = new ValueBoolean("Status", "Status", "Show type of item at status module.", true);
     public static ValueNumber settingSmartTotem = new ValueNumber("Smart Totem", "SmartTotem", "If 0 its disabled, make you don't die.", 1, 0, 20);
     public static ValueBoolean settingAutoTotem = new ValueBoolean("Auto totem", "AutoTotem", "Auto disable or enable totem.", true);
 
+    /* Types. */
     public static ValueBind settingTotem = new ValueBind("Totem", "Totem", "Set totem at hand.", -1);
     public static ValueBind settingEndCrystal = new ValueBind("End Crystal", "EndCrystal", "Set end crystal at hand.", -1);
     public static ValueBind settingGoldenApple = new ValueBind("Golden Apple", "GoldenApple", "Set golden apple at hand.", -1);

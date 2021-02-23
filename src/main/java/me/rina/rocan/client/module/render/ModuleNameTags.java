@@ -165,8 +165,12 @@ public class ModuleNameTags extends Module {
         float scaling = (float) ((distance / 8f) * Math.pow(1.2589254f, settingScale.getValue().intValue() / 100f));
 
         boolean flag = distance <= 4.0f;
-
-        this.scaled = TurokMath.lerp(this.scaled, settingSmartScale.getValue() ? (flag ? settingScale.getValue().intValue() / 100f : scaling) : scaling, Rocan.getClientEventManager().getCurrentRender3DPartialTicks());
+        
+        if (flag && settingSmartScale.getValue()) {
+            this.scaled = settingScale.getValue().intValue() / 100f;
+        } else {
+            this.scaled = scaling;
+        }
     }
 
     public boolean doAccept(EntityLivingBase entity) {

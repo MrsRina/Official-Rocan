@@ -8,10 +8,15 @@ import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.api.util.item.SlotUtil;;
+import me.rina.rocan.api.util.network.PacketUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
+import me.rina.rocan.client.event.network.PacketEvent;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
+import net.minecraft.network.play.client.CPacketPlayerTryUseItem;
+import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
+import net.minecraft.util.EnumHand;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
@@ -58,6 +63,13 @@ public class ModuleAutoEat extends Module {
             settingFoodFill.setValue(settingFood.getValue());
         }
     }
+    
+    @Listener
+    public void onListenEventPacket(PacketEvent.Send event) {
+        if (event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock && this.isToEat) {
+            event.setCanceled(true);
+        }
+    }
 
     @Listener
     public void onListen(ClientTickEvent event) {
@@ -69,7 +81,7 @@ public class ModuleAutoEat extends Module {
             boolean flagO = this.newSlot == 40; // Offhand.
             boolean flagM = this.newSlot != 40; // Main hand.
 
-            if (settingMode.getValue() == Mode.HEALTH && ((settingOnlyGoldenApple.getValue() == false && mc.player.getFoodStats().getFoodLevel() == 20) | settingOnlyGoldenApple.getValue())) {
+            if (settingMode.getValue() == Mode.HEALTH && settingOnlyGoldenApple.getValue() == false && mc.player.getFoodStats().getFoodLevel() == 20) {
                 this.isToEat = false;
             }
 
@@ -139,8 +151,17 @@ public class ModuleAutoEat extends Module {
         }
     }
 
+    /**
+     * Make player eat.
+     */
     public void doEat() {
+        // We need verify hand.
+        EnumHand hand = this.doAccept(mc.player.getHeldItemOffhand().getItem()) ? EnumHand.OFF_HAND : EnumHand.MAIN_HAND;
+
         mc.gameSettings.keyBindUseItem.pressed = true;
+
+        // Process right click.
+        mc.playerController.processRightClick(mc.player, mc.world, hand);
     }
 
     public int findFoodSlot() {

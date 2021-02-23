@@ -21,25 +21,22 @@ import java.awt.*;
  **/
 @Registry(name = "Block Highlight", tag = "BlockHighlight", description = "Draw block over the mouse.", category = ModuleCategory.RENDER)
 public class ModuleBlockHighlight extends Module {
+    /* Misc. */
     public static ValueBoolean settingRGB = new ValueBoolean("RGB", "RGB", "RGB effect.", false);
-
     public static ValueNumber settingRed = new ValueNumber("Red", "Red", "Color line range red.", 0, 0, 255);
     public static ValueNumber settingGreen = new ValueNumber("Green", "Green", "Color line range green.", 0, 0, 255);
     public static ValueNumber settingBlue = new ValueNumber("Blue", "Blue", "Color line range blue.", 0, 0, 255);
     public static ValueNumber renderAlpha = new ValueNumber("Alpha", "Alpha", "Color line range alpha.", 100, 0, 255);
 
-    /*
-     * Outline config;
-     */
     public static ValueEnum renderOutline = new ValueEnum("Outline", "Outline", "Outline effect.", RenderOutline.Enabled);
 
     enum RenderOutline {
         Enabled, Disabled;
     }
 
+    /* Outline misc. */
     public static ValueNumber settingOutlineLineSize = new ValueNumber("Outline Line Size", "OutlineLineSize", "Line size.", 1.0f, 1f, 3.0f);
     public static ValueBoolean settingOutlineRGB = new ValueBoolean("Outline RGB", "OutlineRGB", "360 color range.", false);
-
     public static ValueNumber settingOutlineRed = new ValueNumber("Outline Red", "OutlineRed", "Color line range red.", 255, 0, 255);
     public static ValueNumber settingOutlineGreen = new ValueNumber("Outline Green", "OutlineGreen", "Color line range green.", 255, 0, 255);
     public static ValueNumber settingOutlineBlue = new ValueNumber("Outline Blue", "OutlineBlue", "Color line range blue.", 255, 0, 255);

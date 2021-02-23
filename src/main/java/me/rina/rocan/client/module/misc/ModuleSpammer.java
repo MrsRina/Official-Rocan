@@ -22,13 +22,16 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  **/
 @Registry(name = "Spammer", tag = "Spammer", description = "Send a lot messages on chat.", category = ModuleCategory.MISC)
 public class ModuleSpammer extends Module {
+    /* Misc settings. */
     public static ValueNumber settingDelay = new ValueNumber("Delay", "Delay", "Seconds delay to send message.", 0.5f, 0.5f, 10.0f);
     public static ValueNumber settingLimit = new ValueNumber("Limit", "Limit", "The limit of messages in queue.", 3, 1, 6);
     public static ValueBoolean settingAntiSpam = new ValueBoolean("Anti-Spam", "AntiSpam", "Make anti spam server crazy.", true);
 
+    /* Walk. */
     public static ValueEnum settingWalk = new ValueEnum("Walk", "Walk", "Spam blocks walked.", FlagBoolUtil.TRUE);
     public static ValueString settingWalkText = new ValueString("Walk Text", "WalkText", "The custom text for spam.", "I just walked <blocks> blocks, thanks to Rocan!");
 
+    /* Jump. */
     public static ValueEnum settingJump = new ValueEnum("Jump", "Jump", "Spam jump action.", FlagBoolUtil.TRUE);
     public static ValueString settingJumpText = new ValueString("Jump Text", "JumpText", "The custom text for spam.", "I just jumped, thanks to Rocan!");
 

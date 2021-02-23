@@ -31,12 +31,14 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  **/
 @Registry(name = "Step", tag = "Step", description = "Step up blocks.", category = ModuleCategory.MOVEMENT)
 public class ModuleStep extends Module {
+    /* Normal. */
     public static ValueBind settingBindNormal = new ValueBind("Bind Normal", "Bind Normal", "Normal step.", -1);
     public static ValueNumber settingHeight = new ValueNumber("Height", "Height", "Height for step.", 2, 1, 4);
     public static ValueBoolean settingVanilla = new ValueBoolean("Vanilla", "Vanilla", "Vanilla step.", false);
     public static ValueBoolean settingSmooth = new ValueBoolean("Smooth", "Smooth", "Smooth step.", false);
     public static ValueBoolean settingDisable = new ValueBoolean("Disable", "Disable", "Disable after you step up.", false);
 
+    /* Reverse. */
     public static ValueBoolean settingReverse = new ValueBoolean("Reverse", "Reverse", "Reverse step.", false);
     public static ValueBind settingBindReverse = new ValueBind("Bind Reverse", "BindReverse", "Step but reverse.", -1);
     public static ValueBoolean settingHole = new ValueBoolean("Hole", "Hole", "Only holes reverse.", true);
