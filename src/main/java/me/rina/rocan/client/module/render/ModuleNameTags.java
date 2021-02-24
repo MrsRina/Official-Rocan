@@ -11,9 +11,12 @@ import me.rina.rocan.api.social.management.SocialManager;
 import me.rina.rocan.api.social.type.SocialType;
 import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.api.util.client.NullUtil;
+import me.rina.rocan.api.util.network.ServerUtil;
+import me.rina.rocan.client.manager.network.PlayerServerManager;
 import me.rina.turok.render.font.management.TurokFontManager;
 import me.rina.turok.render.opengl.TurokGL;
 import me.rina.turok.util.TurokMath;
+import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -143,7 +146,7 @@ public class ModuleNameTags extends Module {
         // Draw.
         GlStateManager.enableTexture2D();
 
-        String tag = (settingName.getValue() ? entity.getName() : "");
+        String tag = this.getTag(entity);
         Color color = this.getColor(entity);
 
         int width = TurokFontManager.getStringWidth(Rocan.getWrapper().fontNameTags, tag) / 2;
@@ -199,6 +202,20 @@ public class ModuleNameTags extends Module {
         }
 
         return isAccepted;
+    }
+
+    public String getTag(EntityLivingBase entity) {
+        StringBuilder stringBuilder = new StringBuilder();
+
+        stringBuilder.append(settingName.getValue() ? entity.getName() + " " : "");
+
+        if (entity instanceof EntityPlayer) {
+            final NetworkPlayerInfo playerInfo = PlayerServerManager.get(entity.getName());
+
+            stringBuilder.append(settingPing.getValue() && playerInfo != null ? ServerUtil.getPing(playerInfo) : "");
+        }
+
+        return stringBuilder.toString();
     }
 
     public Color getColor(EntityLivingBase entity) {

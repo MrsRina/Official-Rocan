@@ -17,15 +17,13 @@ import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.manager.chat.SpammerManager;
 import me.rina.rocan.client.manager.network.PlayerServerManager;
 import me.rina.rocan.client.module.client.ModuleDeveloper;
+import me.rina.rocan.client.module.client.ModuleTPSSync;
 import me.rina.rocan.client.module.combat.*;
 import me.rina.rocan.client.module.exploit.ModuleExtraSlots;
 import me.rina.rocan.client.module.exploit.ModuleFastUse;
 import me.rina.rocan.client.module.exploit.ModuleBetterMine;
 import me.rina.rocan.client.module.misc.*;
-import me.rina.rocan.client.module.movement.ModuleAutoWalk;
-import me.rina.rocan.client.module.movement.ModuleMoveGUI;
-import me.rina.rocan.client.module.movement.ModuleStep;
-import me.rina.rocan.client.module.movement.ModuleVelocity;
+import me.rina.rocan.client.module.movement.*;
 import me.rina.rocan.client.module.render.*;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
@@ -83,6 +81,7 @@ public class Rocan {
         // Category Client.
         this.moduleManager.registry(new me.rina.rocan.client.module.client.ModuleClickGUI());
         this.moduleManager.registry(new ModuleDeveloper());
+        this.moduleManager.registry(new ModuleTPSSync());
 
         // Category Combat.
         this.moduleManager.registry(new ModuleOffhand());
@@ -116,6 +115,7 @@ public class Rocan {
         this.moduleManager.registry(new ModuleMoveGUI());
         this.moduleManager.registry(new ModuleVelocity());
         this.moduleManager.registry(new ModuleStep());
+        this.moduleManager.registry(new ModuleStrafe());
 
         // Commands.
         this.commandManager.registry(new CommandPrefix());

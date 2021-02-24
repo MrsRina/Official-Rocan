@@ -70,6 +70,8 @@ public class ModuleSurround extends Module {
         PLACED, STUCK, AIR;
     }
 
+    private final Item obsidian = Item.getItemFromBlock(Blocks.OBSIDIAN);
+
     @Override
     public void onSetting() {
         settingSmoothRotation.setEnabled(settingManualRotation.getValue());
@@ -162,7 +164,7 @@ public class ModuleSurround extends Module {
         this.slot = this.oldSlot;
 
         if (SlotUtil.getItemStack(this.oldSlot).getItem() != itemObsidian) {
-            this.slot = SlotUtil.findItemSlotFromHotBar(itemObsidian);
+            this.slot = this.doFind();
         }
     }
 
@@ -209,6 +211,28 @@ public class ModuleSurround extends Module {
         }
     }
 
+    /*
+     * Uses to update current item to obi at hot bar.
+     */
+    public void doUpdateCurrentItem() {
+        this.slot = this.doFind();
+
+        if (this.slot == -1) {
+            this.setDisabled();
+        } else {
+            mc.player.inventory.currentItem = this.slot;
+        }
+    }
+
+    /*
+     * For some reason I need do - 36 for handle current item;
+     */
+    public int doFind() {
+        int i = SlotUtil.findItemSlotFromHotBar(obsidian);
+
+        return i != -1 ? i - 36 : -1;
+    }
+
     public boolean doCenterPosition() {
         BlockPos pos = PlayerUtil.getBlockPos();
         Vec3d center = PositionUtil.toVec(pos).add(0.5, 0, 0.5);
@@ -223,6 +247,11 @@ public class ModuleSurround extends Module {
     }
 
     public Flag doPlace(BlockPos pos) {
+        /*
+         * First verification, for unnecessary segment.
+         */
+        this.doUpdateCurrentItem();
+
         if (BlockUtil.isAir(pos) == false) {
             return Flag.AIR;
         }
@@ -255,15 +284,10 @@ public class ModuleSurround extends Module {
         EnumFacing facing = BlockUtil.getFacing(offset, mc.player);
         Vec3d hit = PositionUtil.hit(offset, facing);
 
-        if (mc.player.getHeldItemMainhand().getItem() != Item.getItemFromBlock(Blocks.OBSIDIAN)) {
-            this.slot = SlotUtil.findItemSlotFromHotBar(Item.getItemFromBlock(Blocks.OBSIDIAN));
-
-            if (this.slot == -1) {
-                this.setDisabled();
-            }
-
-            mc.player.inventory.currentItem = this.slot;
-        }
+        /*
+         * Last update in hot bar, for not hack slot kick.
+         */
+        this.doUpdateCurrentItem();
 
         // Send swing anim to server.
         mc.player.swingArm(EnumHand.MAIN_HAND);
@@ -279,7 +303,9 @@ public class ModuleSurround extends Module {
             PlayerRotationUtil.packet(hit);
         }
 
-        mc.playerController.processRightClickBlock(mc.player, mc.world, offset, facing, hit, EnumHand.MAIN_HAND);
+        if (mc.player.getHeldItemMainhand().getItem() == obsidian) {
+            mc.playerController.processRightClickBlock(mc.player, mc.world, offset, facing, hit, EnumHand.MAIN_HAND);
+        }
 
         return Flag.PLACED;
     }

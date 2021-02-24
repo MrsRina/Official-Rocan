@@ -1,5 +1,6 @@
 package me.rina.rocan.client.module.movement;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import ibxm.Player;
 import me.rina.rocan.Rocan;
 import me.rina.rocan.api.module.Module;
@@ -44,6 +45,7 @@ public class ModuleStep extends Module {
     public static ValueBoolean settingHole = new ValueBoolean("Hole", "Hole", "Only holes reverse.", true);
 
     private int packetSpam;
+    private int normalStepAlert;
 
     @Override
     public void onSetting() {
@@ -62,8 +64,18 @@ public class ModuleStep extends Module {
         }
 
         if (settingBindNormal.getState()) {
+            if (this.normalStepAlert != -1) {
+                this.print(ChatFormatting.GREEN + "Normal step");
+                this.normalStepAlert = -1;
+            }
+
             this.doNormal();
         } else {
+            if (this.normalStepAlert != 0) {
+                this.print(ChatFormatting.RED + "Normal step");
+                this.normalStepAlert = 0;
+            }
+
             if (mc.player.stepHeight != 0) {
                 mc.player.stepHeight = 0;
             }
@@ -100,10 +112,8 @@ public class ModuleStep extends Module {
         }
 
         if (mc.player.collidedHorizontally && mc.player.onGround) {
-            this.packetSpam++;
+            ++this.packetSpam;
         }
-
-        final AxisAlignedBB bb = mc.player.getEntityBoundingBox();
 
         if (mc.player.onGround && mc.player.isInsideOfMaterial(Material.WATER) == false && mc.player.isInsideOfMaterial(Material.LAVA) == false && mc.player.isInWeb == false && mc.player.collidedVertically && mc.player.fallDistance == 0f && KeyUtil.isPressed(mc.gameSettings.keyBindJump) == false && mc.player.collidedHorizontally && mc.player.isOnLadder() == false && this.packetSpam > stepHeight.length - 2) {
             Vec3d playerPosition = PlayerUtil.getVec();
