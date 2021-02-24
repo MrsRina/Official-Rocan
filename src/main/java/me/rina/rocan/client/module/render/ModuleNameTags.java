@@ -156,9 +156,6 @@ public class ModuleNameTags extends Module {
         GlStateManager.disableTexture2D();
 
         // Release.
-        GlStateManager.glNormal3f(0, 0, 0);
-        GlStateManager.translate(0, 40, 0);
-
         GlStateManager.depthMask(true);
         GlStateManager.enableLighting();
         GlStateManager.enableDepth();

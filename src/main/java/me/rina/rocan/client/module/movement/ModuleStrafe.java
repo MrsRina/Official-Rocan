@@ -6,6 +6,7 @@ import me.rina.rocan.api.module.registry.Registry;
 import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
+import me.rina.rocan.api.util.client.KeyUtil;
 import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.api.util.entity.PlayerUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
@@ -132,9 +133,13 @@ public class ModuleStrafe extends Module {
                 }
             }
 
-            // if (settingOldStrafeSmoothJump.getValue() == false) {
-            //     speed = 0.6174077f;
-            //}
+            if (KeyUtil.isPressed(mc.gameSettings.keyBindJump) && mc.player.onGround) {
+                if (settingOldStrafeSmoothJump.getValue()) {
+                    speed = 0.6174077f;
+                }
+
+                event.setY(mc.player.motionY = getMotionJumpY());
+            }
 
             double x = ((playerForward * speed) * Math.cos(Math.toRadians(playerRotationYaw + 90f)) + (playerStrafe * speed) * Math.sin(Math.toRadians(playerRotationYaw + 90f)));
             double z = ((playerForward * speed) * Math.sin(Math.toRadians(playerRotationYaw + 90f)) - (playerStrafe * speed) * Math.cos(Math.toRadians(playerRotationYaw + 90f)));
@@ -142,5 +147,17 @@ public class ModuleStrafe extends Module {
             event.setX(x);
             event.setZ(z);
         }
+    }
+
+    public float getMotionJumpY() {
+        float y = 0.40123128f;
+
+        if (mc.player.isPotionActive(MobEffects.JUMP_BOOST)) {
+            final int amplify = mc.player.getActivePotionEffect(MobEffects.JUMP_BOOST).getAmplifier();
+
+            y += (amplify + 1) * 0.1f;
+        }
+
+        return y;
     }
 }
