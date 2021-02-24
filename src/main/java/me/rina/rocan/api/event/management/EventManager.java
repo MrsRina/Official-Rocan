@@ -5,11 +5,14 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.command.Command;
 import me.rina.rocan.api.command.management.CommandManager;
 import me.rina.rocan.api.module.Module;
+import me.rina.rocan.api.module.management.ModuleManager;
 import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
+import me.rina.rocan.client.module.movement.ModuleNoSlowDown;
 import me.rina.turok.render.opengl.TurokGL;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.ClientChatEvent;
+import net.minecraftforge.client.event.InputUpdateEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -126,6 +129,15 @@ public class EventManager {
             }
 
             modules.onSetting();
+        }
+    }
+
+    @SubscribeEvent()
+    public void onInputUpdate(InputUpdateEvent event) {
+        ModuleNoSlowDown module = (ModuleNoSlowDown) ModuleManager.get(ModuleNoSlowDown.class);
+
+        if (module.isEnabled()) {
+            module.onUpdate(event);
         }
     }
 

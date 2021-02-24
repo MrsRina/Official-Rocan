@@ -116,6 +116,7 @@ public class Rocan {
         this.moduleManager.registry(new ModuleVelocity());
         this.moduleManager.registry(new ModuleStep());
         this.moduleManager.registry(new ModuleStrafe());
+        this.moduleManager.registry(new ModuleNoSlowDown());
 
         // Commands.
         this.commandManager.registry(new CommandPrefix());
