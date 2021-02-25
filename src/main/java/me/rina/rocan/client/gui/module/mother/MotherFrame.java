@@ -372,7 +372,7 @@ public class MotherFrame extends Frame {
             this.isStarted = false;
         }
 
-        /**
+        /*
          * We need make the GUI return backs, so we need get distance and bypass the interpolation delay.
          */
         if (this.isReturnCenterPressed && ((this.isMouseClickedLeft == false && this.isDragging == false) && this.master.isPositionBack() && this.master.isOpened())) {

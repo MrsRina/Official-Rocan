@@ -129,7 +129,7 @@ public class Tracker {
 
         for (PacketUtil.PacketTracker packets : new ArrayList<>(this.queue)) {
             if (this.tick.isPassedMS(this.delay)) {
-                this.send(packets);
+                if (packets.isCanceled() == false) this.send(packets);
 
                 this.queue.remove(packets);
                 this.isNext = true;

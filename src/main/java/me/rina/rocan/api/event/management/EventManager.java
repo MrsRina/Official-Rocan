@@ -7,6 +7,7 @@ import me.rina.rocan.api.command.management.CommandManager;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.management.ModuleManager;
 import me.rina.rocan.api.util.chat.ChatUtil;
+import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.rocan.client.module.movement.ModuleNoSlowDown;
 import me.rina.turok.render.opengl.TurokGL;
@@ -33,7 +34,7 @@ public class EventManager {
     private float currentRender2DPartialTicks;
     private float currentRender3DPartialTicks;
 
-    private int[] currentRGBColor;
+    private int[] currentRGBColor = {0, 0, 0};
 
     protected void setCurrentRender2DPartialTicks(float currentRender2DPartialTicks) {
         this.currentRender2DPartialTicks = currentRender2DPartialTicks;
@@ -65,14 +66,21 @@ public class EventManager {
     }
 
     @SubscribeEvent
-    public void onRender(RenderGameOverlayEvent event) {
-        if (Rocan.MC.player == null) {
+    public void onTick(TickEvent.ClientTickEvent event) {
+        if (NullUtil.isPlayer()) {
             return;
         }
 
         Rocan.getSpammerManager().onUpdateAll();
         Rocan.getTrackerManager().onUpdateAll();
         Rocan.getPlayerServerManager().onUpdateAll();
+    }
+
+    @SubscribeEvent
+    public void onRender(RenderGameOverlayEvent event) {
+        if (Rocan.MC.player == null) {
+            return;
+        }
 
         this.setCurrentRender2DPartialTicks(event.getPartialTicks());
 

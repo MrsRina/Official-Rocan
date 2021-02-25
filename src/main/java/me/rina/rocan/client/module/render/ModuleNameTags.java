@@ -18,6 +18,7 @@ import me.rina.turok.render.opengl.TurokGL;
 import me.rina.turok.util.TurokMath;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.IMob;
@@ -39,9 +40,9 @@ public class ModuleNameTags extends Module {
     public static ValueBoolean settingAnimal = new ValueBoolean("Mob", "Mob", "Allows render animals name tag.", true);
 
     /* Player stuff. */
-    public static ValueBoolean settingPlayer = new ValueBoolean("Player", "Player", "Allows render player name tag.", true);
-    public static ValueBoolean settingFriend = new ValueBoolean("Friend", "Friend", "Take HUD color to render friends.", true);
-    public static ValueBoolean settingEnemy = new ValueBoolean("Enemy", "Enemy", "Focus enemy only.", false);
+    public static ValueBoolean settingPlayer = new ValueBoolean("Player", "Player", "Allows render players name tag.", true);
+    public static ValueBoolean settingFriend = new ValueBoolean("Friend", "Friend", "Allows render friends name tag.", true);
+    public static ValueBoolean settingEnemy = new ValueBoolean("Enemy", "Enemy", "Allows render enemies name tag.", false);
     public static ValueBoolean settingPing = new ValueBoolean("Ping", "Ping", "Show ping player.", false);
     public static ValueBoolean settingName = new ValueBoolean("Name", "Name", "Draws name.", true);
 
@@ -53,7 +54,7 @@ public class ModuleNameTags extends Module {
     public static ValueBoolean settingSmartScale = new ValueBoolean("Smart Scale", "SmartScale", "Automatically scale if you are close of player.", true);
     public static ValueNumber settingScale = new ValueNumber("Scale", "Scale", "The scale of render.", 25, 1, 1000);
     public static ValueNumber settingOffsetY = new ValueNumber("Offset Y", "OffsetY", "Offset y to render.", 10, 0, 100);
-    public static ValueNumber settingRange = new ValueNumber("Range", "Range", "Distance to capture players.", 200, 0, 500);
+    public static ValueNumber settingRange = new ValueNumber("Range", "Range", "Distance to capture players.", 200, 0, 200);
 
     private float scaled;
 
@@ -127,6 +128,8 @@ public class ModuleNameTags extends Module {
          */
         this.doScale(entity);
 
+        RenderHelper.enableStandardItemLighting();
+
         GlStateManager.pushMatrix();
         GlStateManager.translate(x, y, z);
 
@@ -160,7 +163,11 @@ public class ModuleNameTags extends Module {
         GlStateManager.enableLighting();
         GlStateManager.enableDepth();
         GlStateManager.enableTexture2D();
+        GlStateManager.scale(-40, -40, 40);
+        GlStateManager.translate(0, 20, 0);
         GlStateManager.popMatrix();
+
+        RenderHelper.disableStandardItemLighting();
     }
 
     public void doScale(EntityLivingBase entity) {
@@ -183,13 +190,17 @@ public class ModuleNameTags extends Module {
             Social social = SocialManager.get(entity.getName());
 
             if (social != null) {
+                if (social.getType() == SocialType.FRIEND && settingFriend.getValue()) {
+                    isAccepted = true;
+                }
+
                 if (social.getType() == SocialType.ENEMY && settingEnemy.getValue()) {
                     isAccepted = true;
                 }
-            }
-
-            if (settingEnemy.getValue() == false) {
-                isAccepted = true;
+            } else {
+                if (settingPlayer.getValue()) {
+                    isAccepted = true;
+                }
             }
         }
 
@@ -197,7 +208,7 @@ public class ModuleNameTags extends Module {
             isAccepted = true;
         }
 
-        if (settingAnimal.getValue() && entity instanceof IAnimals) {
+        if (settingAnimal.getValue() && entity instanceof IAnimals && (entity instanceof IMob) == false) {
             isAccepted = true;
         }
 

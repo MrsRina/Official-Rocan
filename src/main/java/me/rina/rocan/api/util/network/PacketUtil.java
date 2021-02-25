@@ -16,6 +16,8 @@ public class PacketUtil {
         private String name;
         private Packet<?> packet;
 
+        private boolean isCanceled;
+
         public PacketTracker(String name, Packet packet) {
             this.name = name;
             this.packet = packet;
@@ -35,6 +37,14 @@ public class PacketUtil {
 
         public Packet<?> getPacket() {
             return packet;
+        }
+
+        public boolean isCanceled() {
+            return isCanceled;
+        }
+
+        public void setCanceled(boolean canceled) {
+            isCanceled = canceled;
         }
 
         /**

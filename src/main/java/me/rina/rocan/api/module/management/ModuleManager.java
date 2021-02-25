@@ -104,6 +104,12 @@ public class ModuleManager implements ISLClass {
         }
     }
 
+    public static void refresh() {
+        for (Module modules : INSTANCE.getModuleList()) {
+            modules.onSetting();
+        }
+    }
+
     @Override
     public void onSave() {
         for (Module modules : this.getModuleList()) {

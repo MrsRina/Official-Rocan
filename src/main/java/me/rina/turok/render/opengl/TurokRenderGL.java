@@ -140,7 +140,7 @@ public class TurokRenderGL {
 	public static void drawOutlineRect(float x, float y, float width, float height) {
 		TurokGL.pushMatrix();
 
-		TurokGL.enable(GL11.GL_SRC_ALPHA);
+		TurokGL.enable(GL11.GL_BLEND);
 		TurokGL.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 		TurokGL.lineSize(1.0f);
@@ -232,10 +232,8 @@ public class TurokRenderGL {
 		TurokGL.enable(GL11.GL_BLEND);
 		TurokGL.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-		TurokGL.prepare(GL11.GL_POLYGON);
+		TurokGL.prepare(GL11.GL_QUADS);
 		{
-			TurokGL.addVertex(x, y);
-
 			TurokGL.addVertex(x, y);
 			TurokGL.addVertex(x,y + height);
 
@@ -244,7 +242,6 @@ public class TurokRenderGL {
 		}
 
 		TurokGL.release();
-
 		TurokGL.disable(GL11.GL_BLEND);
 
 		TurokGL.popMatrix();

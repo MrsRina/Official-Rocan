@@ -3,6 +3,7 @@ package me.rina.rocan.client.module.combat;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.module.registry.Registry;
+import me.rina.rocan.api.setting.value.ValueBind;
 import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
@@ -39,10 +40,13 @@ public class ModuleKillAura extends Module {
     /* Misc. */
     public static ValueBoolean settingStatus = new ValueBoolean("Status", "Status", "Show target at status module.", false);
     public static ValueBoolean settingOnlySword = new ValueBoolean("Only Sword", "OnlySword", "Only sword to hit.", false);
-    public static ValueBoolean settingFriendHit = new ValueBoolean("Friend Hit", "FriendHit", "Hit social friend.", true);
+
+    /* Player stuff. */
+    public static ValueBoolean settingPlayer = new ValueBoolean("Player", "Player", "Hit entity players.", true);
+    public static ValueBoolean settingFriend = new ValueBoolean("Friend", "Friend", "Hit entity friend.", false);
+    public static ValueBoolean settingEnemy = new ValueBoolean("Enemy", "Enemy", "Hit entity enemy.", true);
 
     /* Entities accepted. */
-    public static ValueBoolean settingPlayer = new ValueBoolean("Player", "Player", "Hit entity players.", true);
     public static ValueBoolean settingMob = new ValueBoolean("Mob", "Mob", "Hit entity mobs.", true);
     public static ValueBoolean settingAnimal = new ValueBoolean("Animal", "Animal", "Hit entity animal.", true);
     public static ValueBoolean settingVehicles = new ValueBoolean("Vehicle", "Vehicle", "Hit entity vehicles.", true);
@@ -51,12 +55,7 @@ public class ModuleKillAura extends Module {
 
     /* Misc. */
     public static ValueNumber settingRange = new ValueNumber("Range", "Range", "Range for target.", 4f, 1f, 5f);
-    public static ValueEnum settingTargetHitMode = new ValueEnum("Target Hit Mode", "TargetHitMode", "Target type to accept hit.", TargetHitMode.UNKNOWN);
     public static ValueEnum settingTargetMode = new ValueEnum("Target Mode", "TargetMode", "Modes for get target.", TargetMode.CLOSEST);
-
-    public enum TargetHitMode {
-        ENEMY, UNKNOWN;
-    }
 
     public enum TargetMode {
         CLOSEST, NORMAL;
@@ -102,8 +101,22 @@ public class ModuleKillAura extends Module {
     public boolean doVerify(Entity entity) {
         boolean isVerified = false;
 
-        if (entity instanceof EntityPlayer && entity != mc.player && settingPlayer.getValue()) {
-            isVerified = true;
+        if (entity instanceof EntityPlayer && entity != mc.player && (settingPlayer.getValue() || settingEnemy.getValue() || settingFriend.getValue())) {
+            Social social = SocialManager.get(entity.getName());
+
+            if (social != null) {
+                if (social.getType() == SocialType.FRIEND && settingFriend.getValue()) {
+                    isVerified = true;
+                }
+
+                if (social.getType() == SocialType.ENEMY && settingEnemy.getValue()) {
+                    isVerified = true;
+                }
+            } else {
+                if (settingPlayer.getValue()) {
+                    isVerified = true;
+                }
+            }
         }
 
         if (entity instanceof IMob && settingMob.getValue()) {
@@ -151,39 +164,10 @@ public class ModuleKillAura extends Module {
 
             if (currentRange <= targetRange) {
                 targetRange = settingTargetMode.getValue() == TargetMode.CLOSEST ? currentRange : settingRange.getValue().floatValue();
-
-                if (entities instanceof EntityPlayer) {
-                    EntityPlayer players = (EntityPlayer) entities;
-
-                    if (this.doAccept(players)) {
-                        entity = entities;
-                    }
-                } else {
-                    entity = entities;
-                }
+                entity = entities;
             }
         }
 
         return entity;
-    }
-
-    public boolean doAccept(EntityPlayer player) {
-        boolean isAccepted = false;
-
-        Social social = SocialManager.get(player.getName());
-
-        if (social != null && social.getType() == SocialType.FRIEND && settingFriendHit.getValue()) {
-            isAccepted = true;
-        }
-
-        if (social != null && social.getType() == SocialType.ENEMY && settingTargetHitMode.getValue() == TargetHitMode.ENEMY) {
-            isAccepted = true;
-        }
-
-        if (settingTargetHitMode.getValue() == TargetHitMode.UNKNOWN) {
-            isAccepted = true;
-        }
-
-        return isAccepted;
     }
 }

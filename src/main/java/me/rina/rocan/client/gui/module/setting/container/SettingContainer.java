@@ -602,10 +602,10 @@ public class SettingContainer extends Container {
                 this.offsetY = maximumScroll;
             }
 
-            TurokShaderGL.pushScissorMatrix();
-            TurokShaderGL.drawScissor(this.rect.getX() - offsetFixOutline, (this.rect.getY() + realScrollHeight), this.rect.getWidth() + (offsetFixOutline * 2), this.rect.getHeight() - (realScrollHeight));
-
             for (Widget widgets : this.loadedWidgetList) {
+                TurokShaderGL.pushScissor();
+                TurokShaderGL.drawScissor(this.rect.getX() - offsetFixOutline, (this.rect.getY() + realScrollHeight), this.rect.getWidth() + (offsetFixOutline * 2), this.rect.getHeight() - (realScrollHeight));
+
                 if (widgets instanceof SettingBooleanWidget) {
                     SettingBooleanWidget settingBooleanWidget = (SettingBooleanWidget) widgets;
 
@@ -645,12 +645,12 @@ public class SettingContainer extends Container {
                         settingBindWidget.onRender();
                     }
                 }
+
+                TurokShaderGL.popScissor();
             }
         } else {
             this.flagMouseRealRect = Flag.MOUSE_NOT_OVER;
         }
-
-        TurokShaderGL.popScissorMatrix();
 
         if (this.flagDescription == Flag.MOUSE_NOT_OVER) {
             this.descriptionLabel.setText(this.widgetModule.getModule().getDescription());

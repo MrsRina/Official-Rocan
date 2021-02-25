@@ -359,7 +359,6 @@ public class SettingStringWidget extends Widget {
         this.stringPositionY = this.rectEntryBox.getY() + (this.rectEntryBox.getHeight() / 2 - (TurokFontManager.getStringHeight(Rocan.getWrapper().fontSmallWidget, "AaBbCc") / 2));
 
         // We push the scissor.
-        TurokShaderGL.pushScissorAttrib();
         TurokShaderGL.drawScissor(this.rectEntryBox.getX() + 0.5f, this.rectEntryBox.getY(), this.rectEntryBox.getWidth() - (0.5f), this.rectEntryBox.getHeight());
 
         if (this.isFocused) {
@@ -391,8 +390,6 @@ public class SettingStringWidget extends Widget {
                 TurokFontManager.render(Rocan.getWrapper().fontSmallWidget, this.rect.getTag() + " " + currentFormat, this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255, 100));
             }
         }
-
-        TurokShaderGL.popScissorAttrib();
 
         this.isTyping = false;
 

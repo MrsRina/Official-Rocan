@@ -84,6 +84,7 @@ public class SocialManager implements ISLClass {
                 Files.createFile(Paths.get(pathFile));
             }
 
+            JsonParser jsonParser = new JsonParser();
             JsonArray mainJson = new JsonArray();
 
             for (Social socials : this.socialList) {
@@ -98,7 +99,7 @@ public class SocialManager implements ISLClass {
                 mainJson.add(socialJson);
             }
 
-            String stringJson = gsonBuilder.toJson(JsonParser.parseString(mainJson.toString()));
+            String stringJson = gsonBuilder.toJson(jsonParser.parseString(mainJson.toString()));
             OutputStreamWriter fileOutputStream = new OutputStreamWriter(new FileOutputStream(pathFile), "UTF-8");
 
             fileOutputStream.write(stringJson);
@@ -118,9 +119,9 @@ public class SocialManager implements ISLClass {
                 return;
             }
 
+            JsonParser jsonParser = new JsonParser();
             InputStream file = Files.newInputStream(Paths.get(pathFile));
-
-            JsonArray mainJson = JsonParser.parseReader(new InputStreamReader(file)).getAsJsonArray();
+            JsonArray mainJson = jsonParser.parseReader(new InputStreamReader(file)).getAsJsonArray();
 
             for (JsonElement element : mainJson) {
                 JsonObject socialJson = element.getAsJsonObject();

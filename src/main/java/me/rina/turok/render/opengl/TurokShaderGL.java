@@ -107,8 +107,8 @@ public class TurokShaderGL {
         }
 
         TurokGL.release();
-
         TurokGL.disable(GL11.GL_BLEND);
+
         TurokGL.popMatrix();
     }
 

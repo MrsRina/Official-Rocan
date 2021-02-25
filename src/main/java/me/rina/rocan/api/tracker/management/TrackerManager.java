@@ -61,9 +61,9 @@ public class TrackerManager {
     }
 
     public void onUpdateAll() {
-        for (Tracker tracker : this.trackerList) {
-            if (tracker.isRegistry()) {
-                tracker.onUpdate();
+        for (Tracker trackers : INSTANCE.getTrackerList()) {
+            if (trackers.isRegistry()) {
+                trackers.onUpdate();
             }
         }
     }

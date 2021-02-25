@@ -15,6 +15,8 @@ public class TurokDisplay {
 
     public TurokDisplay(Minecraft mc) {
         this.mc = mc;
+
+        this.onUpdate();
     }
 
     public int getWidth() {
@@ -26,14 +28,10 @@ public class TurokDisplay {
     }
 
     public int getScaledWidth() {
-        this.onUpdate();
-
         return (int) ((double) this.mc.displayWidth / this.scaleFactor);
     }
 
     public int getScaledHeight() {
-        this.onUpdate();
-
         return (int) ((double) this.mc.displayHeight / this.scaleFactor);
     }
 

@@ -142,6 +142,7 @@ public class Rocan {
 
         // Refresh and reload managers.
         ModuleManager.reload();
+        ModuleManager.refresh();
     }
 
     /**

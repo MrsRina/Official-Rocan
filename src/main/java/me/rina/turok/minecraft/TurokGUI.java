@@ -172,6 +172,10 @@ public class TurokGUI extends GuiScreen {
 
     @Override
     public void drawScreen(int mousePositionX, int mousePositionY, float partialTicks) {
+        this.display = new TurokDisplay(Minecraft.getMinecraft());
+
+        TurokShaderGL.init(this.display, this.mouse);
+
         // Update the position wi0th mouse field.
         this.mouse.setPos(mousePositionX, mousePositionY);
 

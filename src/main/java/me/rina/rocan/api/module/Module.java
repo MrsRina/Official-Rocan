@@ -249,6 +249,7 @@ public class Module implements ISLClass {
             String pathFile = pathFolder + this.tag + ".json";
 
             Gson gsonBuilder = new GsonBuilder().setPrettyPrinting().create();
+            JsonParser jsonParser = new JsonParser();
 
             if (Files.exists(Paths.get(pathFolder)) == false) {
                 Files.createDirectories(Paths.get(pathFolder));
@@ -304,7 +305,7 @@ public class Module implements ISLClass {
 
             mainJson.add("settings", jsonSettingList);
 
-            String stringJson = gsonBuilder.toJson(JsonParser.parseString(mainJson.toString()));
+            String stringJson = gsonBuilder.toJson(jsonParser.parseString(mainJson.toString()));
             OutputStreamWriter fileOutputStream = new OutputStreamWriter(new FileOutputStream(pathFile), "UTF-8");
 
             fileOutputStream.write(stringJson);
@@ -324,8 +325,10 @@ public class Module implements ISLClass {
                 return;
             }
 
+            JsonParser jsonParser = new JsonParser();
+
             InputStream file = Files.newInputStream(Paths.get(pathFile));
-            JsonObject mainJson = JsonParser.parseReader(new InputStreamReader(file)).getAsJsonObject();
+            JsonObject mainJson = jsonParser.parse(new InputStreamReader(file)).getAsJsonObject();
 
             if (mainJson.get("settings") != null) {
                 JsonObject jsonSettingList = mainJson.get("settings").getAsJsonObject();

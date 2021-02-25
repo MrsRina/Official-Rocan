@@ -20,21 +20,15 @@ import java.util.Arrays;
 public class ModuleTPSSync extends Module {
     public static ModuleTPSSync INSTANCE;
 
-    private float[] tickRates;
+    private static final float[] tickRates = new float[20];
     private long lastTick;
 
     private int index;
 
     public ModuleTPSSync() {
         INSTANCE = this;
-    }
 
-    public void setTickRates(float[] tickRates) {
-        this.tickRates = tickRates;
-    }
-
-    public float[] getTickRates() {
-        return tickRates;
+        this.resetVariables();
     }
 
     public void setLastTick(long lastTick) {
@@ -63,7 +57,7 @@ public class ModuleTPSSync extends Module {
     public void doSync() {
         if (this.lastTick != -1) {
             float currentTicks = (System.currentTimeMillis() - this.lastTick) / 1000.0f;
-            this.tickRates[(this.index % this.tickRates.length)] = TurokMath.clamp(20.0f / currentTicks, 0f, 20);
+            tickRates[(this.index % tickRates.length)] = TurokMath.clamp(20.0f / currentTicks, 0f, 20);
 
             this.index += 1;
         }
@@ -75,14 +69,14 @@ public class ModuleTPSSync extends Module {
         this.index = 0;
         this.lastTick = -1l;
 
-        Arrays.fill(this.tickRates, 0f);
+        Arrays.fill(tickRates, 0f);
     }
 
     public static float getTPS() {
         float sum = 0f;
         float num = 0f;
 
-        for (float ticks : INSTANCE.getTickRates()) {
+        for (float ticks : tickRates) {
             if (ticks > 0f) {
                 sum += ticks;
                 num += 1f;
