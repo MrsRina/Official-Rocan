@@ -1,6 +1,7 @@
 package me.rina.rocan.client.module.render;
 
 import me.rina.rocan.Rocan;
+import me.rina.rocan.api.event.impl.EventStage;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.module.registry.Registry;
@@ -12,6 +13,7 @@ import me.rina.rocan.api.social.type.SocialType;
 import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.api.util.network.ServerUtil;
+import me.rina.rocan.client.event.render.RenderNameEvent;
 import me.rina.rocan.client.manager.network.PlayerServerManager;
 import me.rina.turok.render.font.management.TurokFontManager;
 import me.rina.turok.render.opengl.TurokGL;
@@ -26,6 +28,7 @@ import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
+import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.awt.*;
 
@@ -51,7 +54,7 @@ public class ModuleNameTags extends Module {
     public static ValueBoolean settingCustomFont = new ValueBoolean("Custom Font", "CustomFont", "Set custom font to render.", true);
 
     /* Misc settings. */
-    public static ValueBoolean settingSmartScale = new ValueBoolean("Smart Scale", "SmartScale", "Automatically scale if you are close of player.", true);
+    public static ValueBoolean settingSmartScale = new ValueBoolean("Smart Scale", "SmartScale", "Automatically scale if you are close of entity.", true);
     public static ValueNumber settingScale = new ValueNumber("Scale", "Scale", "The scale of render.", 25, 1, 1000);
     public static ValueNumber settingOffsetY = new ValueNumber("Offset Y", "OffsetY", "Offset y to render.", 10, 0, 100);
     public static ValueNumber settingRange = new ValueNumber("Range", "Range", "Distance to capture players.", 200, 0, 200);
@@ -65,6 +68,13 @@ public class ModuleNameTags extends Module {
         settingFriend.setEnabled(settingPlayer.getValue());
 
         Rocan.getWrapper().fontNameTags.setRenderingCustomFont(settingCustomFont.getValue());
+    }
+
+    @Listener
+    public void onListenRenderNameEvent(RenderNameEvent event) {
+        if (event.getStage() == EventStage.PRE) {
+            event.setCanceled(true);
+        }
     }
 
     @Override
@@ -163,8 +173,6 @@ public class ModuleNameTags extends Module {
         GlStateManager.enableLighting();
         GlStateManager.enableDepth();
         GlStateManager.enableTexture2D();
-        GlStateManager.scale(-40, -40, 40);
-        GlStateManager.translate(0, 20, 0);
         GlStateManager.popMatrix();
 
         RenderHelper.disableStandardItemLighting();

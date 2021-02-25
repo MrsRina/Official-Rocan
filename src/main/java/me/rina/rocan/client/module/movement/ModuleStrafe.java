@@ -133,20 +133,20 @@ public class ModuleStrafe extends Module {
                 }
             }
 
-            if (KeyUtil.isPressed(mc.gameSettings.keyBindJump) && mc.player.onGround) {
+            if (mc.gameSettings.keyBindJump.isPressed() && mc.player.onGround) {
                 if (settingOldStrafeSmoothJump.getValue()) {
                     speed = 0.6174077f;
                 }
 
                 event.setY(mc.player.motionY = getMotionJumpY());
             }
-
-            double x = ((playerForward * speed) * Math.cos(Math.toRadians(playerRotationYaw + 90f)) + (playerStrafe * speed) * Math.sin(Math.toRadians(playerRotationYaw + 90f)));
-            double z = ((playerForward * speed) * Math.sin(Math.toRadians(playerRotationYaw + 90f)) - (playerStrafe * speed) * Math.cos(Math.toRadians(playerRotationYaw + 90f)));
-
-            event.setX(x);
-            event.setZ(z);
         }
+
+        double x = ((playerForward * speed) * Math.cos(Math.toRadians(playerRotationYaw + 90f)) + (playerStrafe * speed) * Math.sin(Math.toRadians(playerRotationYaw + 90f)));
+        double z = ((playerForward * speed) * Math.sin(Math.toRadians(playerRotationYaw + 90f)) - (playerStrafe * speed) * Math.cos(Math.toRadians(playerRotationYaw + 90f)));
+
+        event.setX(x);
+        event.setZ(z);
     }
 
     public float getMotionJumpY() {

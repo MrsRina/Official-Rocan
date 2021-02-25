@@ -13,6 +13,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  **/
 @Registry(name = "No Slow Down", tag = "NoSlowDown", description = "No slow down while use item.", category = ModuleCategory.MOVEMENT)
 public class ModuleNoSlowDown extends Module {
+    @Listener
     public void onUpdate(InputUpdateEvent event) {
         if (mc.player.isHandActive() && mc.player.isRiding() == false) {
             event.getMovementInput().moveStrafe *= 5;

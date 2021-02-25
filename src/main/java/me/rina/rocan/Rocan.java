@@ -96,6 +96,7 @@ public class Rocan {
         this.moduleManager.registry(new ModuleFullBright());
         this.moduleManager.registry(new ModuleCustomFov());
         this.moduleManager.registry(new ModuleNameTags());
+        this.moduleManager.registry(new ModuleNoRender());
 
         // Category Misc.
         this.moduleManager.registry(new ModuleAutoRespawn());

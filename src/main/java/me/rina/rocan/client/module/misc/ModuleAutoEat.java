@@ -63,13 +63,6 @@ public class ModuleAutoEat extends Module {
             settingFoodFill.setValue(settingFood.getValue());
         }
     }
-    
-    @Listener
-    public void onListenEventPacket(PacketEvent.Send event) {
-        if (event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock && this.isToEat) {
-            event.setCanceled(true);
-        }
-    }
 
     @Listener
     public void onListen(ClientTickEvent event) {
@@ -148,6 +141,13 @@ public class ModuleAutoEat extends Module {
                     break;
                 }
             }
+        }
+    }
+
+    @Listener
+    public void onListenEventPacket(PacketEvent.Send event) {
+        if (event.getPacket() instanceof CPacketPlayerTryUseItemOnBlock && this.isToEat) {
+            event.setCanceled(true);
         }
     }
 

@@ -84,6 +84,8 @@ public class EventManager {
 
         this.setCurrentRender2DPartialTicks(event.getPartialTicks());
 
+        Rocan.getPomeloEventManager().dispatchEvent(event);
+
         for (Module modules : Rocan.getModuleManager().getModuleList()) {
             modules.onRender2D();
 
@@ -142,11 +144,7 @@ public class EventManager {
 
     @SubscribeEvent()
     public void onInputUpdate(InputUpdateEvent event) {
-        ModuleNoSlowDown module = (ModuleNoSlowDown) ModuleManager.get(ModuleNoSlowDown.class);
-
-        if (module.isEnabled()) {
-            module.onUpdate(event);
-        }
+        Rocan.getPomeloEventManager().dispatchEvent(event);
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH, receiveCanceled = true)
