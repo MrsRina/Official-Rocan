@@ -10,9 +10,11 @@ import me.rina.rocan.client.gui.module.client.container.ClientContainer;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.turok.hardware.mouse.TurokMouse;
 import me.rina.turok.render.opengl.TurokRenderGL;
+import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 import org.lwjgl.input.Keyboard;
@@ -50,7 +52,6 @@ public class MotherFrame extends Frame {
 
     private float widgetHeight;
 
-    private TurokRect rectWidgetSelected = new TurokRect("Canada", 0, 0);
     private TurokRect rectResize = new TurokRect("Goo", 0, 0);
 
     private boolean isStarted = true;
@@ -93,14 +94,6 @@ public class MotherFrame extends Frame {
                 moduleCategoryWidget.setSelected(false);
             }
         }
-    }
-
-    public void setRectWidgetSelected(TurokRect rectWidgetSelected) {
-        this.rectWidgetSelected = rectWidgetSelected;
-    }
-
-    public TurokRect getRectWidgetSelected() {
-        return rectWidgetSelected;
     }
 
     public void setRectResize(TurokRect rectResize) {
@@ -292,10 +285,6 @@ public class MotherFrame extends Frame {
         this.rectResize.setX(this.rect.getX() + this.rect.getWidth() - this.rectResize.getWidth());
         this.rectResize.setY(this.rect.getY() + this.rect.getHeight() - this.rectResize.getHeight());
 
-        // Set the rect of selected widget for y & width, so we can't change.
-        this.rectWidgetSelected.setY(this.rect.getY());
-        this.rectWidgetSelected.setHeight(this.widgetHeight);
-
         this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
         this.flagMouseResize = this.rectResize.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
 
@@ -320,8 +309,7 @@ public class MotherFrame extends Frame {
         this.scaleWidth = TurokMath.lerp(this.scaleWidth, (TurokMath.clamp(this.size, (minimumWidth + 1) * this.loadedWidgetList.size(), (maximumWidth + 1) * this.loadedWidgetList.size())), this.master.getPartialTicks());
 
         // Background of frame.
-        TurokRenderGL.color(Rocan.getWrapper().colorFrameBackground[0], Rocan.getWrapper().colorFrameBackground[1], Rocan.getWrapper().colorFrameBackground[2], Rocan.getWrapper().colorFrameBackground[3]);
-        TurokRenderGL.drawSolidRect(this.rect);
+        TurokShaderGL.drawSolidRect(this.rect, new int[] {Rocan.getWrapper().colorFrameBackground[0], Rocan.getWrapper().colorFrameBackground[1], Rocan.getWrapper().colorFrameBackground[2], Rocan.getWrapper().colorFrameBackground[3]});
 
         /*
          * We need render the normal render and custom, cause yes.
@@ -340,10 +328,6 @@ public class MotherFrame extends Frame {
                 moduleCategoryWidget.setOffsetX((moduleCategoryWidget.getRect().getWidth() + 1) * this.loadedWidgetList.indexOf(widgets));
             }
         }
-
-        // Selected category effect.
-        TurokRenderGL.color(Rocan.getWrapper().colorWidgetSelected[0], Rocan.getWrapper().colorWidgetSelected[1], Rocan.getWrapper().colorWidgetSelected[2], Rocan.getWrapper().colorWidgetSelected[3]);
-        TurokRenderGL.drawOutlineRect(this.rectWidgetSelected);
 
         if (this.isDragging && this.master.isOpened()) {
             float x = this.master.getMouse().getX() - this.dragX;

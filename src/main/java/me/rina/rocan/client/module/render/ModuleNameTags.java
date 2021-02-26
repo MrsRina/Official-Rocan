@@ -38,12 +38,7 @@ import java.awt.*;
  **/
 @Registry(name = "Name Tags", tag = "NameTags", description = "Better name tag.", category = ModuleCategory.RENDER)
 public class ModuleNameTags extends Module {
-    /* Entities. */
-    public static ValueBoolean settingMob = new ValueBoolean("Animal", "Animal", "Allows render mobs name tag.", true);
-    public static ValueBoolean settingAnimal = new ValueBoolean("Mob", "Mob", "Allows render animals name tag.", true);
-
     /* Player stuff. */
-    public static ValueBoolean settingPlayer = new ValueBoolean("Player", "Player", "Allows render players name tag.", true);
     public static ValueBoolean settingFriend = new ValueBoolean("Friend", "Friend", "Allows render friends name tag.", true);
     public static ValueBoolean settingEnemy = new ValueBoolean("Enemy", "Enemy", "Allows render enemies name tag.", false);
     public static ValueBoolean settingPing = new ValueBoolean("Ping", "Ping", "Show ping player.", false);
@@ -63,10 +58,6 @@ public class ModuleNameTags extends Module {
 
     @Override
     public void onSetting() {
-        settingEnemy.setEnabled(settingPlayer.getValue());
-        settingPing.setEnabled(settingPlayer.getValue());
-        settingFriend.setEnabled(settingPlayer.getValue());
-
         Rocan.getWrapper().fontNameTags.setRenderingCustomFont(settingCustomFont.getValue());
     }
 
@@ -85,34 +76,28 @@ public class ModuleNameTags extends Module {
 
         float partialTicks = Rocan.getClientEventManager().getCurrentRender3DPartialTicks();
 
-        for (Entity entities : mc.world.loadedEntityList) {
+        for (EntityPlayer entities : mc.world.playerEntities) {
             if (entities == null) {
                 continue;
             }
 
-            if ((entities instanceof EntityLivingBase) == false) {
+            if (this.doAccept(entities) == false) {
                 continue;
             }
 
-            EntityLivingBase entityLivingBase = (EntityLivingBase) entities;
-
-            if (this.doAccept(entityLivingBase) == false) {
+            if (entities.getHealth() < 0 || entities.isDead) {
                 continue;
             }
 
-            if (entityLivingBase.getHealth() < 0 || entities.isDead) {
+            if (mc.player.getDistance(entities) >= settingRange.getValue().intValue()) {
                 continue;
             }
 
-            if (mc.player.getDistance(entityLivingBase) >= settingRange.getValue().intValue()) {
-                continue;
-            }
-
-            this.doDraw(entityLivingBase, partialTicks);
+            this.doDraw(entities, partialTicks);
         }
     }
 
-    public void doDraw(EntityLivingBase entity, float partialTicks) {
+    public void doDraw(EntityPlayer entity, float partialTicks) {
         if (mc.getRenderManager().options == null) {
             return;
         }
@@ -191,57 +176,39 @@ public class ModuleNameTags extends Module {
         }
     }
 
-    public boolean doAccept(EntityLivingBase entity) {
+    public boolean doAccept(EntityPlayer entity) {
         boolean isAccepted = false;
 
-        if (settingPlayer.getValue() && entity instanceof EntityPlayer && entity != mc.player) {
-            Social social = SocialManager.get(entity.getName());
+        Social social = SocialManager.get(entity.getName());
 
-            if (social != null) {
-                if (social.getType() == SocialType.FRIEND && settingFriend.getValue()) {
-                    isAccepted = true;
-                }
-
-                if (social.getType() == SocialType.ENEMY && settingEnemy.getValue()) {
-                    isAccepted = true;
-                }
-            } else {
-                if (settingPlayer.getValue()) {
-                    isAccepted = true;
-                }
+        if (social != null) {
+            if (social.getType() == SocialType.FRIEND && settingFriend.getValue()) {
+                isAccepted = true;
             }
-        }
 
-        if (settingMob.getValue() && entity instanceof IMob) {
-            isAccepted = true;
-        }
-
-        if (settingAnimal.getValue() && entity instanceof IAnimals && (entity instanceof IMob) == false) {
+            if (social.getType() == SocialType.ENEMY && settingEnemy.getValue()) {
+                isAccepted = true;
+            }
+        } else {
             isAccepted = true;
         }
 
         return isAccepted;
     }
 
-    public String getTag(EntityLivingBase entity) {
+    public String getTag(EntityPlayer entity) {
         StringBuilder stringBuilder = new StringBuilder();
 
         stringBuilder.append(settingName.getValue() ? entity.getName() + " " : "");
 
-        if (entity instanceof EntityPlayer) {
-            final NetworkPlayerInfo playerInfo = PlayerServerManager.get(entity.getName());
+        final NetworkPlayerInfo playerInfo = PlayerServerManager.get(entity.getName());
 
-            stringBuilder.append(settingPing.getValue() && playerInfo != null ? ServerUtil.getPing(playerInfo) : "");
-        }
+        stringBuilder.append(settingPing.getValue() && playerInfo != null ? ServerUtil.getPing(playerInfo) : "");
 
         return stringBuilder.toString();
     }
 
     public Color getColor(EntityLivingBase entity) {
-        if ((entity instanceof EntityPlayer) == false) {
-            return new Color(190, 190, 190);
-        }
-
         EntityPlayer entityPlayer = (EntityPlayer) entity;
 
         Social social = SocialManager.get(entity.getName());

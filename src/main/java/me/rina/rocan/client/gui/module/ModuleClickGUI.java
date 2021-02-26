@@ -5,6 +5,7 @@ import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.turok.hardware.mouse.TurokMouse;
 import me.rina.turok.minecraft.TurokGUI;
 import me.rina.turok.render.opengl.TurokRenderGL;
+import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokDisplay;
 import me.rina.turok.util.TurokMath;
 import net.minecraft.client.gui.GuiScreen;
@@ -118,8 +119,7 @@ public class ModuleClickGUI extends TurokGUI {
         this.effectAlphaBackground = (int) TurokMath.lerp(this.effectAlphaBackground, me.rina.rocan.client.module.client.ModuleClickGUI.drawDefaultMinecraftBackground.getValue() ? 190 : 0, this.partialTicks);
 
         // Draw the default background of Minecraft.
-        TurokRenderGL.color(20, 20, 20, this.effectAlphaBackground);
-        TurokRenderGL.drawSolidRect(0, 0, this.display.getWidth(), this.display.getHeight());
+        TurokShaderGL.drawSolidRect(0, 0, this.display.getWidth(), this.display.getHeight(), new int[] {20, 20, 20, this.effectAlphaBackground});
 
         // Update onRender of mother frame.
         this.motherFrame.onRender();

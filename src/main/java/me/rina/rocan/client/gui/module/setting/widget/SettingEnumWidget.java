@@ -12,6 +12,7 @@ import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.rocan.client.gui.module.setting.container.SettingContainer;
 import me.rina.turok.render.font.management.TurokFontManager;
 import me.rina.turok.render.opengl.TurokRenderGL;
+import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokClass;
 import me.rina.turok.util.TurokMath;
 
@@ -204,8 +205,7 @@ public class SettingEnumWidget extends Widget {
         TurokFontManager.render(Rocan.getWrapper().fontSmallWidget, name, this.rect.getX() + 2, this.rect.getY() + ((this.rect.getHeight() / 2) - (TurokFontManager.getStringHeight(Rocan.getWrapper().fontSmallWidget, this.rect.getTag()) / 2) - 1), true, new Color(255, 255, 255));
 
         // Outline on rect render.
-        TurokRenderGL.color(Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightRect);
-        TurokRenderGL.drawOutlineRect(this.rect);
+        TurokShaderGL.drawOutlineRect(this.rect, new int[] {Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightRect});
     }
 
     @Override

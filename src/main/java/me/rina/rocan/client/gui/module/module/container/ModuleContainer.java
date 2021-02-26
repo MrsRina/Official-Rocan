@@ -16,6 +16,7 @@ import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 /**
@@ -336,8 +337,7 @@ public class ModuleContainer extends Container {
         this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
 
         // Background of container.
-        TurokRenderGL.color(Rocan.getWrapper().colorContainerBackground[0], Rocan.getWrapper().colorContainerBackground[1], Rocan.getWrapper().colorContainerBackground[2], Rocan.getWrapper().colorContainerBackground[3]);
-        TurokRenderGL.drawSolidRect(this.rect);
+        TurokShaderGL.drawSolidRect(this.rect, new int[] {Rocan.getWrapper().colorContainerBackground[0], Rocan.getWrapper().colorContainerBackground[1], Rocan.getWrapper().colorContainerBackground[2], Rocan.getWrapper().colorContainerBackground[3]});
 
         float offsetFixOutline = 1;
 

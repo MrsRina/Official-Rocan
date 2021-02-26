@@ -10,6 +10,7 @@ import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.rocan.client.gui.module.setting.container.SettingContainer;
 import me.rina.turok.render.font.management.TurokFontManager;
 import me.rina.turok.render.opengl.TurokRenderGL;
+import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokTick;
 
@@ -258,12 +259,13 @@ public class ModuleWidget extends Widget {
 
         this.alphaEffectHighlight = (int) (this.flagMouse == Flag.MOUSE_OVER ? TurokMath.lerp(this.alphaEffectHighlight, Rocan.getWrapper().colorWidgetHighlight[3], this.master.getPartialTicks()) : TurokMath.lerp(this.alphaEffectHighlight, 0, this.master.getPartialTicks()));
 
-        TurokRenderGL.color(Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlight);
-        TurokRenderGL.drawOutlineRect(this.rect);
+        // Outline mouse effect.
+        TurokShaderGL.drawOutlineRect(this.rect, new int[] {Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlight});
 
-        TurokRenderGL.color(Rocan.getWrapper().colorWidgetPressed[0], Rocan.getWrapper().colorWidgetPressed[1], Rocan.getWrapper().colorWidgetPressed[2], this.alphaEffectPressed);
-        TurokRenderGL.drawSolidRect(this.rect);
+        // Background.
+        TurokShaderGL.drawSolidRect(this.rect, new int[] {Rocan.getWrapper().colorWidgetPressed[0], Rocan.getWrapper().colorWidgetPressed[1], Rocan.getWrapper().colorWidgetPressed[2], this.alphaEffectPressed});
 
+        // String.
         TurokFontManager.render(Rocan.getWrapper().fontNormalWidget, this.rect.getTag(), this.rect.getX() + 2, this.rect.getY() + 5, true, new Color(255, 255, 255));
 
         if (this.module.isEnabled()) {
@@ -277,6 +279,9 @@ public class ModuleWidget extends Widget {
 
             // We need set as open to client container do not glitch.
             this.container.setModuleOpen(true);
+
+            // Update color only when is locked.
+            this.alphaEffectSelected = (int) TurokMath.lerp(this.alphaEffectSelected, Rocan.getWrapper().colorWidgetSelected[3], this.master.getPartialTicks());
         } else {
             // The fun animation is here, so set the selected when mouse over with flag.
             // OBS: this make mixed the settings sometimes but is pretty cool!
@@ -294,13 +299,11 @@ public class ModuleWidget extends Widget {
             }
         }
 
-        TurokRenderGL.color(Rocan.getWrapper().colorWidgetSelected[0], Rocan.getWrapper().colorWidgetSelected[1], Rocan.getWrapper().colorWidgetSelected[2], this.alphaEffectSelected);
-        TurokRenderGL.drawOutlineRect(this.rect);
+        // Selected.
+        TurokShaderGL.drawOutlineRect(this.rect, new int[] {Rocan.getWrapper().colorWidgetSelected[0], Rocan.getWrapper().colorWidgetSelected[1], Rocan.getWrapper().colorWidgetSelected[2], this.alphaEffectSelected});
 
         // If this is selected the current setting, we use lerp to set the sizes and if minimum 10 set the fully scaled width&height.
         if (this.isSelected) {
-            this.alphaEffectSelected = (int) TurokMath.lerp(this.alphaEffectSelected, Rocan.getWrapper().colorWidgetSelected[3], this.master.getPartialTicks());
-
             this.settingContainer.getRect().setWidth(TurokMath.lerp(this.settingContainer.getRect().getWidth(), this.settingContainer.getWidthScale(), this.master.getPartialTicks()));
 
             if (this.settingContainer.getRect().getWidth() >= this.settingContainer.getWidthScale() - 10) {

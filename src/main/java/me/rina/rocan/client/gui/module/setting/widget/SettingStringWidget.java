@@ -340,20 +340,16 @@ public class SettingStringWidget extends Widget {
         }
 
         // The outline rect effect.
-        TurokRenderGL.color(Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightRect);
-        TurokRenderGL.drawOutlineRect(this.rect);
+        TurokShaderGL.drawOutlineRect(this.rect, new int[] {Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightRect});
 
         // The check box outline highlight.
-        TurokRenderGL.color(Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightEntryBox);
-        TurokRenderGL.drawOutlineRect(this.rectEntryBox);
+        TurokShaderGL.drawOutlineRect(this.rectEntryBox, new int[] {Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightEntryBox});
 
         // The typing solid effect.
-        TurokRenderGL.color(255, 255, 255, this.alphaEffectPressed);
-        TurokRenderGL.drawSolidRect(this.rectEntryBox);
+        TurokShaderGL.drawSolidRect(this.rectEntryBox, new int[] {255, 255, 255, this.alphaEffectPressed});
 
         // The selected solid effect.
-        TurokRenderGL.color(0, 0, 255, this.isAllSelected ? this.alphaEffectPressed : 0);
-        TurokRenderGL.drawSolidRect(this.rectEntryBox.getX(), this.rectEntryBox.getY(), offsetSpace + TurokFontManager.getStringWidth(Rocan.getWrapper().fontSmallWidget, this.cacheType.getValue()), this.rectEntryBox.getHeight());
+        TurokShaderGL.drawSolidRect(this.rectEntryBox.getX(), this.rectEntryBox.getY(), offsetSpace + TurokFontManager.getStringWidth(Rocan.getWrapper().fontSmallWidget, this.cacheType.getValue()), this.rectEntryBox.getHeight(), new int[] {0, 0, 255, this.isAllSelected ? this.alphaEffectPressed : 0});
 
         this.stringPositionX = TurokMath.lerp(this.stringPositionX, this.rectEntryBox.getX() + offsetSpace + this.offsetPositionTextX, this.master.getPartialTicks());
         this.stringPositionY = this.rectEntryBox.getY() + (this.rectEntryBox.getHeight() / 2 - (TurokFontManager.getStringHeight(Rocan.getWrapper().fontSmallWidget, "AaBbCc") / 2));

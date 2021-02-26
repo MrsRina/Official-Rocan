@@ -1,6 +1,7 @@
 package me.rina.turok.render.opengl;
 
 import me.rina.turok.util.TurokRect;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;

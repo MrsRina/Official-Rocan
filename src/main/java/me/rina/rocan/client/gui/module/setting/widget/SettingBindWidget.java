@@ -13,6 +13,7 @@ import me.rina.rocan.client.gui.module.setting.container.SettingContainer;
 import me.rina.turok.hardware.keyboard.TurokKeyboard;
 import me.rina.turok.render.font.management.TurokFontManager;
 import me.rina.turok.render.opengl.TurokRenderGL;
+import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
 import org.lwjgl.input.Keyboard;
@@ -261,23 +262,19 @@ public class SettingBindWidget extends Widget {
         TurokFontManager.render(Rocan.getWrapper().fontSmallWidget, currentName, this.rect.getX() + 2, this.rectCheckbox.getY() + ((this.rectCheckbox.getHeight() / 2) - (TurokFontManager.getStringHeight(Rocan.getWrapper().fontSmallWidget, this.rect.getTag()) / 2)), true, new Color(255, 255, 255));
 
         // Outline on rect render.
-        TurokRenderGL.color(Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightRect);
-        TurokRenderGL.drawOutlineRect(this.rect);
+        TurokShaderGL.drawOutlineRect(this.rect, new int[] {Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightRect});
 
         // The check box outline highlight.
-        TurokRenderGL.color(Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightCheckbox);
-        TurokRenderGL.drawOutlineRect(this.rectCheckbox);
+        TurokShaderGL.drawOutlineRect(this.rectCheckbox, new int[] {Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightCheckbox});
 
         // The check box outline unpressed.
-        TurokRenderGL.color(Rocan.getWrapper().colorWidgetPressed[0], Rocan.getWrapper().colorWidgetPressed[1], Rocan.getWrapper().colorWidgetPressed[2], Rocan.getWrapper().colorWidgetPressed[3]);
-        TurokRenderGL.drawOutlineRect(this.rectCheckbox);
+        TurokShaderGL.drawOutlineRect(this.rectCheckbox, new int[] {Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], Rocan.getWrapper().colorWidgetPressed[3]});
 
         float checkBoxPressedOffsetX = 0.5f;
         float checkBoxPressedOffsetY = 1f;
 
         // The solid pressed checkbox.
-        TurokRenderGL.color(Rocan.getWrapper().colorWidgetPressed[0], Rocan.getWrapper().colorWidgetPressed[1], Rocan.getWrapper().colorWidgetPressed[2], this.alphaEffectPressed);
-        TurokRenderGL.drawSolidRect(this.rectCheckbox);
+        TurokShaderGL.drawSolidRect(this.rectCheckbox, new int[] {Rocan.getWrapper().colorWidgetPressed[0], Rocan.getWrapper().colorWidgetPressed[1], Rocan.getWrapper().colorWidgetPressed[2], this.alphaEffectPressed});
 
         if (this.isListening) {
             this.master.setCanceledCloseGUI(true);

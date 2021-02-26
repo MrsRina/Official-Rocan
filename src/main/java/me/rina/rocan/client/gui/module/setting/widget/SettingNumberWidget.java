@@ -12,6 +12,7 @@ import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.rocan.client.gui.module.setting.container.SettingContainer;
 import me.rina.turok.render.font.management.TurokFontManager;
 import me.rina.turok.render.opengl.TurokRenderGL;
+import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
 
@@ -208,20 +209,16 @@ public class SettingNumberWidget extends Widget {
         float checkBoxPressedOffsetY = 1f;
 
         // The solid pressed slider.
-        TurokRenderGL.color(Rocan.getWrapper().colorWidgetPressed[0], Rocan.getWrapper().colorWidgetPressed[1], Rocan.getWrapper().colorWidgetPressed[2], Rocan.getWrapper().colorWidgetPressed[3]);
-        TurokRenderGL.drawSolidRect(this.rectSlider.getX(), this.rectSlider.getY(), this.offsetWidth, this.rectSlider.getHeight());
+        TurokShaderGL.drawSolidRect(this.rectSlider.getX(), this.rectSlider.getY(), this.offsetWidth, this.rectSlider.getHeight(), new int[] {Rocan.getWrapper().colorWidgetPressed[0], Rocan.getWrapper().colorWidgetPressed[1], Rocan.getWrapper().colorWidgetPressed[2], Rocan.getWrapper().colorWidgetPressed[3]});
 
         // The check slider unpressed.
-        TurokRenderGL.color(Rocan.getWrapper().colorWidgetPressed[0], Rocan.getWrapper().colorWidgetPressed[1], Rocan.getWrapper().colorWidgetPressed[2], Rocan.getWrapper().colorWidgetPressed[3]);
-        TurokRenderGL.drawOutlineRect(this.rectSlider);
+        TurokShaderGL.drawOutlineRect(this.rectSlider, new int[] {Rocan.getWrapper().colorWidgetPressed[0], Rocan.getWrapper().colorWidgetPressed[1], Rocan.getWrapper().colorWidgetPressed[2], Rocan.getWrapper().colorWidgetPressed[3]});
 
         // Outline on rect render.
-        TurokRenderGL.color(Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightRect);
-        TurokRenderGL.drawOutlineRect(this.rect);
+        TurokShaderGL.drawOutlineRect(this.rect, new int[] {Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightRect});
 
         // The slider outline highlight.
-        TurokRenderGL.color(Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightSlider);
-        TurokRenderGL.drawOutlineRect(this.rectSlider.getX(), this.rectSlider.getY(), this.offsetWidth, this.rectSlider.getHeight());
+        TurokShaderGL.drawOutlineRect(this.rectSlider.getX(), this.rectSlider.getY(), this.offsetWidth, this.rectSlider.getHeight(), new int[] {Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightSlider});
 
         double mouse = Math.min(this.rectSlider.getWidth(), Math.max(0, this.master.getMouse().getX() - this.rect.getX()));
 

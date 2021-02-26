@@ -9,6 +9,7 @@ import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.turok.render.font.management.TurokFontManager;
 import me.rina.turok.render.opengl.TurokRenderGL;
+import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokMath;
 
 import java.awt.*;
@@ -31,6 +32,7 @@ public class ModuleCategoryWidget extends Widget {
     private boolean isSelected;
 
     private int alphaEffect;
+    private int alphaEffectSelected;
 
     public Flag flagMouse = Flag.MOUSE_NOT_OVER;
 
@@ -182,8 +184,11 @@ public class ModuleCategoryWidget extends Widget {
 
         TurokFontManager.render(Rocan.getWrapper().fontBigWidget, this.rect.getTag(), this.rect.getX() + (this.rect.getWidth() / 2 - (TurokFontManager.getStringWidth(Rocan.getWrapper().fontBigWidget, this.rect.getTag()) / 2)), this.rect.getY() + 6, true, new Color(255, 255, 255));
 
-        TurokRenderGL.color(Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffect);
-        TurokRenderGL.drawOutlineRect(this.rect);
+        // Outline effect.
+        TurokShaderGL.drawOutlineRect(this.rect, new int[] {Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffect});
+
+        // Selected category effect.
+        TurokShaderGL.drawOutlineRect(this.rect, new int[] {Rocan.getWrapper().colorWidgetSelected[0], Rocan.getWrapper().colorWidgetSelected[1], Rocan.getWrapper().colorWidgetSelected[2], this.alphaEffectSelected});
 
         /*
          * The selected refresh effects,
@@ -191,16 +196,15 @@ public class ModuleCategoryWidget extends Widget {
          * to fix slow linear slow interpolation.
          */
         if (this.isSelected) {
+            this.alphaEffectSelected = (int) TurokMath.lerp(this.alphaEffectSelected, Rocan.getWrapper().colorWidgetSelected[3], this.master.getPartialTicks());
+
             this.container.getRect().setHeight(this.container.getHeightScale());
-
-            this.frame.getRectWidgetSelected().setX(this.rect.getX());
-
             this.container.onRender();
         } else {
+            this.alphaEffectSelected = (int) TurokMath.lerp(this.alphaEffectSelected, 0, this.master.getPartialTicks());
+
             this.container.getRect().setHeight(0);
         }
-
-        this.frame.getRectWidgetSelected().setWidth(this.rect.getWidth());
     }
 
     @Override

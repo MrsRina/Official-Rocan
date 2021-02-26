@@ -4,6 +4,11 @@ import me.rina.turok.hardware.mouse.TurokMouse;
 import me.rina.turok.util.TurokDisplay;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.BufferBuilder;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -17,6 +22,11 @@ public class TurokShaderGL {
 
     private TurokDisplay display;
     private TurokMouse mouse;
+
+    /*
+     * VBO.
+     */
+    public static Tessellator tessellator = Tessellator.getInstance();
 
     public static void init(TurokDisplay display, TurokMouse mouse) {
         INSTANCE = new TurokShaderGL();
@@ -110,6 +120,65 @@ public class TurokShaderGL {
         TurokGL.disable(GL11.GL_BLEND);
 
         TurokGL.popMatrix();
+    }
+
+    public static void drawSolidRect(TurokRect rect, int[] color) {
+        drawSolidRect(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), color);
+    }
+
+    public static void drawSolidRect(float x, float y, float w, float h, int[] c) {
+        Color color = new Color(TurokMath.clamp(c[0], 0, 255), TurokMath.clamp(c[1], 0, 255), TurokMath.clamp(c[2], 0, 255), TurokMath.clamp(c[3], 0, 255));
+
+        float r = (float) (color.getRGB() >> 16 & 255) / 255.0f;
+        float g = (float) (color.getRGB() >> 8 & 255) / 255.0f;
+        float b = (float) (color.getRGB() & 255) / 255.0f;
+        float a = (float) (color.getRGB() >> 24 & 255) / 255.0f;
+
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+
+        BufferBuilder bufferBuilder = tessellator.getBuffer();
+
+        bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        bufferBuilder.pos(x, y, 0).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x, y + h, 0).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x + w, y + h, 0).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x + w,  y, 0).color(r, g, b, a).endVertex();
+
+        tessellator.draw();
+
+        GlStateManager.disableBlend();
+    }
+
+    public static void drawOutlineRect(TurokRect rect, int[] color) {
+        drawOutlineRect(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), color);
+    }
+
+    public static void drawOutlineRect(float x, float y, float w, float h, int[] c) {
+        Color color = new Color(TurokMath.clamp(c[0], 0, 255), TurokMath.clamp(c[1], 0, 255), TurokMath.clamp(c[2], 0, 255), TurokMath.clamp(c[3], 0, 255));
+
+        float r = (float) (color.getRGB() >> 16 & 255) / 255.0f;
+        float g = (float) (color.getRGB() >> 8 & 255) / 255.0f;
+        float b = (float) (color.getRGB() & 255) / 255.0f;
+        float a = (float) (color.getRGB() >> 24 & 255) / 255.0f;
+
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.glLineWidth(0.5f);
+
+        BufferBuilder bufferBuilder = tessellator.getBuffer();
+
+        bufferBuilder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+        bufferBuilder.pos(x, y, 0).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x, y + h, 0).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x + w, y + h, 0).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x + w,  y, 0).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x, y, 0).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x, y, 0).color(r, g, b, a).endVertex();
+
+        tessellator.draw();
+
+        GlStateManager.disableBlend();
     }
 
     public static void pushScissor() {
