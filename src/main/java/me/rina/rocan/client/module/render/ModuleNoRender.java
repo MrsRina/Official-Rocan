@@ -8,6 +8,8 @@ import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.rocan.client.event.network.PacketEvent;
+import me.rina.rocan.client.event.render.RenderPortalOverlayEvent;
+import me.rina.rocan.client.event.render.RenderPotionEffects;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.network.play.server.SPacketTimeUpdate;
@@ -41,6 +43,20 @@ public class ModuleNoRender extends Module {
     @Override
     public void onSetting() {
         settingWorldTime.setEnabled(settingCustomWorldTime.getValue());
+    }
+
+    @Listener
+    public void onListenRenderPotionEffects(RenderPotionEffects event) {
+        if (settingPotionIcons.getValue()) {
+            event.setCanceled(true);
+        }
+    }
+
+    @Listener
+    public void onListenRenderPortalOverlay(RenderPortalOverlayEvent event) {
+        if (settingPortal.getValue()) {
+            event.setCanceled(true);
+        }
     }
 
     @Listener
@@ -88,7 +104,6 @@ public class ModuleNoRender extends Module {
         if ( /* I made it to be pretty easy read. */
             (type == ElementType.BOSSINFO && settingBossInfo.getValue()) ||
             (type == ElementType.CROSSHAIRS && settingCrossHair.getValue()) ||
-            (type == ElementType.POTION_ICONS && settingPotionIcons.getValue()) ||
             (type == ElementType.PORTAL && settingPortal.getValue())
         ) {
             isAccepted = true;

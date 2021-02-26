@@ -82,9 +82,9 @@ public class EventManager {
             return;
         }
 
-        this.setCurrentRender2DPartialTicks(event.getPartialTicks());
-
         Rocan.getPomeloEventManager().dispatchEvent(event);
+
+        this.setCurrentRender2DPartialTicks(event.getPartialTicks());
 
         for (Module modules : Rocan.getModuleManager().getModuleList()) {
             modules.onRender2D();
