@@ -12,6 +12,7 @@ import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.rocan.client.gui.module.setting.container.SettingContainer;
 import me.rina.turok.render.font.management.TurokFontManager;
+import me.rina.turok.render.opengl.TurokGL;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokGeneric;
@@ -21,6 +22,7 @@ import me.rina.turok.util.TurokTick;
 import net.minecraft.util.ChatAllowedCharacters;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -28,6 +30,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
+import java.nio.IntBuffer;
 
 /**
  * @author SrRina
@@ -339,23 +342,17 @@ public class SettingStringWidget extends Widget {
             this.flagMouse = Flag.MOUSE_NOT_OVER;
         }
 
-        // The outline rect effect.
-        TurokShaderGL.drawOutlineRect(this.rect, new int[] {Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightRect});
-
-        // The check box outline highlight.
-        TurokShaderGL.drawOutlineRect(this.rectEntryBox, new int[] {Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightEntryBox});
-
         // The typing solid effect.
         TurokShaderGL.drawSolidRect(this.rectEntryBox, new int[] {255, 255, 255, this.alphaEffectPressed});
-
-        // The selected solid effect.
-        TurokShaderGL.drawSolidRect(this.rectEntryBox.getX(), this.rectEntryBox.getY(), offsetSpace + TurokFontManager.getStringWidth(Rocan.getWrapper().fontSmallWidget, this.cacheType.getValue()), this.rectEntryBox.getHeight(), new int[] {0, 0, 255, this.isAllSelected ? this.alphaEffectPressed : 0});
 
         this.stringPositionX = TurokMath.lerp(this.stringPositionX, this.rectEntryBox.getX() + offsetSpace + this.offsetPositionTextX, this.master.getPartialTicks());
         this.stringPositionY = this.rectEntryBox.getY() + (this.rectEntryBox.getHeight() / 2 - (TurokFontManager.getStringHeight(Rocan.getWrapper().fontSmallWidget, "AaBbCc") / 2));
 
-        // We push the scissor.
-        TurokShaderGL.drawScissor(this.rectEntryBox.getX() + 0.5f, this.rectEntryBox.getY(), this.rectEntryBox.getWidth() - (0.5f), this.rectEntryBox.getHeight());
+        TurokShaderGL.pushScissorAttrib();
+        TurokShaderGL.drawScissor(this.rectEntryBox.getX() + 0.5f, this.settingContainer.getRect().getY() + (this.settingContainer.getDescriptionLabel().getRect().getHeight() + 1), this.rectEntryBox.getWidth() - (0.5f), this.settingContainer.getRect().getHeight() - (this.settingContainer.getDescriptionLabel().getRect().getHeight() + 1));
+
+        // The selected solid effect.
+        TurokShaderGL.drawSolidRect(this.rectEntryBox.getX(), this.rectEntryBox.getY(), offsetSpace + TurokFontManager.getStringWidth(Rocan.getWrapper().fontSmallWidget, this.cacheType.getValue()), this.rectEntryBox.getHeight(), new int[] {0, 0, 255, this.isAllSelected ? this.alphaEffectPressed : 0});
 
         if (this.isFocused) {
             this.master.setCanceledCloseGUI(true);
@@ -386,6 +383,14 @@ public class SettingStringWidget extends Widget {
                 TurokFontManager.render(Rocan.getWrapper().fontSmallWidget, this.rect.getTag() + " " + currentFormat, this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255, 100));
             }
         }
+
+        TurokShaderGL.popScissorAttrib();
+
+        // The outline rect effect.
+        TurokShaderGL.drawOutlineRect(this.rect, new int[] {Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightRect});
+
+        // The check box outline highlight.
+        TurokShaderGL.drawOutlineRect(this.rectEntryBox, new int[] {Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightEntryBox});
 
         this.isTyping = false;
 

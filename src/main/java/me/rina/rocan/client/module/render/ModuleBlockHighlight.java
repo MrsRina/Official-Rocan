@@ -8,7 +8,8 @@ import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.api.util.client.NullUtil;
-import me.rina.rocan.api.util.render.Render3DUtil;
+import me.rina.rocan.api.util.render.RenderUtil;
+import me.rina.rocan.client.module.client.ModuleAntiCheat;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -74,19 +75,19 @@ public class ModuleBlockHighlight extends Module {
         Color colorOutline = new Color(settingOutlineRed.getValue().intValue(), settingOutlineGreen.getValue().intValue(), settingOutlineBlue.getValue().intValue(), settingOutlineAlpha.getValue().intValue());
 
         // Get the mouse object over split.
-        RayTraceResult splitResult = mc.player.rayTrace(5, mc.getRenderPartialTicks());
+        RayTraceResult splitResult = mc.player.rayTrace(ModuleAntiCheat.getRange(), mc.getRenderPartialTicks());
 
         if (splitResult != null && splitResult.typeOfHit == RayTraceResult.Type.BLOCK) {
             BlockPos block = splitResult.getBlockPos();
 
             // No air!
             if (mc.world.getBlockState(block).getBlock() != Blocks.AIR) {
-                Render3DUtil.render3DSolid(camera, block, color);
+                RenderUtil.render3DSolid(camera, block, color);
 
                 if (renderOutline.getValue() == RenderOutline.Enabled) {
                     float line = (float) settingOutlineLineSize.getValue();
 
-                    Render3DUtil.render3DOutline(camera, block, line, colorOutline);
+                    RenderUtil.render3DOutline(camera, block, line, colorOutline);
                 }
             }
         }

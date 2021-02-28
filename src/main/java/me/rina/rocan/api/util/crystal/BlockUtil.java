@@ -66,6 +66,12 @@ public class BlockUtil {
         return Rocan.MC.world.getBlockState(pos).getBlock() == Blocks.AIR || Rocan.MC.world.getBlockState(pos).getBlock() == Blocks.SNOW_LAYER || Rocan.MC.world.getBlockState(pos).getBlock() == Blocks.TALLGRASS;
     }
 
+    public static boolean isUnbreakable(BlockPos pos) {
+        IBlockState blockState = Rocan.MC.world.getBlockState(pos);
+
+        return Rocan.MC.world.getBlockState(pos).getBlockHardness(Rocan.MC.world, pos) == -1;
+    }
+
     public static float getHardness(BlockPos pos) {
         IBlockState blockState = Rocan.MC.world.getBlockState(pos);
 

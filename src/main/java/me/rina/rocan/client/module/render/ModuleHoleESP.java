@@ -11,7 +11,7 @@ import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.api.util.crystal.BlockUtil;
 import me.rina.rocan.api.util.crystal.HoleUtil;
 import me.rina.rocan.api.util.entity.PlayerUtil;
-import me.rina.rocan.api.util.render.Render3DUtil;
+import me.rina.rocan.api.util.render.RenderUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.turok.util.TurokMath;
 import net.minecraft.block.Block;
@@ -131,12 +131,12 @@ public class ModuleHoleESP extends Module {
         for (BlockPos blocks : holes) {
             float offsetY = settingOffsetY.getValue().intValue() / 100f;
             
-            Render3DUtil.render3DSolid(camera, blocks.x, blocks.y, blocks.z, 1, offsetY, 1, color);
+            RenderUtil.render3DSolid(camera, blocks.x, blocks.y, blocks.z, 1, offsetY, 1, color);
 
             if (settingOutline.getValue() == RenderOutline.Enabled) {
                 float line = settingOutlineLineSize.getValue().floatValue();
 
-                Render3DUtil.render3DOutline(camera, blocks.x, blocks.y, blocks.z, 1, offsetY, 1, line, colorOutline);
+                RenderUtil.render3DOutline(camera, blocks.x, blocks.y, blocks.z, 1, offsetY, 1, line, colorOutline);
             }
         }
     }

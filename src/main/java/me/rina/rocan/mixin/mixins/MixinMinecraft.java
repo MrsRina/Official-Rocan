@@ -36,6 +36,4 @@ public abstract class MixinMinecraft implements IMinecraft {
     private void onTick(CallbackInfo callbackInfo) {
         Rocan.getPomeloEventManager().dispatchEvent(new ClientTickEvent());
     }
-
-
 }

@@ -82,12 +82,12 @@ public class RightMouseClickOnBlockTracker extends PacketUtil.PacketTracker {
 
     @Override
     public void onPre() {
+        if (this.hand != null) {
+            Rocan.MC.player.swingArm(this.hand);
+        }
     }
 
     @Override
     public void onPost() {
-        if (this.hand != null) {
-            Rocan.MC.player.swingArm(this.hand);
-        }
     }
 }

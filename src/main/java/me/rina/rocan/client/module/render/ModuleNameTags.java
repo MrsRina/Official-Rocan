@@ -197,15 +197,9 @@ public class ModuleNameTags extends Module {
     }
 
     public String getTag(EntityPlayer entity) {
-        StringBuilder stringBuilder = new StringBuilder();
+        final NetworkPlayerInfo playerInfo = mc.getConnection().getPlayerInfo(entity.getUniqueID());
 
-        stringBuilder.append(settingName.getValue() ? entity.getName() + " " : "");
-
-        final NetworkPlayerInfo playerInfo = PlayerServerManager.get(entity.getName());
-
-        stringBuilder.append(settingPing.getValue() && playerInfo != null ? ServerUtil.getPing(playerInfo) : "");
-
-        return stringBuilder.toString();
+        return "" + (settingName.getValue() ? playerInfo.getDisplayName().getFormattedText() : "") + (settingPing.getValue() ? ServerUtil.getPing(playerInfo) : "");
     }
 
     public Color getColor(EntityLivingBase entity) {

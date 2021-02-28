@@ -16,7 +16,7 @@ import java.awt.*;
  * @author SrRina
  * @since 22/10/2020 at 1:44pm
  */
-public class Render3DUtil  {
+public class RenderUtil {
     public static void prepare(float line) {
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();

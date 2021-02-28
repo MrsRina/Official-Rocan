@@ -15,13 +15,10 @@ import java.awt.*;
 public class TurokFontManager {
 	public static void render(TurokFont fontRenderer, String string, float x, float y, boolean shadow, Color color) {
 		TurokGL.pushMatrix();
-
 		TurokGL.enable(GL11.GL_TEXTURE_2D);
 
 		TurokGL.enable(GL11.GL_BLEND);
 		TurokGL.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-		TurokGL.color(color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
 
 		if (shadow) {
 			if (fontRenderer.isRenderingCustomFont()) {

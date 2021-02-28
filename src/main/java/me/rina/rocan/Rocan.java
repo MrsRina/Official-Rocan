@@ -16,12 +16,14 @@ import me.rina.rocan.client.Wrapper;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.manager.chat.SpammerManager;
 import me.rina.rocan.client.manager.network.PlayerServerManager;
+import me.rina.rocan.client.module.client.ModuleAntiCheat;
 import me.rina.rocan.client.module.client.ModuleDeveloper;
 import me.rina.rocan.client.module.client.ModuleTPSSync;
 import me.rina.rocan.client.module.combat.*;
+import me.rina.rocan.client.module.exploit.ModuleBetterMine;
+import me.rina.rocan.client.module.exploit.ModuleCancelPackets;
 import me.rina.rocan.client.module.exploit.ModuleExtraSlots;
 import me.rina.rocan.client.module.exploit.ModuleFastUse;
-import me.rina.rocan.client.module.exploit.ModuleBetterMine;
 import me.rina.rocan.client.module.misc.*;
 import me.rina.rocan.client.module.movement.*;
 import me.rina.rocan.client.module.render.*;
@@ -44,7 +46,7 @@ public class Rocan {
     public static Rocan INSTANCE;
 
     public static final String NAME        = "Rocan";
-    public static final String VERSION     = "1.1.0";
+    public static final String VERSION     = "1.2.5";
     public static final String PATH_CONFIG = "Rocan/";
     public static final String CHAT        = ChatFormatting.GRAY + "Rocan " + ChatFormatting.WHITE;
 
@@ -82,6 +84,7 @@ public class Rocan {
         this.moduleManager.registry(new me.rina.rocan.client.module.client.ModuleClickGUI());
         this.moduleManager.registry(new ModuleDeveloper());
         this.moduleManager.registry(new ModuleTPSSync());
+        this.moduleManager.registry(new ModuleAntiCheat());
 
         // Category Combat.
         this.moduleManager.registry(new ModuleOffhand());
@@ -110,6 +113,7 @@ public class Rocan {
         this.moduleManager.registry(new ModuleExtraSlots());
         this.moduleManager.registry(new ModuleFastUse());
         this.moduleManager.registry(new ModuleBetterMine());
+        this.moduleManager.registry(new ModuleCancelPackets());
 
         // Movement
         this.moduleManager.registry(new ModuleAutoWalk());

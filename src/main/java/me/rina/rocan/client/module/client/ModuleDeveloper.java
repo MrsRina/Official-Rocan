@@ -18,8 +18,6 @@ import java.awt.*;
  **/
 @Registry(name = "Developer", tag = "Developer", description = "Test stuff!", category = ModuleCategory.CLIENT)
 public class ModuleDeveloper extends Module {
-    public static ValueColor colorPicker = new ValueColor("Color", "Color", "Color picker.", new Color(255, 0, 255));
-
 
     @Listener
     public void onListenClientTickEvent(ClientTickEvent event) {

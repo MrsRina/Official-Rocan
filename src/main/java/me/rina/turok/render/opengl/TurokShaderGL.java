@@ -191,7 +191,6 @@ public class TurokShaderGL {
     }
 
     public static void pushScissorAttrib() {
-        TurokGL.pushMatrix();
         TurokGL.pushAttrib(GL11.GL_SCISSOR_BIT);
         TurokGL.enable(GL11.GL_SCISSOR_TEST);
     }
@@ -219,7 +218,6 @@ public class TurokShaderGL {
     public static void popScissorAttrib() {
         TurokGL.disable(GL11.GL_SCISSOR_TEST);
         TurokGL.popAttrib();
-        TurokGL.popMatrix();
     }
 }
 
