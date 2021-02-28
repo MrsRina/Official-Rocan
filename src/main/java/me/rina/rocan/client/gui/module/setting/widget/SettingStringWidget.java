@@ -240,12 +240,20 @@ public class SettingStringWidget extends Widget {
                         break;
                     }
 
+                    case Keyboard.KEY_DELETE: {
+                        if (this.isAllSelected) {
+                            this.cacheType.setValue("");
+                            this.isAllSelected = false;
+                        }
+
+                        break;
+                    }
+
                     default: {
                         // Some characters are not allowed at Minecraft.
                         if (ChatAllowedCharacters.isAllowedCharacter(character)) {
                             if (this.isAllSelected) {
                                 this.cacheType.setValue("");
-
                                 this.isAllSelected = false;
                             }
 
