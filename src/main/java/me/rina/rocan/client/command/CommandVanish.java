@@ -52,6 +52,8 @@ public class CommandVanish extends Command {
                 mc.player.startRiding(entity, true);
 
                 splash("Mounted");
+
+                Rocan.getEntityWorldManager().removeEntity(250);
             }
         }
 

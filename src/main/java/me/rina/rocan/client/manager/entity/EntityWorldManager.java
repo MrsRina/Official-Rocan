@@ -40,6 +40,10 @@ public class EntityWorldManager extends Manager {
         this.entitySavedList.put(entityId, entity);
     }
 
+    public void removeEntity(int entityId) {
+        this.entitySavedList.remove(entityId);
+    }
+
     public Entity getEntity(int entityId) {
         return (Entity) this.entitySavedList.get(entityId);
     }
