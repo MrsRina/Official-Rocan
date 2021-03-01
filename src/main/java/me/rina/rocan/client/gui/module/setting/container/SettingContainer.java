@@ -54,6 +54,8 @@ public class SettingContainer extends Container {
     private TurokRect scrollRect = new TurokRect("I will go to canada and forget everything make me bad.", 0, 0);
     private TurokRect realRect = new TurokRect("Real rect", 0, 0);
 
+    private boolean isStarted;
+
     public Flag flagMouse = Flag.MOUSE_NOT_OVER;
     public Flag flagMouseRealRect = Flag.MOUSE_NOT_OVER;
     public Flag flagDescription = Flag.MOUSE_NOT_OVER;
@@ -68,6 +70,7 @@ public class SettingContainer extends Container {
         this.container = container;
 
         this.widgetModule = widgetModule;
+        this.isStarted = true;
 
         this.init();
     }
@@ -554,6 +557,14 @@ public class SettingContainer extends Container {
 
     @Override
     public void onRender() {
+        /*
+         * We refresh when start, to fix incorrect enabled position at setting list.
+         */
+        if (this.isStarted) {
+            this.onRefreshWidget();
+            this.isStarted = false;
+        }
+
         float positionXScaled = (this.container.getRect().getX() + this.container.getRect().getWidth()) + (2 * this.frame.getScale());
         float positionYScaled = this.container.getRect().getY();
 

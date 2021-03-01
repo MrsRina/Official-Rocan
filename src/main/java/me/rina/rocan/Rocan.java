@@ -8,13 +8,11 @@ import me.rina.rocan.api.module.management.ModuleManager;
 import me.rina.rocan.api.preset.management.PresetManager;
 import me.rina.rocan.api.social.management.SocialManager;
 import me.rina.rocan.api.tracker.management.TrackerManager;
-import me.rina.rocan.client.command.CommandCoords;
-import me.rina.rocan.client.command.CommandPrefix;
-import me.rina.rocan.client.command.CommandSocial;
-import me.rina.rocan.client.command.CommandToggle;
+import me.rina.rocan.client.command.*;
 import me.rina.rocan.client.Wrapper;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.manager.chat.SpammerManager;
+import me.rina.rocan.client.manager.entity.EntityWorldManager;
 import me.rina.rocan.client.manager.network.PlayerServerManager;
 import me.rina.rocan.client.module.client.ModuleAntiCheat;
 import me.rina.rocan.client.module.client.ModuleDeveloper;
@@ -71,6 +69,7 @@ public class Rocan {
     /* Not API managers. */
     private SpammerManager spammerManager;
     private PlayerServerManager playerServerManager;
+    private EntityWorldManager entityWorldManager;
 
     /* Gui screen stuff. */
     private ModuleClickGUI moduleClickGUI;
@@ -129,6 +128,7 @@ public class Rocan {
         this.commandManager.registry(new CommandToggle());
         this.commandManager.registry(new CommandCoords());
         this.commandManager.registry(new CommandSocial());
+        this.commandManager.registry(new CommandVanish());
 
         // We organize module list to alphabetical order.
         Collections.sort(this.moduleManager.getModuleList(), Comparator.comparing(Module::getName));
@@ -177,6 +177,7 @@ public class Rocan {
         this.presetManager = new PresetManager();
         this.spammerManager = new SpammerManager();
         this.playerServerManager = new PlayerServerManager();
+        this.entityWorldManager = new EntityWorldManager();
 
         this.wrapper = new Wrapper();
 
@@ -231,6 +232,10 @@ public class Rocan {
 
     public static PlayerServerManager getPlayerServerManager() {
         return INSTANCE.playerServerManager;
+    }
+
+    public static EntityWorldManager getEntityWorldManager() {
+        return INSTANCE.entityWorldManager;
     }
 
     public static Wrapper getWrapper() {

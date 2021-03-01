@@ -23,24 +23,44 @@ public class PlayerUtil {
         return new Vec3d(Rocan.MC.player.posX, Rocan.MC.player.posY, Rocan.MC.player.posZ);
     }
 
+    /**
+     * 0, 1, 2 are position x, y & z;
+     *
+     * @return position
+     */
     public static double[] getPos() {
         return new double[] {
                 Rocan.MC.player.posX, Rocan.MC.player.posY, Rocan.MC.player.posZ
         };
     }
 
+    /**
+     * 0, 1, 2 are last tick pos x, y & z;
+     *
+     * @return last tick pos.
+     */
     public static double[] getLastTickPos() {
         return new double[] {
                 Rocan.MC.player.lastTickPosX, Rocan.MC.player.lastTickPosY, Rocan.MC.player.lastTickPosZ
         };
     }
 
+    /**
+     * 0, 1, 2 are prev position x, y & z;
+     *
+     * @return prev position
+     */
     public static double[] getPrevPos() {
         return new double[] {
                 Rocan.MC.player.prevPosX, Rocan.MC.player.prevPosY, Rocan.MC.player.prevPosZ
         };
     }
 
+    /**
+     * 0, 1, 2 are motion x, y & z;
+     *
+     * @return motions movement
+     */
     public static double[] getMotion() {
         return new double[] {
                 Rocan.MC.player.motionX, Rocan.MC.player.motionY, Rocan.MC.player.motionZ
@@ -48,9 +68,18 @@ public class PlayerUtil {
     }
 
     /**
+     * 0 is head yaw, 1 yaw player & 2 pitch.
+     *
+     * @return rotations player
+     */
+    public static float[] getRotation() {
+        return new float[] {Rocan.MC.player.rotationYawHead, Rocan.MC.player.rotationYaw, Rocan.MC.player.rotationPitch};
+    }
+
+    /**
      * Calculate blocks per second.
      *
-     * @return blocks per tick.
+     * @return blocks per tick
      */
     public static double getBPS() {
         double[] prevPosition = getPrevPos();
