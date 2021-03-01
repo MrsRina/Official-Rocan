@@ -26,6 +26,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.IAnimals;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.Vec3d;
 import org.lwjgl.opengl.GL11;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
@@ -43,6 +44,8 @@ public class ModuleNameTags extends Module {
     public static ValueBoolean settingEnemy = new ValueBoolean("Enemy", "Enemy", "Allows render enemies name tag.", false);
     public static ValueBoolean settingPing = new ValueBoolean("Ping", "Ping", "Show ping player.", false);
     public static ValueBoolean settingName = new ValueBoolean("Name", "Name", "Draws name.", true);
+    public static ValueBoolean settingMainHand = new ValueBoolean("Main Hand", "MainHand", "Render item main hand.", true);
+    public static ValueBoolean settingOffhand = new ValueBoolean("Offhand", "Offhand", "Render item offhand.", true);
 
     /* Fonts setting. */
     public static ValueBoolean settingShadow = new ValueBoolean("Shadow", "Shadow", "String shadow.", true);
@@ -150,6 +153,24 @@ public class ModuleNameTags extends Module {
         int width = TurokFontManager.getStringWidth(Rocan.getWrapper().fontNameTags, tag) / 2;
 
         TurokFontManager.render(Rocan.getWrapper().fontNameTags, tag, -width, 0, settingShadow.getValue(), color);
+
+        int positionItems = 0;
+
+        if (entity.getHeldItemOffhand() != null && settingOffhand.getValue()) {
+            positionItems -= 8;
+        }
+
+        for (int i = 0; i < 4; i++) {
+            ItemStack item = mc.player.inventory.armorItemInSlot(i);
+
+            if (item != null) {
+                positionItems += 8;
+            }
+        }
+
+        if (entity.getHeldItemMainhand() != null && settingMainHand.getValue()) {
+            positionItems += 8;
+        }
 
         GlStateManager.disableTexture2D();
 
