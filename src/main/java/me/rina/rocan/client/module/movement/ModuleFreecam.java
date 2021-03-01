@@ -8,8 +8,13 @@ import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.api.util.entity.PlayerUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
+import me.rina.rocan.client.event.entity.PlayerMoveEvent;
+import me.rina.rocan.client.event.network.PacketEvent;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.Entity;
+import net.minecraft.network.play.client.CPacketInput;
+import net.minecraft.network.play.client.CPacketPlayer;
+import net.minecraftforge.client.event.PlayerSPPushOutOfBlocksEvent;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
@@ -93,6 +98,23 @@ public class ModuleFreecam extends Module {
 
             mc.player.noClip = true;
         }
+    }
+
+    @Listener
+    public void onListenPushPlayer(PlayerSPPushOutOfBlocksEvent event) {
+        event.setCanceled(true);
+    }
+
+    @Listener
+    public void onListenEvent(PacketEvent.Send event) {
+        if (event.getPacket() instanceof CPacketPlayer || event.getPacket() instanceof CPacketInput) {
+            event.setCanceled(true);
+        }
+    }
+
+    @Listener
+    public void onListenPlayerMove(PlayerMoveEvent event) {
+        mc.player.noClip = true;
     }
 
     @Override

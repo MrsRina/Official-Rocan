@@ -12,10 +12,7 @@ import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.rocan.client.module.movement.ModuleNoSlowDown;
 import me.rina.turok.render.opengl.TurokGL;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraftforge.client.event.ClientChatEvent;
-import net.minecraftforge.client.event.InputUpdateEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -144,6 +141,11 @@ public class EventManager {
 
     @SubscribeEvent()
     public void onInputUpdate(InputUpdateEvent event) {
+        Rocan.getPomeloEventManager().dispatchEvent(event);
+    }
+
+    @SubscribeEvent
+    public void onPlayerSPPushOutOfBlocksEvent(PlayerSPPushOutOfBlocksEvent event) {
         Rocan.getPomeloEventManager().dispatchEvent(event);
     }
 
