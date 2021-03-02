@@ -157,10 +157,12 @@ public class Rocan {
     public static void onEndClient() {
         me.rina.rocan.client.module.client.ModuleClickGUI moduleClickGUI = (me.rina.rocan.client.module.client.ModuleClickGUI) ModuleManager.get(me.rina.rocan.client.module.client.ModuleClickGUI.class);
         ModuleSpammer moduleSpammer = (ModuleSpammer) ModuleManager.get(ModuleSpammer.class);
+        ModuleFreecam moduleFreecam = (ModuleFreecam) ModuleManager.get(ModuleFreecam.class);
 
         // Close some modules.
         moduleClickGUI.setDisabled();
         moduleSpammer.setDisabled();
+        moduleFreecam.setDisabled();
 
         // Finish the preset saving all.
         Rocan.getModuleManager().onSave();

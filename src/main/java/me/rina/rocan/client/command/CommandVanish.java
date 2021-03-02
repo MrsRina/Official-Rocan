@@ -49,7 +49,7 @@ public class CommandVanish extends Command {
                     return;
                 }
 
-                mc.player.startRiding(entity, true);
+                mc.player.startRiding(entity);
 
                 splash("Mounted");
 
