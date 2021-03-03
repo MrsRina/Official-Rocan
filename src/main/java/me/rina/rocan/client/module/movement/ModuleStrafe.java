@@ -8,10 +8,9 @@ import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.api.util.client.KeyUtil;
 import me.rina.rocan.api.util.client.NullUtil;
-import me.rina.rocan.api.util.entity.PlayerUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.rocan.client.event.entity.PlayerMoveEvent;
-import me.rina.turok.util.TurokMath;
+import me.rina.turok.util.TurokTick;
 import net.minecraft.init.MobEffects;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
@@ -21,28 +20,36 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  **/
 @Registry(name = "Strafe", tag = "Strafe", description = "Allows you control air movement.", category = ModuleCategory.MOVEMENT)
 public class ModuleStrafe extends Module {
-    public static ValueEnum settingType = new ValueEnum("Type", "Type", "Type strafe.", Type.OLD);
+    public static ValueEnum settingType = new ValueEnum("Type", "Type", "Type strafe.", Type.MANUAL_JUMP);
 
-    /* Old misc. */
-    public static ValueBoolean settingOldStrafeOnGround = new ValueBoolean("On Ground", "OnGround", "On ground controls.", true);
-    public static ValueBoolean settingOldStrafeSmoothJump = new ValueBoolean("Smooth Jump", "SmoothJump", "Smooth jumping.", true);
-    public static ValueNumber settingOldStrafeSpeedSprint = new ValueNumber("Speed Sprint", "SpeedSprint", "Add cool speed if player is sprinting.", 0, 0, 10000);
+    /* Normal settings. */
+    public static ValueBoolean settingStrafeOnGround = new ValueBoolean("On Ground", "OnGround", "On ground controls.", true);
+    public static ValueBoolean settingStrafeSmoothJump = new ValueBoolean("Smooth Jump", "SmoothJump", "Smooth jumping.", true);
+
+    /* Increase speed setting. */
+    public static ValueBoolean settingIncreaseSpeed = new ValueBoolean("Increase Speed", "IncreaseSpeed", "Increase a cool speed value when you hit speed limit vanilla.", true);
+    public static ValueNumber settingSpeed = new ValueNumber("Speed", "Speed", "Speed boost.", 100, 0, 1000);
 
     public enum Type {
-        OLD;
+        AUTO_JUMP, MANUAL_JUMP;
     }
 
-    private int oldSpeed;
-    private int oldSpeedLast;
-    private double oldSpeedSQRT;
+    private int speed;
+    private int lastSpeed;
+    private int jumps;
 
-    private boolean flagOldSpeed;
+    private double speedSQRT;
+    private boolean flag;
+
+    /**
+     * Ticks for set speed by steps.
+     *
+     */
+    private TurokTick tickStrafeOld = new TurokTick();
 
     @Override
     public void onSetting() {
-        settingOldStrafeOnGround.setEnabled(settingType.getValue() == Type.OLD);
-        settingOldStrafeSmoothJump.setEnabled(settingType.getValue() == Type.OLD);
-        settingOldStrafeSpeedSprint.setEnabled(settingType.getValue() == Type.OLD);
+        settingSpeed.setEnabled(settingIncreaseSpeed.getValue());
     }
 
     @Listener
@@ -51,13 +58,46 @@ public class ModuleStrafe extends Module {
             return;
         }
 
-        switch ((Type) settingType.getValue()) {
-            case OLD: {
-                this.doOldTick();
+        int sqrt = (int) (this.speedSQRT * 10000);
 
-                break;
+        if (this.flag && mc.player.isSprinting()) {
+            switch (this.jumps) {
+                case 0: {
+                    this.lastSpeed = sqrt;
+
+                    break;
+                }
+
+                case 1: {
+                    this.jumps++;
+
+                    break;
+                }
+
+                case 2: {
+                    this.lastSpeed = 2873;
+
+                    break;
+                }
+
+                case 3: {
+                    this.lastSpeed = sqrt + (settingSpeed.isEnabled() ? settingSpeed.getValue().intValue() : 0);
+
+                    break;
+                }
             }
+
+            if (this.jumps > 3) {
+                this.lastSpeed = sqrt + (settingSpeed.isEnabled() ? settingSpeed.getValue().intValue() : 0);
+
+                this.jumps = 1;
+            }
+        } else {
+            this.lastSpeed = 2873;
+            this.tickStrafeOld.reset();
         }
+
+        this.speed = this.lastSpeed;
     }
 
     @Listener
@@ -66,38 +106,22 @@ public class ModuleStrafe extends Module {
             return;
         }
 
-        switch ((Type) settingType.getValue()) {
-            case OLD: {
-                this.doOld(event);
+        if (mc.player.isOnLadder() || mc.player.isInWater() || mc.player.isInLava() || mc.player.isInWeb || mc.player.capabilities.isFlying) {
+            return;
+        }
 
-                break;
+        if (settingStrafeOnGround.getValue() == false) {
+            if (mc.player.onGround) {
+                return;
             }
         }
-    }
 
-    public void doOldTick() {
-        if (this.flagOldSpeed && mc.player.isSprinting()) {
-            this.oldSpeedLast = (int) (this.oldSpeedSQRT * 10000d) + settingOldStrafeSpeedSprint.getValue().intValue();
-        } else {
-            this.oldSpeedLast = 2873;
-        }
+        this.speedSQRT = Math.sqrt(event.getX() * event.getX() + event.getZ() * event.getZ());
+        this.flag = this.speedSQRT > 0.2873f;
 
-        this.oldSpeed = (int) TurokMath.lerp(this.oldSpeed, this.oldSpeedLast, mc.isGamePaused() ? mc.renderPartialTicksPaused : mc.getRenderPartialTicks());
-    }
+        float speed = this.flag ? (this.speed / 10000f) : 0.2873f;
 
-    public void doOld(PlayerMoveEvent event) {
-        if (mc.player.isSneaking() || mc.player.isOnLadder() || mc.player.isInWater() || mc.player.isInLava() || mc.player.isInWeb || mc.player.capabilities.isFlying) {
-            return;
-        }
-
-        if (settingOldStrafeOnGround.getValue() == false && mc.player.onGround) {
-            return;
-        }
-
-        this.oldSpeedSQRT = Math.sqrt(event.getX() * event.getX() + event.getZ() * event.getZ());
-        this.flagOldSpeed = this.oldSpeedSQRT > 0.2873f;
-
-        float speed = this.oldSpeed / 10000f;
+        this.print("" + this.speed + " " + this.jumps);
 
         if (mc.player.isPotionActive(MobEffects.SPEED)) {
             final int amplifier = mc.player.getActivePotionEffect(MobEffects.SPEED).getAmplifier();
@@ -114,6 +138,13 @@ public class ModuleStrafe extends Module {
         if (playerForward == 0.0d && playerStrafe == 0.0d) {
             event.setX(0d);
             event.setZ(0d);
+
+            if (settingType.getValue() == Type.AUTO_JUMP) {
+                KeyUtil.press(mc.gameSettings.keyBindJump, false);
+            }
+
+            this.jumps = 0;
+            this.tickStrafeOld.reset();
         } else {
             if (playerForward != 0.0d & playerStrafe != 0.0d) {
                 if (playerForward != 0.0d) {
@@ -133,20 +164,32 @@ public class ModuleStrafe extends Module {
                 }
             }
 
-            if (mc.gameSettings.keyBindJump.isPressed() && mc.player.onGround) {
-                if (settingOldStrafeSmoothJump.getValue()) {
-                    speed = 0.6174077f;
-                }
+            if (settingType.getValue() == Type.AUTO_JUMP) {
+                KeyUtil.press(mc.gameSettings.keyBindJump, true);
 
-                event.setY(mc.player.motionY = getMotionJumpY());
+                mc.player.setSprinting(this.jumps >= 1);
+            }
+
+            boolean isJumping = mc.gameSettings.keyBindJump.isKeyDown();
+
+            if (isJumping) {
+                if (mc.player.onGround) {
+                    ++this.jumps;
+
+                    if (settingStrafeSmoothJump.getValue() == false) {
+                        speed = 0.6174077f;
+                    }
+
+                    event.setY(mc.player.motionY = getMotionJumpY());
+                }
             }
         }
 
-        double x = ((playerForward * speed) * Math.cos(Math.toRadians(playerRotationYaw + 90f)) + (playerStrafe * speed) * Math.sin(Math.toRadians(playerRotationYaw + 90f)));
-        double z = ((playerForward * speed) * Math.sin(Math.toRadians(playerRotationYaw + 90f)) - (playerStrafe * speed) * Math.cos(Math.toRadians(playerRotationYaw + 90f)));
+        double x = Math.cos(Math.toRadians(playerRotationYaw + 90f));
+        double z = Math.sin(Math.toRadians(playerRotationYaw + 90f));
 
-        event.setX(x);
-        event.setZ(z);
+        event.setX(playerForward * speed * x + playerStrafe * speed * z);
+        event.setZ(playerForward * speed * z - playerStrafe * speed * x);
     }
 
     public float getMotionJumpY() {

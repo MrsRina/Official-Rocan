@@ -46,6 +46,13 @@ public class ModuleFreecam extends Module {
         mc.player.capabilities.isFlying = true;
         mc.player.capabilities.setFlySpeed((settingSpeed.getValue().intValue() * 2) / 1000f);
 
+        this.customPlayer.setRotationYawHead(settingRotateHead.getValue() ? mc.player.getRotationYawHead() : this.lastRotation[0]);
+
+        if (settingRotate.getValue()) {
+            this.customPlayer.rotationYaw = mc.player.rotationYaw;
+            this.customPlayer.rotationPitch = mc.player.rotationPitch;
+        }
+
         float playerRotationYaw = mc.player.rotationYaw;
         float playerRotationPitch = mc.player.rotationPitch;
 
@@ -106,12 +113,14 @@ public class ModuleFreecam extends Module {
         }
 
         mc.player.capabilities.isFlying = false;
+        mc.player.noClip = false;
 
-        mc.player.setPositionAndRotation(this.lastPosition[0], this.lastPosition[1], this.lastPosition[2], this.lastRotation[1], this.lastRotation[2]);
         mc.world.removeEntityFromWorld(-100);
 
         if (this.isRiding) {
             mc.player.startRiding(this.ridingEntity, true);
+        } else {
+            mc.player.setPositionAndRotation(this.lastPosition[0], this.lastPosition[1], this.lastPosition[2], this.lastRotation[1], this.lastRotation[2]);
         }
     }
 
