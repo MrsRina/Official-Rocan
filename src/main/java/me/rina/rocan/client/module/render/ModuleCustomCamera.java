@@ -4,6 +4,8 @@ import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.module.registry.Registry;
 import me.rina.rocan.api.setting.value.ValueNumber;
+import me.rina.rocan.api.util.client.NullUtil;
+import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.rocan.client.event.render.EnumHandSideEvent;
 import me.rina.turok.render.opengl.TurokGL;
 import net.minecraft.util.EnumHandSide;
@@ -15,8 +17,11 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  *
  * Sorry jake, I have update the module.
  **/
-@Registry(name = "Custom Fov", tag = "CustomFov", description = "Changes the fov of the item held in your hand.", category = ModuleCategory.RENDER)
-public class ModuleCustomFov extends Module {
+@Registry(name = "Custom Camera", tag = "CustomCamera", description = "Manage camera stuff and player hands.", category = ModuleCategory.RENDER)
+public class ModuleCustomCamera extends Module {
+    /* Field of View. */
+    public static ValueNumber settingFieldOfView = new ValueNumber("Field of View", "FieldOfView", "Field of view camera.", 130, 0, 180);
+
     /* Misc right hand. */
     public static ValueNumber settingRightX = new ValueNumber("Right X", "RightX", "Changes the x value.", 0.0, -50.0, 50.0);
     public static ValueNumber settingRightY = new ValueNumber("Right Y", "RightY", "Changes the y value.", 0.0, -50.0, 50.0);
@@ -30,6 +35,15 @@ public class ModuleCustomFov extends Module {
     public static ValueNumber settingLeftZ = new ValueNumber("Left Z", "LeftZ", "Changes the z value.", 0.0, -50.0, 50.0);
 
     public static ValueNumber settingScaleLeft = new ValueNumber("Scale Left", "ScaleLeft", "Changes the scale.", 10, 0, 50);
+
+    @Listener
+    public void onListenTickEvent(ClientTickEvent event) {
+        if (NullUtil.isPlayerWorld()) {
+            return;
+        }
+
+        mc.gameSettings.fovSetting = settingFieldOfView.getValue().intValue();
+    }
 
     @Listener
     public void onEnumHandSideEvent(EnumHandSideEvent event) {

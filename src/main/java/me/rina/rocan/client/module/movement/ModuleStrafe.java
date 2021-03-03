@@ -8,6 +8,7 @@ import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.api.util.client.KeyUtil;
 import me.rina.rocan.api.util.client.NullUtil;
+import me.rina.rocan.api.util.entity.PlayerUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.rocan.client.event.entity.PlayerMoveEvent;
 import me.rina.turok.util.TurokTick;
@@ -58,36 +59,24 @@ public class ModuleStrafe extends Module {
             return;
         }
 
-        int sqrt = (int) (this.speedSQRT * 10000);
+        int sqrt = speedSQRT < 0.2873 ? 2873 : (int) (this.speedSQRT * 10000);
 
-        if (this.flag && mc.player.isSprinting()) {
-            switch (this.jumps) {
-                case 0: {
-                    this.lastSpeed = sqrt;
+        print("" + ((int)(PlayerUtil.getBPS() * 3.6f)) + " " + this.lastSpeed / 10000f);
 
-                    break;
-                }
-
-                case 1: {
-                    this.jumps++;
-
-                    break;
-                }
-
-                case 2: {
-                    this.lastSpeed = 2873;
-
-                    break;
-                }
-
-                case 3: {
-                    this.lastSpeed = sqrt + (settingSpeed.isEnabled() ? settingSpeed.getValue().intValue() : 0);
-
-                    break;
-                }
+        if (mc.player.isSprinting() || (mc.player.movementInput.moveStrafe != 0f)) {
+            if (this.jumps == 0) {
+                this.lastSpeed = sqrt;
             }
 
-            if (this.jumps > 3) {
+            if (this.jumps == 1) {
+                this.lastSpeed = sqrt + (settingSpeed.isEnabled() ? settingSpeed.getValue().intValue() : 0);
+            }
+
+            if (this.jumps == 2) {
+                this.lastSpeed = sqrt + (settingSpeed.isEnabled() ? settingSpeed.getValue().intValue() / 2 : 0);
+            }
+
+            if (this.jumps == 4) {
                 this.lastSpeed = sqrt + (settingSpeed.isEnabled() ? settingSpeed.getValue().intValue() : 0);
 
                 this.jumps = 1;
@@ -117,11 +106,9 @@ public class ModuleStrafe extends Module {
         }
 
         this.speedSQRT = Math.sqrt(event.getX() * event.getX() + event.getZ() * event.getZ());
-        this.flag = this.speedSQRT > 0.2873f;
+        this.flag = (this.speed / 10000f) > 0.2873f;
 
         float speed = this.flag ? (this.speed / 10000f) : 0.2873f;
-
-        this.print("" + this.speed + " " + this.jumps);
 
         if (mc.player.isPotionActive(MobEffects.SPEED)) {
             final int amplifier = mc.player.getActivePotionEffect(MobEffects.SPEED).getAmplifier();

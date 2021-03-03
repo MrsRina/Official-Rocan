@@ -44,7 +44,7 @@ public class Rocan {
     public static Rocan INSTANCE;
 
     public static final String NAME        = "Rocan";
-    public static final String VERSION     = "1.2.10";
+    public static final String VERSION     = "1.3.0beta";
     public static final String PATH_CONFIG = "Rocan/";
     public static final String CHAT        = ChatFormatting.GRAY + "Rocan " + ChatFormatting.WHITE;
 
@@ -96,7 +96,7 @@ public class Rocan {
         this.moduleManager.registry(new ModuleBlockHighlight());
         this.moduleManager.registry(new ModuleHoleESP());
         this.moduleManager.registry(new ModuleFullBright());
-        this.moduleManager.registry(new ModuleCustomFov());
+        this.moduleManager.registry(new ModuleCustomCamera());
         this.moduleManager.registry(new ModuleNameTags());
         this.moduleManager.registry(new ModuleNoRender());
         this.moduleManager.registry(new ModuleFreecam());

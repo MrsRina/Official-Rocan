@@ -18,11 +18,13 @@ import java.awt.*;
  **/
 @Registry(name = "Developer", tag = "Developer", description = "Test stuff!", category = ModuleCategory.CLIENT)
 public class ModuleDeveloper extends Module {
-
     @Listener
     public void onListenClientTickEvent(ClientTickEvent event) {
         if (NullUtil.isPlayerWorld()) {
             return;
         }
+
+        if (mc.player.movementInput.moveForward != 0f || mc.player.movementInput.moveStrafe != 0f)
+            mc.player.setSprinting(true);
     }
 }
