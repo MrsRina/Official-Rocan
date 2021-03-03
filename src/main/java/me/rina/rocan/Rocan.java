@@ -44,7 +44,7 @@ public class Rocan {
     public static Rocan INSTANCE;
 
     public static final String NAME        = "Rocan";
-    public static final String VERSION     = "1.3.0beta";
+    public static final String VERSION     = "1.3.1beta";
     public static final String PATH_CONFIG = "Rocan/";
     public static final String CHAT        = ChatFormatting.GRAY + "Rocan " + ChatFormatting.WHITE;
 

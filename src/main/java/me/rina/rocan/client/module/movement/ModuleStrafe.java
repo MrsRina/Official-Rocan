@@ -61,22 +61,20 @@ public class ModuleStrafe extends Module {
 
         int sqrt = speedSQRT < 0.2873 ? 2873 : (int) (this.speedSQRT * 10000);
 
-        print("" + ((int)(PlayerUtil.getBPS() * 3.6f)) + " " + this.lastSpeed / 10000f);
-
-        if (mc.player.isSprinting() || (mc.player.movementInput.moveStrafe != 0f)) {
+        if (mc.player.isSprinting()) {
             if (this.jumps == 0) {
                 this.lastSpeed = sqrt;
             }
 
             if (this.jumps == 1) {
-                this.lastSpeed = sqrt + (settingSpeed.isEnabled() ? settingSpeed.getValue().intValue() : 0);
+                this.lastSpeed = sqrt ;
             }
 
             if (this.jumps == 2) {
-                this.lastSpeed = sqrt + (settingSpeed.isEnabled() ? settingSpeed.getValue().intValue() / 2 : 0);
+                this.lastSpeed = sqrt;
             }
 
-            if (this.jumps == 4) {
+            if (this.jumps == 3) {
                 this.lastSpeed = sqrt + (settingSpeed.isEnabled() ? settingSpeed.getValue().intValue() : 0);
 
                 this.jumps = 1;
@@ -114,6 +112,10 @@ public class ModuleStrafe extends Module {
             final int amplifier = mc.player.getActivePotionEffect(MobEffects.SPEED).getAmplifier();
 
             speed *= (1.0d + 0.2d * (amplifier + 1));
+        }
+
+        if (mc.player.isSneaking()) {
+            speed = 0.1500f;
         }
 
         float playerRotationYaw = mc.player.rotationYaw;
