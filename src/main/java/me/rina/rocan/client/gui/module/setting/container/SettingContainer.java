@@ -574,7 +574,12 @@ public class SettingContainer extends Container {
         this.rect.setY(positionYScaled);
 
         this.scrollRect.setX(this.rect.getX());
-        this.scrollRect.setY(TurokMath.lerp(this.scrollRect.getY(), this.rect.getY() + realScrollHeight + this.offsetY, this.master.getPartialTicks()));
+
+        if (this.master.getMouse().hasWheel()) {
+            this.scrollRect.setY(TurokMath.lerp(this.scrollRect.getY(), this.rect.getY() + realScrollHeight + this.offsetY, this.master.getPartialTicks()));
+        } else {
+            this.scrollRect.setY(this.rect.getY() + this.offsetY);
+        }
 
         this.realRect.setX(this.rect.getX());
         this.realRect.setY(this.rect.getY() + realScrollHeight);

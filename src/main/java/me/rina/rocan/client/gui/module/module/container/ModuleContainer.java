@@ -316,7 +316,12 @@ public class ModuleContainer extends Container {
         float maximumScroll = 3f;
 
         this.scrollRect.setX(this.rect.getX());
-        this.scrollRect.setY(TurokMath.lerp(this.scrollRect.getY(), this.rect.getY() + this.offsetY, this.master.getPartialTicks()));
+
+        if (this.master.getMouse().hasWheel()) {
+            this.scrollRect.setY(TurokMath.lerp(this.scrollRect.getY(), this.rect.getY() + this.offsetY, this.master.getPartialTicks()));
+        } else {
+            this.scrollRect.setY(this.rect.getY() + this.offsetY);
+        }
 
         this.scrollRect.setWidth(this.rect.getWidth());
 

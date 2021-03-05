@@ -6,5 +6,7 @@ package me.rina.rocan.api.gui.flag;
  */
 public enum Flag {
     MOUSE_OVER,
-    MOUSE_NOT_OVER;
+    MOUSE_NOT_OVER,
+    ANIMATING,
+    ANIMATED;
 }
