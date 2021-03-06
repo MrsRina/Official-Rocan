@@ -1,6 +1,7 @@
 package me.rina.rocan.api.util.crystal;
 
 import me.rina.rocan.Rocan;
+import me.rina.rocan.api.util.entity.PlayerUtil;
 import me.rina.turok.util.TurokMath;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -9,6 +10,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 
 /**
  * @author SrRina
@@ -98,7 +100,17 @@ public class BlockUtil {
         return TurokMath.sqrt(x * x + y * y + z * z);
     }
 
-    public static EnumFacing getFacing(BlockPos pos, EntityLivingBase entityLivingBase) {
+    public static EnumFacing getSideFacing(BlockPos pos, EntityLivingBase entityLivingBase) {
         return EnumFacing.getDirectionFromEntityLiving(pos, entityLivingBase);
+    }
+
+    public static EnumFacing getFacing(BlockPos pos, EntityLivingBase entityLivingBase) {
+        Vec3d eye = entityLivingBase.getPositionEyes(1f);
+
+        float x = (float) eye.x - (pos.x + 0.5f);
+        float y = (float) eye.y - (pos.y + 0.5f);
+        float z = (float) eye.z - (pos.z + 0.5f);
+
+        return EnumFacing.getFacingFromVector(x, y, z);
     }
 }

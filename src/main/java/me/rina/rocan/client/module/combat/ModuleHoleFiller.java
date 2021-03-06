@@ -33,12 +33,16 @@ public class ModuleHoleFiller extends Module {
     public static ValueNumber settingRange = new ValueNumber("Range", "Range", "The maximum range for place blocks and collect.", 6f, 1f, 6f);
     public static ValueNumber settingTimeOut = new ValueNumber("Time Out", "TimeOut", "Time out delay for disable filler.", 1000, 1, 3000);
     public static ValueNumber settingDelay = new ValueNumber("Delay", "Delay", "The MS delay for places blocks on queue system.", 50, 0, 1000);
+    public static ValueNumber settingHoleLimit = new ValueNumber("Hole Limit", "HoleLimit", "Limit of holes to place blocks.", 6, 1, 24);
+
 
     private final Item obsidian = Item.getItemFromBlock(Blocks.OBSIDIAN);
     private ArrayList<BlockPos> blocks = new ArrayList<>();
 
     private int slot;
     private int oldSlot;
+
+    private int universalCountHolePlaced;
 
     private TurokTick tickQueue = new TurokTick();
     private TurokTick tickTimeOut = new TurokTick();
@@ -55,7 +59,7 @@ public class ModuleHoleFiller extends Module {
             return;
         }
 
-        if (this.tickTimeOut.isPassedMS(settingTimeOut.getValue().intValue())) {
+        if (this.tickTimeOut.isPassedMS(settingTimeOut.getValue().intValue()) || (this.universalCountHolePlaced >= settingHoleLimit.getValue().intValue())) {
             this.setDisabled();
             this.tickTimeOut.reset();
 
@@ -83,6 +87,8 @@ public class ModuleHoleFiller extends Module {
         this.tickQueue.reset();
         this.blocks.clear();
 
+        this.universalCountHolePlaced = 0;
+
         if (NullUtil.isPlayerWorld()) {
             return;
         }
@@ -100,6 +106,8 @@ public class ModuleHoleFiller extends Module {
         this.tickTimeOut.reset();
         this.tickQueue.reset();
         this.blocks.clear();
+
+        this.universalCountHolePlaced = 0;
 
         if (NullUtil.isPlayerWorld()) {
             return;
@@ -183,7 +191,9 @@ public class ModuleHoleFiller extends Module {
         PlayerRotationUtil.packet(hit);
 
         if (mc.player.getHeldItemMainhand().getItem() == obsidian) {
-            mc.playerController.processRightClickBlock(mc.player, mc.world, offset, facing, hit, EnumHand.MAIN_HAND);
+            mc.playerController.processRightClickBlock(mc.player, mc.world, pos, facing, hit, EnumHand.MAIN_HAND);
+
+            this.universalCountHolePlaced++;
         }
     }
 

@@ -185,24 +185,25 @@ public class RenderUtil {
             BufferBuilder bufferBuilder = tessellator.getBuffer();
             bufferBuilder.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION_COLOR);
 
-            bufferBuilder.pos(minX, minY, minZ).color(red, green, blue, 0.0F).endVertex();
-            bufferBuilder.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
-            bufferBuilder.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
-            bufferBuilder.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();
-            bufferBuilder.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
-            bufferBuilder.pos(minX, minY, minZ).color(red, green, blue, alpha).endVertex();
-            bufferBuilder.pos(minX, maxY, minZ).color(red, green, blue, alpha).endVertex();
-            bufferBuilder.pos(maxX, maxY, minZ).color(red, green, blue, alpha).endVertex();
-            bufferBuilder.pos(maxX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
-            bufferBuilder.pos(minX, maxY, maxZ).color(red, green, blue, alpha).endVertex();
-            bufferBuilder.pos(minX, maxY, minZ).color(red, green, blue, alpha).endVertex();
-            bufferBuilder.pos(minX, maxY, maxZ).color(red, green, blue, 0.0F).endVertex();
-            bufferBuilder.pos(minX, minY, maxZ).color(red, green, blue, alpha).endVertex();
-            bufferBuilder.pos(maxX, maxY, maxZ).color(red, green, blue, 0.0F).endVertex();
-            bufferBuilder.pos(maxX, minY, maxZ).color(red, green, blue, alpha).endVertex();
-            bufferBuilder.pos(maxX, maxY, minZ).color(red, green, blue, 0.0F).endVertex();
-            bufferBuilder.pos(maxX, minY, minZ).color(red, green, blue, alpha).endVertex();
-            bufferBuilder.pos(maxX, minY, minZ).color(red, green, blue, 0.0F).endVertex();
+            bufferBuilder.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+            bufferBuilder.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+            bufferBuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+            bufferBuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+            bufferBuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red, green, blue, alpha).endVertex();
+            bufferBuilder.pos(bb.minX, bb.minY, bb.minZ).color(red, green, blue, alpha).endVertex();
+            bufferBuilder.pos(bb.minX, bb.maxY / 2, bb.minZ).color(red, green, blue, alpha).endVertex();
+            bufferBuilder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, 0).endVertex();
+            bufferBuilder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, 0f).endVertex();
+            bufferBuilder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, 0f).endVertex();
+            bufferBuilder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, 0f).endVertex();
+            bufferBuilder.pos(bb.minX, bb.maxY, bb.minZ).color(red, green, blue, 0f).endVertex();
+            bufferBuilder.pos(bb.minX, bb.maxY, bb.maxZ).color(red, green, blue, 0f).endVertex();
+            bufferBuilder.pos(bb.minX, bb.minY, bb.maxZ).color(red, green, blue, 0f).endVertex();
+            bufferBuilder.pos(bb.maxX, bb.maxY, bb.maxZ).color(red, green, blue, 0f).endVertex();
+            bufferBuilder.pos(bb.maxX, bb.minY, bb.maxZ).color(red, green, blue, 0f).endVertex();
+            bufferBuilder.pos(bb.maxX, bb.maxY, bb.minZ).color(red, green, blue, 0f).endVertex();
+            bufferBuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, 0f).endVertex();
+            bufferBuilder.pos(bb.maxX, bb.minY, bb.minZ).color(red, green, blue, 0f).endVertex();
 
             tessellator.draw();
 
@@ -278,13 +279,5 @@ public class RenderUtil {
 
             release();
         }
-    }
-
-    public static void drawOutlineLegacyFadingBlock(ICamera camera, int x, int y, int z, double offsetX, double offsetY, double offsetZ, float line, Color color) {
-
-    }
-
-    public static void drawSolidLegacyFadingBlock(ICamera camera, int x, int y, int z, double offsetX, double offsetY, double offsetZ, Color color) {
-
     }
 }

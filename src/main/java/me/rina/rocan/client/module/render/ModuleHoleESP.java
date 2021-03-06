@@ -37,7 +37,7 @@ public class ModuleHoleESP extends Module {
     public static ValueEnum settingRenderStyle = new ValueEnum("Render Style", "RenderStyle", "Style to render.", RenderStyle.NORMAL);
 
     public enum RenderStyle {
-        NORMAL, LEGACY, SHADER
+        NORMAL, LEGACY, LEGACY_INVERTED
     }
 
     /* Color. */

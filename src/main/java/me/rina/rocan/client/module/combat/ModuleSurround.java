@@ -302,7 +302,7 @@ public class ModuleSurround extends Module {
         }
 
         if (mc.player.getHeldItemMainhand().getItem() == obsidian) {
-            mc.playerController.processRightClickBlock(mc.player, mc.world, offset, facing, hit, EnumHand.MAIN_HAND);
+            mc.playerController.processRightClickBlock(mc.player, mc.world, pos, facing, hit, EnumHand.MAIN_HAND);
         }
 
         return Flag.PLACED;

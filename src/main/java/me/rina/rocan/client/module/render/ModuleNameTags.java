@@ -1,5 +1,6 @@
 package me.rina.rocan.client.module.render;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rina.rocan.Rocan;
 import me.rina.rocan.api.event.impl.EventStage;
 import me.rina.rocan.api.module.Module;
@@ -206,9 +207,20 @@ public class ModuleNameTags extends Module {
     }
 
     public String getTag(EntityPlayer entity) {
-        final NetworkPlayerInfo playerInfo = mc.getConnection().getPlayerInfo(entity.getUniqueID());
+        String name = settingName.getValue() ? entity.getName() : "";
+        String ping = "";
 
-        return "" + (settingName.getValue() ? playerInfo.getDisplayName().getFormattedText() : "") + (settingPing.getValue() ? ServerUtil.getPing(playerInfo) : "");
+        if (settingPing.getValue() && mc.getConnection() != null) {
+            final NetworkPlayerInfo playerInfo = mc.getConnection().getPlayerInfo(entity.getUniqueID());
+
+            if (playerInfo != null) {
+                ping = (ServerUtil.getPing(playerInfo) >= 140 ? ChatFormatting.RED + " " + ServerUtil.getPing(playerInfo) : ChatFormatting.GREEN + " " + ServerUtil.getPing(playerInfo));
+            }
+        } else {
+            ping = "";
+        }
+
+        return name + ping;
     }
 
     public Color getColor(EntityLivingBase entity) {

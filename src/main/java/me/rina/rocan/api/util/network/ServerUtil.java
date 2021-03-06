@@ -8,7 +8,7 @@ import net.minecraft.client.network.NetworkPlayerInfo;
  **/
 public class ServerUtil {
     public static int getPing(NetworkPlayerInfo player) {
-        boolean flag = player.getResponseTime() == 0;
+        boolean flag = player.getResponseTime() < 0;
 
         return flag ? -1 : player.getResponseTime();
     }
