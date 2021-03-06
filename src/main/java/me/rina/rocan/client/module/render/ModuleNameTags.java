@@ -32,6 +32,7 @@ import org.lwjgl.opengl.GL11;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * @author SrRina
@@ -59,6 +60,8 @@ public class ModuleNameTags extends Module {
 
     private float scaled;
 
+    private ArrayList<EntityPlayer> entityToDraw;
+
     @Override
     public void onSetting() {
         Rocan.getWrapper().fontNameTags.setRenderingCustomFont(settingCustomFont.getValue());
@@ -79,109 +82,94 @@ public class ModuleNameTags extends Module {
 
         float partialTicks = Rocan.getClientEventManager().getCurrentRender3DPartialTicks();
 
-        for (EntityPlayer entities : mc.world.playerEntities) {
-            if (entities == null) {
-                continue;
+        mc.world.playerEntities.stream()
+        .filter(entityPlayer -> entityPlayer != null)
+        .filter(entityPlayer -> this.doAccept(entityPlayer))
+        .filter(entityPlayer -> entityPlayer.getHealth() > 0 && entityPlayer.isDead == false)
+        .filter(entityPlayer -> mc.player.getDistance(entityPlayer) < settingRange.getValue().intValue())
+        .forEach(entity -> {
+            if (mc.getRenderManager().options == null) {
+                return;
             }
 
-            if (this.doAccept(entities) == false) {
-                continue;
+            Vec3d vecLastTickPosition = new Vec3d(entity.lastTickPosX, entity.lastTickPosY, entity.lastTickPosZ);
+            Vec3d vecPosition = new Vec3d(entity.posX, entity.posY, entity.posZ);
+
+            Vec3d vec = TurokMath.lerp(vecLastTickPosition, vecPosition, partialTicks);
+
+            float playerViewX = mc.getRenderManager().playerViewX;
+            float playerViewY = mc.getRenderManager().playerViewY;
+
+            boolean flag = mc.getRenderManager().options.thirdPersonView == 2;
+
+            double height = (entity.height + (settingOffsetY.getValue().intValue() / 100d) - (entity.isSneaking() ? 0.25f : 0f));
+
+            double x = vec.x - mc.getRenderManager().renderPosX;
+            double y = (vec.y + height) - mc.getRenderManager().renderPosY;
+            double z = vec.z - mc.getRenderManager().renderPosZ;
+
+            /*
+             * Current scale of entity.
+             */
+            this.doScale(entity);
+
+            RenderHelper.enableStandardItemLighting();
+
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(x, y, z);
+
+            // Rotate for name tag.
+            GlStateManager.rotate(-playerViewY, 0f, 1f, 0f);
+            GlStateManager.rotate((flag ? -1f : 1f) * playerViewX, 1f, 0f, 0f);
+
+            // Scale.
+            GlStateManager.scale(this.scaled, this.scaled, this.scaled);
+            GlStateManager.scale(-0.025f, -0.025f, 0.025f);
+
+            GlStateManager.disableLighting();
+            GlStateManager.disableDepth();
+
+            GlStateManager.depthMask(false);
+
+            // Draw.
+            GlStateManager.enableTexture2D();
+
+            String tag = this.getTag(entity);
+            Color color = this.getColor(entity);
+
+            int width = TurokFontManager.getStringWidth(Rocan.getWrapper().fontNameTags, tag) / 2;
+
+            TurokFontManager.render(Rocan.getWrapper().fontNameTags, tag, -width, 0, settingShadow.getValue(), color);
+
+            int positionItems = 0;
+
+            if (entity.getHeldItemOffhand() != null && settingOffhand.getValue()) {
+                positionItems -= 8;
             }
 
-            if (entities.getHealth() < 0 || entities.isDead) {
-                continue;
+            for (int i = 0; i < 4; i++) {
+                ItemStack item = mc.player.inventory.armorItemInSlot(i);
+
+                if (item != null) {
+                    positionItems += 8;
+                }
             }
 
-            if (mc.player.getDistance(entities) >= settingRange.getValue().intValue()) {
-                continue;
-            }
-
-            this.doDraw(entities, partialTicks);
-        }
-    }
-
-    public void doDraw(EntityPlayer entity, float partialTicks) {
-        if (mc.getRenderManager().options == null) {
-            return;
-        }
-
-        Vec3d vecLastTickPosition = new Vec3d(entity.lastTickPosX, entity.lastTickPosY, entity.lastTickPosZ);
-        Vec3d vecPosition = new Vec3d(entity.posX, entity.posY, entity.posZ);
-
-        Vec3d vec = TurokMath.lerp(vecLastTickPosition, vecPosition, partialTicks);
-
-        float playerViewX = mc.getRenderManager().playerViewX;
-        float playerViewY = mc.getRenderManager().playerViewY;
-
-        boolean flag = mc.getRenderManager().options.thirdPersonView == 2;
-
-        double height = (entity.height + (settingOffsetY.getValue().intValue() / 100d) - (entity.isSneaking() ? 0.25f : 0f));
-
-        double x = vec.x - mc.getRenderManager().renderPosX;
-        double y = (vec.y + height) - mc.getRenderManager().renderPosY;
-        double z = vec.z - mc.getRenderManager().renderPosZ;
-
-        /*
-         * Current scale of entity.
-         */
-        this.doScale(entity);
-
-        RenderHelper.enableStandardItemLighting();
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(x, y, z);
-
-        // Rotate for name tag.
-        GlStateManager.rotate(-playerViewY, 0f, 1f, 0f);
-        GlStateManager.rotate((flag ? -1f : 1f) * playerViewX, 1f, 0f, 0f);
-
-        // Scale.
-        GlStateManager.scale(this.scaled, this.scaled, this.scaled);
-        GlStateManager.scale(-0.025f, -0.025f, 0.025f);
-
-        GlStateManager.disableLighting();
-        GlStateManager.disableDepth();
-
-        GlStateManager.depthMask(false);
-
-        // Draw.
-        GlStateManager.enableTexture2D();
-
-        String tag = this.getTag(entity);
-        Color color = this.getColor(entity);
-
-        int width = TurokFontManager.getStringWidth(Rocan.getWrapper().fontNameTags, tag) / 2;
-
-        TurokFontManager.render(Rocan.getWrapper().fontNameTags, tag, -width, 0, settingShadow.getValue(), color);
-
-        int positionItems = 0;
-
-        if (entity.getHeldItemOffhand() != null && settingOffhand.getValue()) {
-            positionItems -= 8;
-        }
-
-        for (int i = 0; i < 4; i++) {
-            ItemStack item = mc.player.inventory.armorItemInSlot(i);
-
-            if (item != null) {
+            if (entity.getHeldItemMainhand() != null && settingMainHand.getValue()) {
                 positionItems += 8;
             }
-        }
 
-        if (entity.getHeldItemMainhand() != null && settingMainHand.getValue()) {
-            positionItems += 8;
-        }
+            GlStateManager.disableTexture2D();
 
-        GlStateManager.disableTexture2D();
+            // Release.
+            GlStateManager.depthMask(true);
+            GlStateManager.enableLighting();
+            GlStateManager.enableDepth();
+            GlStateManager.enableTexture2D();
+            GlStateManager.popMatrix();
 
-        // Release.
-        GlStateManager.depthMask(true);
-        GlStateManager.enableLighting();
-        GlStateManager.enableDepth();
-        GlStateManager.enableTexture2D();
-        GlStateManager.popMatrix();
-
-        RenderHelper.disableStandardItemLighting();
+            RenderHelper.disableStandardItemLighting();
+        });
     }
 
     public void doScale(EntityLivingBase entity) {

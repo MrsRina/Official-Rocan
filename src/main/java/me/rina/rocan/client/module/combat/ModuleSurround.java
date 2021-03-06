@@ -158,12 +158,10 @@ public class ModuleSurround extends Module {
             return;
         }
 
-        Item itemObsidian = Item.getItemFromBlock(Blocks.OBSIDIAN);
-
         this.oldSlot = mc.player.inventory.currentItem;
         this.slot = this.oldSlot;
 
-        if (SlotUtil.getItemStack(this.oldSlot).getItem() != itemObsidian) {
+        if (SlotUtil.getItemStack(this.oldSlot).getItem() != obsidian) {
             this.slot = this.doFind();
         }
     }
@@ -199,13 +197,13 @@ public class ModuleSurround extends Module {
 
         if (this.blocks.isEmpty()) {
             this.tickQueue.reset();
-        }
+        } else {
+            BlockPos position = this.blocks.get(0);
 
-        for (BlockPos pos : new ArrayList<>(this.blocks)) {
             if (this.tickQueue.isPassedMS(settingDelay.getValue().intValue())) {
-                Flag flag = this.doPlace(pos);
+                Flag flag = this.doPlace(position);
 
-                this.blocks.remove(pos);
+                this.blocks.remove(0);
                 this.tickQueue.reset();
             }
         }

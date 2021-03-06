@@ -82,12 +82,12 @@ public class ModuleBlockHighlight extends Module {
 
             // No air!
             if (mc.world.getBlockState(block).getBlock() != Blocks.AIR) {
-                RenderUtil.render3DSolid(camera, block, color);
+                RenderUtil.drawSolidBlock(camera, block, color);
 
                 if (renderOutline.getValue() == RenderOutline.Enabled) {
                     float line = (float) settingOutlineLineSize.getValue();
 
-                    RenderUtil.render3DOutline(camera, block, line, colorOutline);
+                    RenderUtil.drawOutlineBlock(camera, block, line, colorOutline);
                 }
             }
         }

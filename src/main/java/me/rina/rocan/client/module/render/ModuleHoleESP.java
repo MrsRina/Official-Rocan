@@ -30,8 +30,15 @@ import java.util.List;
 @Registry(name = "Hole ESP", tag = "HoleESP", description = "Draws holes to help visibility at crystal pvp.", category = ModuleCategory.RENDER)
 public class ModuleHoleESP extends Module {
     /* Misc hole ESP. */
-    private ValueNumber settingRange = new ValueNumber("Range", "Range", "Maximum distance to render.", 6f, 0.1f, 10f);
+    private ValueNumber settingRange = new ValueNumber("Range", "Range", "Maximum distance to render.", 6f, 0.1f, 6f);
     private ValueNumber settingOffsetY = new ValueNumber("Offset Y", "OffsetY", "Offset y block render.", 25, 0, 100);
+
+    /* Render style. */
+    public static ValueEnum settingRenderStyle = new ValueEnum("Render Style", "RenderStyle", "Style to render.", RenderStyle.NORMAL);
+
+    public enum RenderStyle {
+        NORMAL, LEGACY, SHADER
+    }
 
     /* Color. */
     public static ValueBoolean settingRGB = new ValueBoolean("RGB", "RGB", "RGB effect.", false);
@@ -40,31 +47,15 @@ public class ModuleHoleESP extends Module {
     public static ValueNumber settingBlue = new ValueNumber("Blue", "Blue", "Color line range blue.", 255, 0, 255);
     public static ValueNumber settingAlpha = new ValueNumber("Alpha", "Alpha", "Color line range alpha.", 255, 0, 255);
 
-    public static ValueEnum settingOutline = new ValueEnum("Outline", "Outline", "Outline effect.", RenderOutline.Enabled);
-
-    enum RenderOutline {
-        Enabled, Disabled;
-    }
-
     /* Outline misc. */
     public static ValueNumber settingOutlineLineSize = new ValueNumber("Outline Line Size", "OutlineLineSize", "Line size.", 1.0f, 1f, 3.0f);
     public static ValueBoolean settingOutlineRGB = new ValueBoolean("Outline RGB", "OutlineRGB", "360 color range.", false);
-    public static ValueNumber settingOutlineRed = new ValueNumber("Outline Red", "OutlineRed", "Color line range red.", 255, 0, 255);
-    public static ValueNumber settingOutlineGreen = new ValueNumber("Outline Green", "OutlineGreen", "Color line range green.", 0, 0, 255);
-    public static ValueNumber settingOutlineBlue = new ValueNumber("Outline Blue", "OutlineBlue", "Color line range blue.", 255, 0, 255);
     public static ValueNumber settingOutlineAlpha = new ValueNumber("Outline Alpha", "OutlineAlpha", "Color line range alpha.", 255, 0, 255);
 
-    private ArrayList<BlockPos> holes = new ArrayList<>();
+    private Color outline = new Color(255, 255, 255, 255);
 
     @Override
     public void onSetting() {
-        settingOutlineLineSize.setEnabled(settingOutline.getValue() == RenderOutline.Enabled);
-        settingOutlineRed.setEnabled(settingOutline.getValue() == RenderOutline.Enabled);
-        settingOutlineGreen.setEnabled(settingOutline.getValue() == RenderOutline.Enabled);
-        settingOutlineBlue.setEnabled(settingOutline.getValue() == RenderOutline.Enabled);
-        settingOutlineAlpha.setEnabled(settingOutline.getValue() == RenderOutline.Enabled);
-        settingOutlineRGB.setEnabled(settingOutline.getValue() == RenderOutline.Enabled);
-
         if (settingRGB.getValue()) {
             settingRed.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[0]);
             settingGreen.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[1]);
@@ -72,71 +63,38 @@ public class ModuleHoleESP extends Module {
         }
 
         if (settingOutlineRGB.getValue()) {
-            settingOutlineRed.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[0]);
-            settingOutlineGreen.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[1]);
-            settingOutlineBlue.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[2]);
-        }
-    }
-
-    @Listener
-    public void onListen(ClientTickEvent event) {
-        if (NullUtil.isPlayerWorld()) {
-            return;
-        }
-
-        holes.clear();
-
-        int r = TurokMath.ceiling((float) settingRange.getValue());
-
-        List<BlockPos> sphereList = HoleUtil.getSphereList(PlayerUtil.getBlockPos(), r, r, false, true);
-
-        // Its not kami, is diff.
-        for (BlockPos blocks : sphereList) {
-            if (BlockUtil.isAir(blocks) == false) {
-                continue;
-            }
-
-            if (BlockUtil.isAir(blocks.add(0, 1, 0)) == false) {
-                continue;
-            }
-
-            if (BlockUtil.isAir(blocks.add(0, 2, 0)) == false) {
-                continue;
-            }
-
-            boolean isHole = true;
-
-            for (BlockPos _blocks : HoleUtil.SURROUND) {
-                Block block = mc.world.getBlockState(blocks.add(_blocks)).getBlock();
-
-                if (block != Blocks.BEDROCK && block != Blocks.OBSIDIAN && block != Blocks.ENDER_CHEST && block != Blocks.ANVIL) {
-                    isHole = false;
-
-                    break;
-                }
-            }
-
-            // Clean code!
-            if (isHole) {
-                holes.add(blocks);
-            }
+            this.outline = new Color(Rocan.getClientEventManager().getCurrentRGBColor()[0], Rocan.getClientEventManager().getCurrentRGBColor()[1], Rocan.getClientEventManager().getCurrentRGBColor()[2], settingOutlineAlpha.getValue().intValue());
+        } else {
+            this.outline = new Color(settingRed.getValue().intValue(), settingGreen.getValue().intValue(), settingBlue.getValue().intValue(), settingOutlineAlpha.getValue().intValue());;
         }
     }
 
     @Override
     public void onRender3D() {
         Color color = new Color(settingRed.getValue().intValue(), settingGreen.getValue().intValue(), settingBlue.getValue().intValue(), settingAlpha.getValue().intValue());
-        Color colorOutline = new Color(settingOutlineRed.getValue().intValue(), settingOutlineGreen.getValue().intValue(), settingOutlineBlue.getValue().intValue(), settingOutlineAlpha.getValue().intValue());
 
-        for (BlockPos blocks : holes) {
-            float offsetY = settingOffsetY.getValue().intValue() / 100f;
-            
-            RenderUtil.render3DSolid(camera, blocks.x, blocks.y, blocks.z, 1, offsetY, 1, color);
+        for (BlockPos holes : Rocan.getHoleManager().getHoles()) {
+            if (holes.getDistance((int) mc.player.posX, (int) mc.player.posY, (int) mc.player.posZ) >= settingRange.getValue().intValue()) {
+                continue;
+            }
 
-            if (settingOutline.getValue() == RenderOutline.Enabled) {
-                float line = settingOutlineLineSize.getValue().floatValue();
+            float y = settingOffsetY.getValue().intValue() / 100f;
+            float l = settingOutlineLineSize.getValue().floatValue();
 
-                RenderUtil.render3DOutline(camera, blocks.x, blocks.y, blocks.z, 1, offsetY, 1, line, colorOutline);
+            switch ((RenderStyle) settingRenderStyle.getValue()) {
+                case NORMAL: {
+                    RenderUtil.drawSolidBlock(camera, holes.x, holes.y, holes.z, 1, y, 1, color);
+                    RenderUtil.drawOutlineBlock(camera, holes.x, holes.y, holes.z, 1, y, 1, l, this.outline);
+
+                    break;
+                }
+
+                case LEGACY: {
+                    RenderUtil.drawSolidLegacyBlock(camera, holes.x, holes.y, holes.z, 1, y, 1, color);
+                    RenderUtil.drawOutlineLegacyBlock(camera, holes.x, holes.y, holes.z, 1, y, 1, l, this.outline);
+
+                    break;
+                }
             }
         }
     }

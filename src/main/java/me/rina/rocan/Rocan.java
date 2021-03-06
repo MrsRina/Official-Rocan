@@ -14,6 +14,7 @@ import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.manager.chat.SpammerManager;
 import me.rina.rocan.client.manager.entity.EntityWorldManager;
 import me.rina.rocan.client.manager.network.PlayerServerManager;
+import me.rina.rocan.client.manager.world.HoleManager;
 import me.rina.rocan.client.module.client.ModuleAntiCheat;
 import me.rina.rocan.client.module.client.ModuleDeveloper;
 import me.rina.rocan.client.module.client.ModuleTPSSync;
@@ -70,6 +71,7 @@ public class Rocan {
     private SpammerManager spammerManager;
     private PlayerServerManager playerServerManager;
     private EntityWorldManager entityWorldManager;
+    private HoleManager holeManager;
 
     /* Gui screen stuff. */
     private ModuleClickGUI moduleClickGUI;
@@ -91,6 +93,7 @@ public class Rocan {
         this.moduleManager.registry(new ModuleSurround());
         this.moduleManager.registry(new ModuleKillAura());
         this.moduleManager.registry(new ModuleCritical());
+        this.moduleManager.registry(new ModuleHoleFiller());
 
         // Category Render.
         this.moduleManager.registry(new ModuleBlockHighlight());
@@ -180,6 +183,7 @@ public class Rocan {
         this.spammerManager = new SpammerManager();
         this.playerServerManager = new PlayerServerManager();
         this.entityWorldManager = new EntityWorldManager();
+        this.holeManager = new HoleManager();
 
         this.wrapper = new Wrapper();
 
@@ -238,6 +242,10 @@ public class Rocan {
 
     public static EntityWorldManager getEntityWorldManager() {
         return INSTANCE.entityWorldManager;
+    }
+
+    public static HoleManager getHoleManager() {
+        return INSTANCE.holeManager;
     }
 
     public static Wrapper getWrapper() {

@@ -161,6 +161,12 @@ public class ModuleStrafe extends Module {
 
                     break;
                 }
+
+                case NONE: {
+                    this.lastSpeed = sqrt;
+
+                    break;
+                }
             }
         } else {
             this.lastSpeed = 2873;
