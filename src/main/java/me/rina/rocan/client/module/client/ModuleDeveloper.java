@@ -1,10 +1,12 @@
 package me.rina.rocan.client.module.client;
 
+import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.module.registry.Registry;
 import me.rina.rocan.api.setting.value.ValueColor;
 import me.rina.rocan.api.setting.value.ValueNumber;
+import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import net.minecraft.item.ItemStack;
@@ -23,8 +25,5 @@ public class ModuleDeveloper extends Module {
         if (NullUtil.isPlayerWorld()) {
             return;
         }
-
-        if (mc.player.movementInput.moveForward != 0f || mc.player.movementInput.moveStrafe != 0f)
-            mc.player.setSprinting(true);
     }
 }

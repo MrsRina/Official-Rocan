@@ -97,7 +97,7 @@ public class ModuleHoleFiller extends Module {
         this.slot = this.oldSlot;
 
         if (SlotUtil.getItemStack(this.oldSlot).getItem() != obsidian) {
-            this.slot = this.doFind();
+            this.slot = SlotUtil.findItemSlotFromHotBar(obsidian);
         }
     }
 
@@ -132,7 +132,7 @@ public class ModuleHoleFiller extends Module {
     }
 
     public void doUpdateCurrentItem() {
-        this.slot = this.doFind();
+        this.slot = SlotUtil.findItemSlotFromHotBar(obsidian);
 
         if (this.slot == -1) {
             this.setDisabled();
@@ -195,11 +195,5 @@ public class ModuleHoleFiller extends Module {
 
             this.universalCountHolePlaced++;
         }
-    }
-
-    public int doFind() {
-        int i = SlotUtil.findItemSlotFromHotBar(obsidian);
-
-        return i != -1 ? i - 36 : -1;
     }
 }

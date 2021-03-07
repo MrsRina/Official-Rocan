@@ -40,11 +40,11 @@ public class TurokMath {
         );
     }
 
-    public static float lerp(int a, int b, float ticks) {
+    public static float lerp(float a, float b, float ticks) {
         return (a + (b - a) * ticks);
     }
 
-    public static float lerp(float a, float b, float ticks) {
+    public static double lerp(double a, double b, float ticks) {
         return (a + (b - a) * ticks);
     }
 

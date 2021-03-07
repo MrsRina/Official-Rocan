@@ -61,7 +61,7 @@ public class ModuleOffhand extends Module {
                 settingBow.setState(false);
 
                 this.status(settingStatus.getValue() ? "T" : "");
-                this.print("Totem Of Undying");
+                this.print("Totem of Undying");
 
                 this.isTotem = true;
             }
@@ -175,7 +175,7 @@ public class ModuleOffhand extends Module {
             }
 
             case HOT_BAR: {
-                slot = SlotUtil.findItemSlotFromHotBar(item);
+                slot = SlotUtil.findItemSlotFromHotBar(item) != -1 ? SlotUtil.findItemSlotFromHotBar(item) + 36 : -1;
 
                 break;
             }

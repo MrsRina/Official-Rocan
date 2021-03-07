@@ -16,16 +16,20 @@ import static me.rina.rocan.Rocan.MC;
  * @since 02/02/2021 at 13:31
  **/
 public class SlotUtil {
-    public static void swap(int window, int slot) {
-        MC.playerController.windowClick(window, slot, 0, ClickType.SWAP, MC.player);
-    }
+    public static int findFirstNotAirSlotFromInventory() {
+        int slot = -1;
 
-    public static void pickup(int window, int slot) {
-        MC.playerController.windowClick(window, slot, 0, ClickType.PICKUP, MC.player);
-    }
+        for (int i = 9; i < 36; i++) {
+            ItemStack stack = MC.player.inventory.getStackInSlot(i);
 
-    public static void quickMove(int window, int slot) {
-        MC.playerController.windowClick(window, slot, 0, ClickType.QUICK_MOVE, MC.player);
+            if (stack.getItem() == Items.AIR) {
+                slot = i;
+
+                break;
+            }
+        }
+
+        return slot;
     }
 
     public static Item getArmourItem(int slot) {
@@ -68,22 +72,6 @@ public class SlotUtil {
         return item;
     }
 
-    public static int findItemSlotFromInventory(Item item) {
-        int slot = -1;
-
-        for (int i = 9; i < 36; i++) {
-            Item items = MC.player.inventory.getStackInSlot(i).getItem();
-
-            if (items == item) {
-                slot = i;
-            }
-
-            break;
-        }
-
-        return slot;
-    }
-
     public static int findItemSlot(Item item) {
         int slot = -1;
 
@@ -104,6 +92,22 @@ public class SlotUtil {
         return slot;
     }
 
+    public static int findItemSlotFromInventory(Item item) {
+        int slot = -1;
+
+        for (int i = 9; i < 36; i++) {
+            Item items = MC.player.inventory.getStackInSlot(i).getItem();
+
+            if (items == item) {
+                slot = i;
+
+                break;
+            }
+        }
+
+        return slot;
+    }
+
     public static int findItemSlotFromHotBar(Item item) {
         int slot = -1;
 
@@ -111,8 +115,6 @@ public class SlotUtil {
             Item items = MC.player.inventory.getStackInSlot(i).getItem();
 
             if (items == item) {
-                i += 36;
-
                 slot = i;
 
                 break;

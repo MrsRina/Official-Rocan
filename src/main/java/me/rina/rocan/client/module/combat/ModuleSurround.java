@@ -162,7 +162,7 @@ public class ModuleSurround extends Module {
         this.slot = this.oldSlot;
 
         if (SlotUtil.getItemStack(this.oldSlot).getItem() != obsidian) {
-            this.slot = this.doFind();
+            this.slot = SlotUtil.findItemSlotFromHotBar(obsidian);
         }
     }
 
@@ -213,22 +213,13 @@ public class ModuleSurround extends Module {
      * Uses to update current item to obi at hot bar.
      */
     public void doUpdateCurrentItem() {
-        this.slot = this.doFind();
+        this.slot = SlotUtil.findItemSlotFromHotBar(obsidian);
 
         if (this.slot == -1) {
             this.setDisabled();
         } else {
             mc.player.inventory.currentItem = this.slot;
         }
-    }
-
-    /*
-     * For some reason I need do - 36 for handle current item;
-     */
-    public int doFind() {
-        int i = SlotUtil.findItemSlotFromHotBar(obsidian);
-
-        return i != -1 ? i - 36 : -1;
     }
 
     public boolean doCenterPosition() {

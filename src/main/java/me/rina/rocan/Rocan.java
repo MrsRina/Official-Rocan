@@ -19,10 +19,7 @@ import me.rina.rocan.client.module.client.ModuleAntiCheat;
 import me.rina.rocan.client.module.client.ModuleDeveloper;
 import me.rina.rocan.client.module.client.ModuleTPSSync;
 import me.rina.rocan.client.module.combat.*;
-import me.rina.rocan.client.module.exploit.ModuleBetterMine;
-import me.rina.rocan.client.module.exploit.ModuleCancelPackets;
-import me.rina.rocan.client.module.exploit.ModuleExtraSlots;
-import me.rina.rocan.client.module.exploit.ModuleFastUse;
+import me.rina.rocan.client.module.exploit.*;
 import me.rina.rocan.client.module.misc.*;
 import me.rina.rocan.client.module.movement.*;
 import me.rina.rocan.client.module.render.*;
@@ -47,7 +44,7 @@ public class Rocan {
     public static final String NAME        = "Rocan";
     public static final String VERSION     = "1.3.2beta";
     public static final String PATH_CONFIG = "Rocan/";
-    public static final String CHAT        = ChatFormatting.GRAY + "Rocan " + ChatFormatting.WHITE;
+    public static final String CHAT        = ChatFormatting.BLUE + "Rocan " + ChatFormatting.WHITE;
 
     /*
      * We create one final Minecraft, there is the function Minecraft or this variable;
@@ -117,6 +114,7 @@ public class Rocan {
         this.moduleManager.registry(new ModuleFastUse());
         this.moduleManager.registry(new ModuleBetterMine());
         this.moduleManager.registry(new ModuleCancelPackets());
+        this.moduleManager.registry(new ModuleAutoHat());
 
         // Movement
         this.moduleManager.registry(new ModuleAutoWalk());

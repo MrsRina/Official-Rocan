@@ -83,94 +83,111 @@ public class ModuleNameTags extends Module {
 
         float partialTicks = Rocan.getClientEventManager().getCurrentRender3DPartialTicks();
 
-        mc.world.playerEntities.stream()
-        .filter(entityPlayer -> entityPlayer != null)
-        .filter(entityPlayer -> this.doAccept(entityPlayer))
-        .filter(entityPlayer -> entityPlayer.getHealth() > 0 && entityPlayer.isDead == false)
-        .filter(entityPlayer -> mc.player.getDistance(entityPlayer) < settingRange.getValue().intValue())
-        .forEach(entity -> {
-            if (mc.getRenderManager().options == null) {
-                return;
+        for (EntityPlayer entities : mc.world.playerEntities) {
+            if (entities == null) {
+                continue;
             }
 
-            Vec3d vecLastTickPosition = new Vec3d(entity.lastTickPosX, entity.lastTickPosY, entity.lastTickPosZ);
-            Vec3d vecPosition = new Vec3d(entity.posX, entity.posY, entity.posZ);
+            if (entities.isDead || entities.getHealth() < 0) {
+                continue;
+            }
 
-            Vec3d vec = TurokMath.lerp(vecLastTickPosition, vecPosition, partialTicks);
+            if (mc.player.getDistance(entities) >= settingRange.getValue().intValue()) {
+                continue;
+            }
 
-            float playerViewX = mc.getRenderManager().playerViewX;
-            float playerViewY = mc.getRenderManager().playerViewY;
+            if (this.doAccept(entities) == false) {
+                continue;
+            }
 
-            boolean flag = mc.getRenderManager().options.thirdPersonView == 2;
-
-            double height = (entity.height + (settingOffsetY.getValue().intValue() / 100d) - (entity.isSneaking() ? 0.25f : 0f));
-
-            double x = vec.x - mc.getRenderManager().renderPosX;
-            double y = (vec.y + height) - mc.getRenderManager().renderPosY;
-            double z = vec.z - mc.getRenderManager().renderPosZ;
+            double x = TurokMath.lerp(entities.lastTickPosX, entities.posX, partialTicks);
+            double y = TurokMath.lerp(entities.lastTickPosY, entities.posY, partialTicks);
+            double z = TurokMath.lerp(entities.lastTickPosZ, entities.posZ, partialTicks);
 
             /*
-             * Current scale of entity.
+             * Draw the name tags with interpolation position.
              */
-            this.doScale(entity);
+            this.doNameTags(entities, x, y, z, partialTicks);
+        }
+    }
 
-            RenderHelper.enableStandardItemLighting();
+    public void doNameTags(EntityPlayer entity, double x, double y, double z, float partialTicks) {
+        if (mc.getRenderManager().options == null) {
+            return;
+        }
 
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(x, y, z);
+        float playerViewX = mc.getRenderManager().playerViewX;
+        float playerViewY = mc.getRenderManager().playerViewY;
 
-            // Rotate for name tag.
-            GlStateManager.rotate(-playerViewY, 0f, 1f, 0f);
-            GlStateManager.rotate((flag ? -1f : 1f) * playerViewX, 1f, 0f, 0f);
+        boolean flag = mc.getRenderManager().options.thirdPersonView == 2;
 
-            // Scale.
-            GlStateManager.scale(this.scaled, this.scaled, this.scaled);
-            GlStateManager.scale(-0.025f, -0.025f, 0.025f);
+        double height = (entity.height + (settingOffsetY.getValue().intValue() / 100d) - (entity.isSneaking() ? 0.25f : 0f));
 
-            GlStateManager.disableLighting();
-            GlStateManager.disableDepth();
+        double referencedX = x - mc.getRenderManager().renderPosX;
+        double referencedY = (y + height) - mc.getRenderManager().renderPosY;
+        double referencedZ = z - mc.getRenderManager().renderPosZ;
 
-            GlStateManager.depthMask(false);
+        /*
+         * Current scale of entity.
+         */
+        this.doScale(entity);
 
-            // Draw.
-            GlStateManager.enableTexture2D();
+        RenderHelper.enableStandardItemLighting();
 
-            String tag = this.getTag(entity);
-            Color color = this.getColor(entity);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(referencedX, referencedY, referencedZ);
 
-            int width = TurokFontManager.getStringWidth(Rocan.getWrapper().fontNameTags, tag) / 2;
+        // Rotate for name tag.
+        GlStateManager.rotate(-playerViewY, 0f, 1f, 0f);
+        GlStateManager.rotate((flag ? -1f : 1f) * playerViewX, 1f, 0f, 0f);
 
-            TurokFontManager.render(Rocan.getWrapper().fontNameTags, tag, -width, 0, settingShadow.getValue(), color);
+        // Scale.
+        GlStateManager.scale(this.scaled, this.scaled, this.scaled);
+        GlStateManager.scale(-0.025f, -0.025f, 0.025f);
 
-            int positionItems = 0;
+        GlStateManager.disableLighting();
+        GlStateManager.disableDepth();
 
-            if (entity.getHeldItemOffhand() != null && settingOffhand.getValue()) {
-                positionItems -= 8;
-            }
+        GlStateManager.depthMask(false);
 
-            for (int i = 0; i < 4; i++) {
-                ItemStack item = mc.player.inventory.armorItemInSlot(i);
+        // Draw.
+        GlStateManager.enableTexture2D();
 
-                if (item != null) {
-                    positionItems += 8;
-                }
-            }
+        String tag = this.getTag(entity);
+        Color color = this.getColor(entity);
 
-            if (entity.getHeldItemMainhand() != null && settingMainHand.getValue()) {
+        int width = TurokFontManager.getStringWidth(Rocan.getWrapper().fontNameTags, tag) / 2;
+
+        TurokFontManager.render(Rocan.getWrapper().fontNameTags, tag, -width, 0, settingShadow.getValue(), color);
+
+        int positionItems = 0;
+
+        if (entity.getHeldItemOffhand() != null && settingOffhand.getValue()) {
+            positionItems -= 8;
+        }
+
+        for (int i = 0; i < 4; i++) {
+            ItemStack item = mc.player.inventory.armorItemInSlot(i);
+
+            if (item != null) {
                 positionItems += 8;
             }
+        }
 
-            GlStateManager.disableTexture2D();
+        if (entity.getHeldItemMainhand() != null && settingMainHand.getValue()) {
+            positionItems += 8;
+        }
 
-            // Release.
-            GlStateManager.depthMask(true);
-            GlStateManager.enableLighting();
-            GlStateManager.enableDepth();
-            GlStateManager.enableTexture2D();
-            GlStateManager.popMatrix();
+        GlStateManager.disableTexture2D();
 
-            RenderHelper.disableStandardItemLighting();
-        });
+        // Release.
+        GlStateManager.depthMask(true);
+        GlStateManager.enableLighting();
+        GlStateManager.enableDepth();
+        GlStateManager.enableTexture2D();
+        GlStateManager.popMatrix();
+
+        RenderHelper.disableStandardItemLighting();
     }
 
     public void doScale(EntityLivingBase entity) {

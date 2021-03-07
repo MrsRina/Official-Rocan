@@ -14,10 +14,13 @@ import me.rina.turok.util.TurokTick;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
+
+import static me.rina.rocan.Rocan.MC;
 
 /**
  * @author SrRina
@@ -37,7 +40,7 @@ public class ModuleAutoArmour extends Module {
         }
 
         if (this.tick.isPassedMS(settingDelay.getValue().intValue())) {
-            if (SlotUtil.getArmourItem(3) == Items.AIR) {
+            if (SlotUtil.getArmourItem(0) == Items.AIR) {
                 for (Item helmets : ItemUtil.ALL_HELMETS) {
                     int slot = SlotUtil.findItemSlotFromInventory(helmets);
 
@@ -47,7 +50,7 @@ public class ModuleAutoArmour extends Module {
                 }
             }
 
-            if (SlotUtil.getArmourItem(2) == Items.AIR) {
+            if (SlotUtil.getArmourItem(1) == Items.AIR) {
                 for (Item helmets : ItemUtil.ALL_CHEST_PLATES) {
                     int slot = SlotUtil.findItemSlotFromInventory(helmets);
 
@@ -57,7 +60,7 @@ public class ModuleAutoArmour extends Module {
                 }
             }
 
-            if (SlotUtil.getArmourItem(1) == Items.AIR) {
+            if (SlotUtil.getArmourItem(2) == Items.AIR) {
                 for (Item helmets : ItemUtil.ALL_LEGGINGS) {
                     int slot = SlotUtil.findItemSlotFromInventory(helmets);
 
@@ -67,7 +70,7 @@ public class ModuleAutoArmour extends Module {
                 }
             }
 
-            if (SlotUtil.getArmourItem(0) == Items.AIR) {
+            if (SlotUtil.getArmourItem(3) == Items.AIR) {
                 for (Item helmets : ItemUtil.ALL_BOOTS) {
                     int slot = SlotUtil.findItemSlotFromInventory(helmets);
 
@@ -78,13 +81,10 @@ public class ModuleAutoArmour extends Module {
             }
 
             if (this.foundSlot != -1) {
-                if (this.foundSlot < 9) {
-                    this.foundSlot += 36;
-                }
-
-                SlotUtil.quickMove(0, this.foundSlot);
+                mc.playerController.windowClick(0, this.foundSlot, 0, ClickType.QUICK_MOVE, MC.player);
 
                 this.tick.reset();
+                this.foundSlot = -1;
             }
         }
     }
