@@ -182,6 +182,8 @@ public class RenderUtil {
 
             prepare(line);
 
+            GL11.glEnable(GL11.GL_BLEND);
+
             BufferBuilder bufferBuilder = tessellator.getBuffer();
             bufferBuilder.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION_COLOR);
 

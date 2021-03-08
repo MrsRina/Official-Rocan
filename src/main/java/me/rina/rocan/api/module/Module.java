@@ -25,8 +25,6 @@ import java.util.ArrayList;
  * @since 15/11/20 at 4:51pm
  */
 public class Module implements ISLClass {
-    public Minecraft mc = Rocan.MC;
-
     private String name = getRegistry().name();
     private String tag = getRegistry().tag();
 

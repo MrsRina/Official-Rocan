@@ -4,24 +4,15 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.module.registry.Registry;
+import me.rina.rocan.api.render.Render;
+import me.rina.rocan.api.render.impl.RenderType;
 import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
-import me.rina.rocan.api.util.client.NullUtil;
-import me.rina.rocan.api.util.crystal.BlockUtil;
-import me.rina.rocan.api.util.crystal.HoleUtil;
-import me.rina.rocan.api.util.entity.PlayerUtil;
 import me.rina.rocan.api.util.render.RenderUtil;
-import me.rina.rocan.client.event.client.ClientTickEvent;
-import me.rina.turok.util.TurokMath;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.math.BlockPos;
-import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author SrRina
@@ -34,11 +25,7 @@ public class ModuleHoleESP extends Module {
     private ValueNumber settingOffsetY = new ValueNumber("Offset Y", "OffsetY", "Offset y block render.", 25, 0, 100);
 
     /* Render style. */
-    public static ValueEnum settingRenderStyle = new ValueEnum("Render Style", "RenderStyle", "Style to render.", RenderStyle.NORMAL);
-
-    public enum RenderStyle {
-        NORMAL, LEGACY, LEGACY_INVERTED
-    }
+    public static ValueEnum settingRenderType = new ValueEnum("Render Type", "RenderType", "Type to render.", RenderType.NORMAL);
 
     /* Color. */
     public static ValueBoolean settingRGB = new ValueBoolean("RGB", "RGB", "RGB effect.", false);
@@ -52,7 +39,10 @@ public class ModuleHoleESP extends Module {
     public static ValueBoolean settingOutlineRGB = new ValueBoolean("Outline RGB", "OutlineRGB", "360 color range.", false);
     public static ValueNumber settingOutlineAlpha = new ValueNumber("Outline Alpha", "OutlineAlpha", "Color line range alpha.", 255, 0, 255);
 
+    private Render render = new Render(RenderType.NORMAL);
+
     private Color outline = new Color(255, 255, 255, 255);
+    private Color solid = new Color(255, 255, 255, 255);
 
     @Override
     public void onSetting() {
@@ -62,17 +52,19 @@ public class ModuleHoleESP extends Module {
             settingBlue.setValue(Rocan.getClientEventManager().getCurrentRGBColor()[2]);
         }
 
+        this.solid = new Color(settingRed.getValue().intValue(), settingGreen.getValue().intValue(), settingBlue.getValue().intValue(), settingAlpha.getValue().intValue());
+
         if (settingOutlineRGB.getValue()) {
             this.outline = new Color(Rocan.getClientEventManager().getCurrentRGBColor()[0], Rocan.getClientEventManager().getCurrentRGBColor()[1], Rocan.getClientEventManager().getCurrentRGBColor()[2], settingOutlineAlpha.getValue().intValue());
         } else {
             this.outline = new Color(settingRed.getValue().intValue(), settingGreen.getValue().intValue(), settingBlue.getValue().intValue(), settingOutlineAlpha.getValue().intValue());;
         }
+
+        this.render.setType((RenderType) settingRenderType.getValue());
     }
 
     @Override
     public void onRender3D() {
-        Color color = new Color(settingRed.getValue().intValue(), settingGreen.getValue().intValue(), settingBlue.getValue().intValue(), settingAlpha.getValue().intValue());
-
         for (BlockPos holes : Rocan.getHoleManager().getHoles()) {
             if (holes.getDistance((int) mc.player.posX, (int) mc.player.posY, (int) mc.player.posZ) >= settingRange.getValue().intValue()) {
                 continue;
@@ -81,21 +73,7 @@ public class ModuleHoleESP extends Module {
             float y = settingOffsetY.getValue().intValue() / 100f;
             float l = settingOutlineLineSize.getValue().floatValue();
 
-            switch ((RenderStyle) settingRenderStyle.getValue()) {
-                case NORMAL: {
-                    RenderUtil.drawSolidBlock(camera, holes.x, holes.y, holes.z, 1, y, 1, color);
-                    RenderUtil.drawOutlineBlock(camera, holes.x, holes.y, holes.z, 1, y, 1, l, this.outline);
-
-                    break;
-                }
-
-                case LEGACY: {
-                    RenderUtil.drawSolidLegacyBlock(camera, holes.x, holes.y, holes.z, 1, y, 1, color);
-                    RenderUtil.drawOutlineLegacyBlock(camera, holes.x, holes.y, holes.z, 1, y, 1, l, this.outline);
-
-                    break;
-                }
-            }
+            this.render.onRender(camera, holes, 1, y, 1, l, this.solid, this.outline);
         }
     }
 }

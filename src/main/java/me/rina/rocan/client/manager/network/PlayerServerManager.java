@@ -55,8 +55,6 @@ public class PlayerServerManager extends Manager {
 
     @Override
     public void onUpdateAll() {
-        final Minecraft mc = Rocan.getMinecraft();
-
         if (NullUtil.isPlayerWorld()) {
             return;
         }

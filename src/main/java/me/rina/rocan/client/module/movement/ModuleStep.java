@@ -22,6 +22,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.network.play.client.CPacketPlayer;
 import net.minecraft.util.math.AxisAlignedBB;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
@@ -141,7 +142,6 @@ public class ModuleStep extends Module {
     }
 
     public void doReverse() {
-
     }
 
     public float[] getStepHeight() {

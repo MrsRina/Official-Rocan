@@ -4,7 +4,6 @@ import me.rina.turok.hardware.mouse.TurokMouse;
 import me.rina.turok.util.TurokDisplay;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -24,9 +23,9 @@ public class TurokShaderGL {
     private TurokMouse mouse;
 
     /*
-     * VBO.
+     * The Minecraft tessellator.
      */
-    public static Tessellator tessellator = Tessellator.getInstance();
+    public static final Tessellator TESSELLATOR = Tessellator.getInstance();
 
     public static void init(TurokDisplay display, TurokMouse mouse) {
         INSTANCE = new TurokShaderGL();
@@ -34,6 +33,14 @@ public class TurokShaderGL {
         // Start the classes.
         INSTANCE.display = display;
         INSTANCE.mouse = mouse;
+    }
+
+    public static BufferBuilder start() {
+        return TESSELLATOR.getBuffer();
+    }
+
+    public static void end() {
+        TESSELLATOR.draw();
     }
 
     public static void drawOutlineRectFadingMouse(TurokRect rect, int radius, Color color) {
@@ -137,7 +144,7 @@ public class TurokShaderGL {
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
 
-        BufferBuilder bufferBuilder = tessellator.getBuffer();
+        BufferBuilder bufferBuilder = start();
 
         bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
         bufferBuilder.pos(x, y, 0).color(r, g, b, a).endVertex();
@@ -145,7 +152,7 @@ public class TurokShaderGL {
         bufferBuilder.pos(x + w, y + h, 0).color(r, g, b, a).endVertex();
         bufferBuilder.pos(x + w,  y, 0).color(r, g, b, a).endVertex();
 
-        tessellator.draw();
+        end();
 
         GlStateManager.disableBlend();
     }
@@ -166,7 +173,7 @@ public class TurokShaderGL {
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         GlStateManager.glLineWidth(0.5f);
 
-        BufferBuilder bufferBuilder = tessellator.getBuffer();
+        BufferBuilder bufferBuilder = start();
 
         bufferBuilder.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
         bufferBuilder.pos(x, y, 0).color(r, g, b, a).endVertex();
@@ -176,7 +183,7 @@ public class TurokShaderGL {
         bufferBuilder.pos(x, y, 0).color(r, g, b, a).endVertex();
         bufferBuilder.pos(x, y, 0).color(r, g, b, a).endVertex();
 
-        tessellator.draw();
+        end();
 
         GlStateManager.disableBlend();
     }

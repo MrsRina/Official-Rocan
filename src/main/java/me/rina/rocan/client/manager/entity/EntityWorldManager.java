@@ -18,8 +18,6 @@ import java.util.Map;
  * @since 01/03/2021 at 09:45
  **/
 public class EntityWorldManager extends Manager {
-    public static final Minecraft mc = Rocan.getMinecraft();
-
     private HashMap<Integer, Entity> entitySavedList;
 
     public EntityWorldManager() {
