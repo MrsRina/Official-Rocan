@@ -1,6 +1,7 @@
 package me.rina.rocan.api.render;
 
 import me.rina.rocan.Rocan;
+import me.rina.rocan.api.ISLClass;
 import me.rina.rocan.api.render.impl.RenderType;
 import me.rina.rocan.api.util.render.RenderUtil;
 import me.rina.turok.render.opengl.TurokGL;
@@ -47,6 +48,10 @@ public class Render {
                 pos.y + y - Rocan.getMinecraft().getRenderManager().viewerPosY,
                 pos.z + z - Rocan.getMinecraft().getRenderManager().viewerPosZ
         );
+
+        if (Rocan.getMinecraft().getRenderViewEntity() == null) {
+            return;
+        }
 
         frustum.setPosition(Rocan.getMinecraft().getRenderViewEntity().posX, Rocan.getMinecraft().getRenderViewEntity().posY, Rocan.getMinecraft().getRenderViewEntity().posZ);
 
@@ -98,5 +103,92 @@ public class Render {
     }
 
     protected void drawGradient(AxisAlignedBB bb, float line, boolean inverted, Color solid, Color outline) {
+        RenderUtil.prepare(1f);
+
+        BufferBuilder solidBufferBuilder = TurokShaderGL.start();
+
+        float solidRed = solid.getRed() / 255f;
+        float solidGreen = solid.getGreen() / 255f;
+        float solidBlue = solid.getBlue() / 255f;
+        float solidAlpha = solid.getAlpha() / 255f;
+
+        double minX = bb.minX;
+        double minY = bb.minY;
+        double minZ = bb.minZ;
+
+        double maxX = bb.maxX;
+        double maxY = bb.maxY;
+        double maxZ = bb.maxZ;
+
+        GL11.glShadeModel(GL11.GL_SMOOTH);
+
+        solidBufferBuilder.begin(5, DefaultVertexFormats.POSITION_COLOR);
+        solidBufferBuilder.pos(minX, minY, minZ).color(solidRed, solidGreen, solidBlue, solidAlpha).endVertex();
+        solidBufferBuilder.pos(minX, minY, minZ).color(solidRed, solidGreen, solidBlue, solidAlpha).endVertex();
+        solidBufferBuilder.pos(minX, minY, minZ).color(solidRed, solidGreen, solidBlue, solidAlpha).endVertex();
+        solidBufferBuilder.pos(minX, minY, maxZ).color(solidRed, solidGreen, solidBlue, solidAlpha).endVertex();
+        solidBufferBuilder.pos(minX, maxY, minZ).color(solidRed, solidGreen, solidBlue, 0).endVertex();
+        solidBufferBuilder.pos(minX, maxY, maxZ).color(solidRed, solidGreen, solidBlue, 0).endVertex();
+        solidBufferBuilder.pos(minX, maxY, maxZ).color(solidRed, solidGreen, solidBlue, 0).endVertex();
+        solidBufferBuilder.pos(minX, minY, maxZ).color(solidRed, solidGreen, solidBlue, solidAlpha).endVertex();
+        solidBufferBuilder.pos(maxX, maxY, maxZ).color(solidRed, solidGreen, solidBlue, 0).endVertex();
+        solidBufferBuilder.pos(maxX, minY, maxZ).color(solidRed, solidGreen, solidBlue, solidAlpha).endVertex();
+        solidBufferBuilder.pos(maxX, minY, maxZ).color(solidRed, solidGreen, solidBlue, solidAlpha).endVertex();
+        solidBufferBuilder.pos(maxX, minY, minZ).color(solidRed, solidGreen, solidBlue, solidAlpha).endVertex();
+        solidBufferBuilder.pos(maxX, maxY, maxZ).color(solidRed, solidGreen, solidBlue, 0).endVertex();
+        solidBufferBuilder.pos(maxX, maxY, minZ).color(solidRed, solidGreen, solidBlue, 0).endVertex();
+        solidBufferBuilder.pos(maxX, maxY, minZ).color(solidRed, solidGreen, solidBlue, 0).endVertex();
+        solidBufferBuilder.pos(maxX, minY, minZ).color(solidRed, solidGreen, solidBlue, solidAlpha).endVertex();
+        solidBufferBuilder.pos(minX, maxY, minZ).color(solidRed, solidGreen, solidBlue, 0).endVertex();
+        solidBufferBuilder.pos(minX, minY, minZ).color(solidRed, solidGreen, solidBlue, solidAlpha).endVertex();
+        solidBufferBuilder.pos(minX, minY, minZ).color(solidRed, solidGreen, solidBlue, solidAlpha).endVertex();
+        solidBufferBuilder.pos(maxX, minY, minZ).color(solidRed, solidGreen, solidBlue, solidAlpha).endVertex();
+        solidBufferBuilder.pos(minX, minY, maxZ).color(solidRed, solidGreen, solidBlue, solidAlpha).endVertex();
+        solidBufferBuilder.pos(maxX, minY, maxZ).color(solidRed, solidGreen, solidBlue, solidAlpha).endVertex();
+        solidBufferBuilder.pos(maxX, minY, maxZ).color(solidRed, solidGreen, solidBlue, solidAlpha).endVertex();
+        solidBufferBuilder.pos(minX, maxY, minZ).color(solidRed, solidGreen, solidBlue, 0).endVertex();
+        solidBufferBuilder.pos(minX, maxY, minZ).color(solidRed, solidGreen, solidBlue, 0).endVertex();
+        solidBufferBuilder.pos(minX, maxY, maxZ).color(solidRed, solidGreen, solidBlue, 0).endVertex();
+        solidBufferBuilder.pos(maxX, maxY, minZ).color(solidRed, solidGreen, solidBlue, 0).endVertex();
+        solidBufferBuilder.pos(maxX, maxY, maxZ).color(solidRed, solidGreen, solidBlue, 0).endVertex();
+        solidBufferBuilder.pos(maxX, maxY, maxZ).color(solidRed, solidGreen, solidBlue, 0).endVertex();
+        solidBufferBuilder.pos(maxX, maxY, maxZ).color(solidRed, solidGreen, solidBlue, 0).endVertex();
+
+        TurokShaderGL.end();
+
+        RenderUtil.release();
+        RenderUtil.prepare(line);
+
+        BufferBuilder outlineBufferBuilder = TurokShaderGL.start();
+
+        float outlineRed = solid.getRed() / 255f;
+        float outlineGreen = solid.getGreen() / 255f;
+        float outlineBlue = solid.getBlue() / 255f;
+        float outlineAlpha = solid.getAlpha() / 255f;
+
+        GL11.glShadeModel(GL11.GL_SMOOTH);
+
+        outlineBufferBuilder.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
+        outlineBufferBuilder.pos(minX, minY, minZ).color(outlineRed, outlineGreen, outlineBlue, 0).endVertex();
+        outlineBufferBuilder.pos(minX, minY, minZ).color(outlineRed, outlineGreen, outlineBlue, outlineAlpha).endVertex();
+        outlineBufferBuilder.pos(maxX, minY, minZ).color(outlineRed, outlineGreen, outlineBlue, outlineAlpha).endVertex();
+        outlineBufferBuilder.pos(maxX, minY, maxZ).color(outlineRed, outlineGreen, outlineBlue, outlineAlpha).endVertex();
+        outlineBufferBuilder.pos(minX, minY, maxZ).color(outlineRed, outlineGreen, outlineBlue, outlineAlpha).endVertex();
+        outlineBufferBuilder.pos(minX, minY, minZ).color(outlineRed, outlineGreen, outlineBlue, outlineAlpha).endVertex();
+        outlineBufferBuilder.pos(minX, maxY, minZ).color(outlineRed, outlineGreen, outlineBlue, 0).endVertex();
+        outlineBufferBuilder.pos(maxX, maxY, minZ).color(outlineRed, outlineGreen, outlineBlue, 0).endVertex();
+        outlineBufferBuilder.pos(maxX, maxY, maxZ).color(outlineRed, outlineGreen, outlineBlue, 0).endVertex();
+        outlineBufferBuilder.pos(minX, maxY, maxZ).color(outlineRed, outlineGreen, outlineBlue, 0).endVertex();
+        outlineBufferBuilder.pos(minX, maxY, minZ).color(outlineRed, outlineGreen, outlineBlue, 0).endVertex();
+        outlineBufferBuilder.pos(minX, maxY, maxZ).color(outlineRed, outlineGreen, outlineBlue, 0).endVertex();
+        outlineBufferBuilder.pos(minX, minY, maxZ).color(outlineRed, outlineGreen, outlineBlue, outlineAlpha).endVertex();
+        outlineBufferBuilder.pos(maxX, maxY, maxZ).color(outlineRed, outlineGreen, outlineBlue, 0).endVertex();
+        outlineBufferBuilder.pos(maxX, minY, maxZ).color(outlineRed, outlineGreen, outlineBlue, outlineAlpha).endVertex();
+        outlineBufferBuilder.pos(maxX, maxY, minZ).color(outlineRed, outlineGreen, outlineBlue, 0).endVertex();
+        outlineBufferBuilder.pos(maxX, minY, minZ).color(outlineRed, outlineGreen, outlineBlue, outlineAlpha).endVertex();
+        outlineBufferBuilder.pos(maxX, minY, minZ).color(outlineRed, outlineGreen, outlineBlue, 0).endVertex();
+        TurokShaderGL.end();
+
+        RenderUtil.release();
     }
 }
