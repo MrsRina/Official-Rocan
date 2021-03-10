@@ -1,16 +1,20 @@
-package me.rina.rocan.api.gui.widget;
+package me.rina.rocan.api.gui.element.container;
 
-import me.rina.rocan.api.gui.IGUI;
+import me.rina.rocan.api.gui.element.Abstract;
+import me.rina.rocan.api.gui.impl.ImplementElement;
 import me.rina.turok.util.TurokRect;
 
 /**
  * @author SrRina
  * @since 07/12/20 at 01:41am
  */
-public class Widget implements IGUI {
+public class Container extends Abstract implements ImplementElement {
     protected TurokRect rect;
 
-    public Widget(String tag) {
+    protected float offsetX;
+    protected float offsetY;
+
+    public Container(String tag) {
         this.rect = new TurokRect(tag, 0, 0);
     }
 
@@ -21,6 +25,26 @@ public class Widget implements IGUI {
     @Override
     public TurokRect getRect() {
         return rect;
+    }
+
+    @Override
+    public float getOffsetX() {
+        return offsetX;
+    }
+
+    @Override
+    public float getOffsetY() {
+        return offsetY;
+    }
+
+    @Override
+    public void setOffsetX(float offsetX) {
+        this.offsetX = offsetX;
+    }
+
+    @Override
+    public void setOffsetY(float offsetY) {
+        this.offsetY = offsetY;
     }
 
     @Override

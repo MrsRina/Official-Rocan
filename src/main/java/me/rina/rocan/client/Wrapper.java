@@ -34,6 +34,10 @@ public class Wrapper {
             255, 255, 255, 100
     };
 
+    public int[] colorWidgetBackground = new int[] {
+            0, 0, 0, 100
+    };
+
     public void onUpdateColor() {
         // We need update the colors lists here using settings colors.
         // The GUI is not done.

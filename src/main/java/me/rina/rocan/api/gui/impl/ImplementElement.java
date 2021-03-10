@@ -1,4 +1,4 @@
-package me.rina.rocan.api.gui;
+package me.rina.rocan.api.gui.impl;
 
 import me.rina.turok.util.TurokRect;
 
@@ -6,13 +6,21 @@ import me.rina.turok.util.TurokRect;
  * @author SrRina
  * @since 07/12/20 at 11:39am
  */
-public interface IGUI {
+public interface ImplementElement {
     /**
-     * Return the current rect of implemented class.
+     * Main rect of element.
      *
-     * @return
+     * @return - TurokRect class.
      */
     public TurokRect getRect();
+
+    /* Getters to offset spaces. */
+    public float getOffsetX();
+    public float getOffsetY();
+
+    /* Setters to offset spaces. */
+    public void setOffsetX(float offsetX);
+    public void setOffsetY(float offsetY);
 
     /**
      * When abstract closes this override is called.
