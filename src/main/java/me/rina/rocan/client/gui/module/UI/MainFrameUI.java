@@ -79,7 +79,7 @@ public class MainFrameUI extends Frame {
             offsetX += widgetCategory.getRect().getWidth();
 
             this.loadedWidgetCategoryList.add(widgetCategory);
-            this.rect.setWidth(offsetX);
+            this.width = offsetX;
         }
     }
 
