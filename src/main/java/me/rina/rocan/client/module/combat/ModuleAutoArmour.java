@@ -39,53 +39,104 @@ public class ModuleAutoArmour extends Module {
             return;
         }
 
-        if (this.tick.isPassedMS(settingDelay.getValue().intValue())) {
-            if (SlotUtil.getArmourItem(0) == Items.AIR) {
-                for (Item helmets : ItemUtil.ALL_HELMETS) {
-                    int slot = SlotUtil.findItemSlotFromInventory(helmets);
+        int k = settingDelay.getValue().intValue();
 
-                    if (slot != -1) {
-                        this.foundSlot = slot;
-                    }
-                }
+        if (this.tick.isPassedMS(k)) {
+            int bestSlotHelmet = this.findBestArmor(0, ItemUtil.ALL_HELMETS);
+
+            if (bestSlotHelmet != -1) {
+                this.doSetArmor(bestSlotHelmet,0);
+
+                return;
             }
 
-            if (SlotUtil.getArmourItem(1) == Items.AIR) {
-                for (Item helmets : ItemUtil.ALL_CHEST_PLATES) {
-                    int slot = SlotUtil.findItemSlotFromInventory(helmets);
+            int bestSlotChestPlace = this.findBestArmor(1, ItemUtil.ALL_CHEST_PLATES);
 
-                    if (slot != -1) {
-                        this.foundSlot = slot;
-                    }
-                }
+            if (bestSlotChestPlace != -1) {
+                this.doSetArmor(bestSlotChestPlace,1);
+
+                return;
             }
 
-            if (SlotUtil.getArmourItem(2) == Items.AIR) {
-                for (Item helmets : ItemUtil.ALL_LEGGINGS) {
-                    int slot = SlotUtil.findItemSlotFromInventory(helmets);
+            int bestSlotLegging = this.findBestArmor(2, ItemUtil.ALL_LEGGINGS);
 
-                    if (slot != -1) {
-                        this.foundSlot = slot;
-                    }
-                }
+            if (bestSlotLegging != -1) {
+                this.doSetArmor(bestSlotLegging,2);
+
+                return;
             }
 
-            if (SlotUtil.getArmourItem(3) == Items.AIR) {
-                for (Item helmets : ItemUtil.ALL_BOOTS) {
-                    int slot = SlotUtil.findItemSlotFromInventory(helmets);
+            int bestSlotBoots = this.findBestArmor(3, ItemUtil.ALL_BOOTS);
 
-                    if (slot != -1) {
-                        this.foundSlot = slot;
-                    }
-                }
-            }
-
-            if (this.foundSlot != -1) {
-                mc.playerController.windowClick(0, this.foundSlot, 0, ClickType.QUICK_MOVE, MC.player);
-
-                this.tick.reset();
-                this.foundSlot = -1;
+            if (bestSlotBoots != -1) {
+                this.doSetArmor(bestSlotBoots,3);
             }
         }
+    }
+
+    public void doSetArmor(int slot, int slotInArmor) {
+        if (slot == -1) {
+            this.tick.reset();
+
+            return;
+        }
+
+        ItemStack bestArmor = SlotUtil.getItemStack(slot);
+        ItemStack currentArmor = SlotUtil.getArmourItemStack(slotInArmor);
+
+        int l = ((ItemArmor) bestArmor.getItem()).damageReduceAmount + EnchantmentHelper.getEnchantmentLevel(Enchantments.PROTECTION, bestArmor);
+        int k = ((ItemArmor) currentArmor.getItem()).damageReduceAmount + EnchantmentHelper.getEnchantmentLevel(Enchantments.PROTECTION, currentArmor);
+
+        if (k > l) {
+            this.tick.reset();
+
+            return;
+        }
+
+        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, 0, ClickType.PICKUP, mc.player);
+        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, 5 + slotInArmor, 0, ClickType.PICKUP, mc.player);
+        mc.playerController.windowClick(mc.player.inventoryContainer.windowId, slot, 0, ClickType.PICKUP, mc.player);
+        mc.playerController.updateController();
+
+        this.tick.reset();
+    }
+
+    public static int findBestArmor(int slotInArmor, Item[] type) {
+        ItemStack bestArmor = ItemStack.EMPTY;
+        ItemStack currentArmor = SlotUtil.getArmourItemStack(slotInArmor);
+
+        int slot = -1;
+        int flag = -1;
+
+        for (int i = 9; i < 36; i++) {
+            ItemStack itemStack = SlotUtil.getItemStack(i);
+
+            if (bestArmor == ItemStack.EMPTY) {
+                bestArmor = itemStack;
+            }
+
+            if (ItemUtil.contains(type, itemStack.getItem()) == false) {
+                continue;
+            }
+
+            if (itemStack.getItem() instanceof ItemArmor) {
+                if ((bestArmor.getItem() instanceof ItemArmor) == false) {
+                    bestArmor = itemStack;
+                }
+
+                int l = ((ItemArmor) bestArmor.getItem()).damageReduceAmount + EnchantmentHelper.getEnchantmentLevel(Enchantments.PROTECTION, bestArmor);
+                int k = ((ItemArmor) itemStack.getItem()).damageReduceAmount + EnchantmentHelper.getEnchantmentLevel(Enchantments.PROTECTION, itemStack);
+
+                flag = i;
+
+                if (k > l) {
+                    bestArmor = itemStack;
+
+                    slot = i;
+                }
+            }
+        }
+
+        return flag;
     }
 }

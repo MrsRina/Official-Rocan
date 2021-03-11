@@ -1,7 +1,14 @@
 package me.rina.rocan.api.util.item;
 
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.EnchantmentProtection;
+import net.minecraft.enchantment.EnumEnchantmentType;
+import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemStack;
 import org.omg.CORBA.PUBLIC_MEMBER;
 
 /**
@@ -47,5 +54,21 @@ public class ItemUtil {
         }
 
         return contains;
+    }
+
+    public static ItemStack getBestArmor(ItemStack firstArmor, ItemStack secondArmor) {
+        float k = ((ItemArmor) firstArmor.getItem()).damageReduceAmount;
+        float l = EnchantmentHelper.getEnchantmentLevel(Enchantments.PROTECTION, firstArmor);
+
+        float n = ((ItemArmor) secondArmor.getItem()).damageReduceAmount;
+        float m = EnchantmentHelper.getEnchantmentLevel(Enchantments.PROTECTION, secondArmor);
+
+        ItemStack itemStack = firstArmor;
+
+        if ((n + m) > (k + l)) {
+            itemStack = secondArmor;
+        }
+
+        return itemStack;
     }
 }

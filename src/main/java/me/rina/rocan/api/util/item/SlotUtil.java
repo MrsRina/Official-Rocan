@@ -1,6 +1,8 @@
 package me.rina.rocan.api.util.item;
 
 import me.rina.rocan.Rocan;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.item.Item;

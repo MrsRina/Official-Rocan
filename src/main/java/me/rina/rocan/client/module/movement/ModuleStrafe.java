@@ -3,6 +3,7 @@ package me.rina.rocan.client.module.movement;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.module.registry.Registry;
+import me.rina.rocan.api.setting.value.ValueBind;
 import me.rina.rocan.api.setting.value.ValueBoolean;
 import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
@@ -25,6 +26,7 @@ public class ModuleStrafe extends Module {
     public static ValueBoolean settingStrafeSmoothJump = new ValueBoolean("Smooth Jump", "SmoothJump", "Smooth jumping.", true);
 
     public static ValueEnum settingJumpMode = new ValueEnum("Jump Mode", "JumpMode", "Mode jump.", JumpMode.AUTO);
+    public static ValueBind settingBypass = new ValueBind("Bypass", "Bypass", "Make you jump.", -1);
 
     public enum JumpMode {
         AUTO, MANUAL;
@@ -87,6 +89,29 @@ public class ModuleStrafe extends Module {
     public void onListenClientTick(ClientTickEvent event) {
         if (NullUtil.isPlayerWorld()) {
             return;
+        }
+
+        if (mc.currentScreen != null && settingBypass.getState()) {
+            if (mc.player.onGround) {
+                mc.player.jump();
+            }
+        }
+    }
+
+    @Listener
+    public void onListenPlayerMove(PlayerMoveEvent event) {
+        if (NullUtil.isPlayerWorld()) {
+            return;
+        }
+
+        if (mc.player.isSneaking() || mc.player.isOnLadder() || mc.player.isInWater() || mc.player.isInLava() || mc.player.isInWeb || mc.player.capabilities.isFlying) {
+            return;
+        }
+
+        if (settingStrafeOnGround.getValue() == false) {
+            if (mc.player.onGround) {
+                return;
+            }
         }
 
         int sqrt = speedSQRT < 0.2873 ? 2873 : (int) (this.speedSQRT * 10000);
@@ -175,23 +200,6 @@ public class ModuleStrafe extends Module {
         }
 
         this.speed = this.lastSpeed;
-    }
-
-    @Listener
-    public void onListenPlayerMove(PlayerMoveEvent event) {
-        if (NullUtil.isPlayerWorld()) {
-            return;
-        }
-
-        if (mc.player.isSneaking() || mc.player.isOnLadder() || mc.player.isInWater() || mc.player.isInLava() || mc.player.isInWeb || mc.player.capabilities.isFlying) {
-            return;
-        }
-
-        if (settingStrafeOnGround.getValue() == false) {
-            if (mc.player.onGround) {
-                return;
-            }
-        }
 
         this.speedSQRT = Math.sqrt(event.getX() * event.getX() + event.getZ() * event.getZ());
         this.flag = this.speedSQRT > 0.2873f;
@@ -261,7 +269,6 @@ public class ModuleStrafe extends Module {
                     event.setY(mc.player.motionY = getMotionJumpY());
                 }
             }
-
 
             switch ((StrafingType) settingStrafingType.getValue()) {
                 case MINIMAL: {

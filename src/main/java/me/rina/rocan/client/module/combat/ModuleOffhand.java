@@ -37,6 +37,7 @@ public class ModuleOffhand extends Module {
     public static ValueBind settingGoldenApple = new ValueBind("Golden Apple", "GoldenApple", "Set golden apple at hand.", -1);
     public static ValueBind settingBow = new ValueBind("Bow", "Bow", "Set bow at hand.", -1);
 
+    public static ValueBoolean settingFastEatGoldenApple = new ValueBoolean("Fast Eat Golden Apple", "FastEatGoldenApple", "Fast eat offhand glitch, (it's glitch the inventory.).", false);
     public static ValueEnum settingFindMode = new ValueEnum("Find Mode", "FindMode", "Modes to find the item(s).", FindMode.FULL);
 
     public enum FindMode {
@@ -142,10 +143,14 @@ public class ModuleOffhand extends Module {
 
         if (item != Items.TOTEM_OF_UNDYING && settingSmartTotem.getValue().intValue() != 0f && mc.player.getHealth() <= settingSmartTotem.getValue().intValue()) {
             settingTotem.setEnabled(true);
+
+            return;
         }
 
-        if (mc.player.getHeldItemOffhand().getItem() == item) {
-            return;
+        if (settingFastEatGoldenApple.getValue() == false && item != Items.GOLDEN_APPLE) {
+            if (mc.player.getHeldItemOffhand().getItem() == item) {
+                return;
+            }
         }
 
         int slot = doFindSlot(item);
