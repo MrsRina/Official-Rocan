@@ -256,9 +256,9 @@ public class Module implements ISLClass {
             if (Files.exists(Paths.get(pathFile))) {
                 java.io.File file = new java.io.File(pathFile);
                 file.delete();
-            } else {
-                Files.createFile(Paths.get(pathFile));
             }
+
+            Files.createFile(Paths.get(pathFile));
 
             JsonObject mainJson = new JsonObject();
             JsonObject jsonSettingList = new JsonObject();

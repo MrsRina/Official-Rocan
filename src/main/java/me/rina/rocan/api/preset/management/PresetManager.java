@@ -103,9 +103,9 @@ public class PresetManager implements ISLClass {
             if (Files.exists(Paths.get(pathFile))) {
                 java.io.File file = new java.io.File(pathFile);
                 file.delete();
-            } else {
-                Files.createFile(Paths.get(pathFile));
             }
+
+            Files.createFile(Paths.get(pathFile));
 
             JsonObject mainJson = new JsonObject();
             JsonArray mainJsonArray = new JsonArray();

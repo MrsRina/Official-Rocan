@@ -46,11 +46,9 @@ public class SettingNumberWidget extends Widget {
      * We need verifiy and cast to double.
      */
     private double _value, minimum, maximum;
-
     private boolean isMouseClickedLeft;
 
     private TurokRect rectSlider = new TurokRect("CheckBox", 0, 0);
-
     private ValueNumber setting;
 
     public Flag flagMouseSlider = Flag.MOUSE_NOT_OVER;

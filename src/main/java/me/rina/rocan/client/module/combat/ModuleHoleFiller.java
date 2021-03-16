@@ -5,6 +5,7 @@ import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.module.registry.Registry;
 import me.rina.rocan.api.setting.value.ValueBoolean;
+import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.api.util.crystal.BlockUtil;
@@ -31,11 +32,11 @@ import java.util.ArrayList;
 @Registry(name = "Hole Filler", tag = "HoleFiller", description = "Automatically places blocks in hole.", category = ModuleCategory.COMBAT)
 public class ModuleHoleFiller extends Module {
     /* General settings. */
-    public static ValueBoolean settingRotate = new ValueBoolean("Rotate", "Rotate", "Make you rotate.", false);
     public static ValueNumber settingRange = new ValueNumber("Range", "Range", "The maximum range for place blocks and collect.", 6f, 1f, 6f);
     public static ValueNumber settingTimeOut = new ValueNumber("Time Out", "TimeOut", "Time out delay for disable filler.", 1000, 1, 3000);
     public static ValueNumber settingDelay = new ValueNumber("Delay", "Delay", "The MS delay for places blocks on queue system.", 50, 0, 1000);
     public static ValueNumber settingHoleLimit = new ValueNumber("Hole Limit", "HoleLimit", "Limit of holes to place blocks.", 6, 1, 24);
+    public static ValueEnum settingRotateMode = new ValueEnum("Rotate Mode", "RotateMode", "Modes for you rotate.", PlayerRotationUtil.RotationMode.NONE);
 
     private final Item obsidian = Item.getItemFromBlock(Blocks.OBSIDIAN);
     private ArrayList<BlockPos> blocks = new ArrayList<>();
@@ -185,16 +186,14 @@ public class ModuleHoleFiller extends Module {
          */
         this.doUpdateCurrentItem();
 
-        // Send swing anim to server.
-        mc.player.swingArm(EnumHand.MAIN_HAND);
-
         // Rotate.
-        if (settingRotate.getValue()) {
-            PlayerRotationUtil.packet(hit);
-        }
+        PlayerRotationUtil.makeRotate(hit, (PlayerRotationUtil.RotationMode) settingRotateMode.getValue());
 
         if (mc.player.getHeldItemMainhand().getItem() == obsidian) {
             mc.playerController.processRightClickBlock(mc.player, mc.world, pos, facing, hit, EnumHand.MAIN_HAND);
+
+            // Send swing anim to server.
+            mc.player.swingArm(EnumHand.MAIN_HAND);
 
             this.universalCountHolePlaced++;
         }
