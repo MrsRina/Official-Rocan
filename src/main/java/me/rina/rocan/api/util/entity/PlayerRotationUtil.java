@@ -54,20 +54,14 @@ public class PlayerRotationUtil {
         switch (rotate) {
             case PACKET: {
                 packet(hit);
-
-                break;
             }
 
             case MANUAL: {
                 manual(hit);
-
-                break;
             }
 
             case NONE: {
                 // No rotate!
-
-                break;
             }
         }
     }

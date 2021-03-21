@@ -15,7 +15,7 @@ public class PlayerStopBreakBlockTracker extends PacketUtil.PacketTracker {
     private BlockUtil.BlockDamage block;
 
     public PlayerStopBreakBlockTracker(BlockUtil.BlockDamage block) {
-        super("Break Block", new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, block.getPos(), block.getFacing()));
+            super("Break Block", new CPacketPlayerDigging(CPacketPlayerDigging.Action.STOP_DESTROY_BLOCK, block.getPos(), block.getFacing()));
 
         this.block = block;
     }

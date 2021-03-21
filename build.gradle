@@ -15,7 +15,7 @@ buildscript {
 	dependencies {
 		classpath "net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT"
 		classpath "com.github.jengelman.gradle.plugins:shadow:1.2.3"
-		classpath "org.spongepowered:mixingradle:0.4-SNAPSHOT"
+		classpath "org.spongepowered:mixingradle:0.6-SNAPSHOT"
 	}
 }
 
@@ -57,12 +57,11 @@ repositories {
 
 dependencies {
 	implementation "org.jetbrains:annotations:20.1.0"
+	implementation group: 'com.google.code.gson', name: 'gson', version: '2.8'
 
     compile "club.minnced:java-discord-rpc:v2.0.1"
-	compile group : "net.jodah", name : "typetools", version: "0.5.0"
 	compile 'se.michaelthelin.spotify:spotify-web-api-java:6.5.1'
-
-	compile group: "com.googlecode.json-simple", name: "json-simple", version: "1.1.1"
+	compile group : "net.jodah", name : "typetools", version: "0.5.0"
 
 	compile("org.spongepowered:mixin:0.7.4-SNAPSHOT") {
 		exclude module: "launchwrapper"

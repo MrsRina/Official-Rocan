@@ -35,15 +35,14 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public class ModuleStep extends Module {
     /* Normal. */
     public static ValueBind settingBindNormal = new ValueBind("Bind Normal", "Bind Normal", "Normal step.", -1);
-    public static ValueNumber settingHeight = new ValueNumber("Height", "Height", "Height for step.", 2, 1, 4);
     public static ValueBoolean settingVanilla = new ValueBoolean("Vanilla", "Vanilla", "Vanilla step.", false);
-    public static ValueBoolean settingSmooth = new ValueBoolean("Smooth", "Smooth", "Smooth step.", false);
-    public static ValueBoolean settingDisable = new ValueBoolean("Disable", "Disable", "Disable after you step up.", false);
+    public static ValueNumber settingHeight = new ValueNumber("Height", "Height", "Height for step.", 2, 1, 4);
 
     /* Reverse. */
     public static ValueBoolean settingReverse = new ValueBoolean("Reverse", "Reverse", "Reverse step.", false);
     public static ValueBind settingBindReverse = new ValueBind("Bind Reverse", "BindReverse", "Step but reverse.", -1);
     public static ValueBoolean settingHole = new ValueBoolean("Hole", "Hole", "Only holes reverse.", true);
+    public static ValueBoolean settingSmooth = new ValueBoolean("Smooth", "Smooth", "Smooth reverse step.", false);
 
     private int packetSpam;
     private int normalStepAlert;
@@ -56,11 +55,17 @@ public class ModuleStep extends Module {
         if (settingReverse.getValue() == false) {
             settingBindReverse.setState(false);
         }
+
+        settingHeight.setEnabled(settingVanilla.getValue());
     }
 
     @Listener
     public void onListen(ClientTickEvent event) {
         if (NullUtil.isPlayerWorld()) {
+            return;
+        }
+
+        if (this.doVerifyPlayerFlags()) {
             return;
         }
 
@@ -102,77 +107,92 @@ public class ModuleStep extends Module {
     }
 
     public void doNormal() {
-        float[] stepHeight = this.getStepHeight();
-
         if (settingVanilla.getValue()) {
             mc.player.stepHeight = settingHeight.getValue().intValue();
+
+            return;
         } else {
             if (mc.player.stepHeight != 0) {
                 mc.player.stepHeight = 0;
             }
         }
 
-        if (mc.player.collidedHorizontally && mc.player.onGround) {
-            ++this.packetSpam;
+        mc.player.stepHeight = 0.5f;
+
+        double step = this.getStepHeight();
+
+        if (step < 0 || step > 2) {
+            return;
         }
 
-        if (mc.player.onGround && mc.player.isInsideOfMaterial(Material.WATER) == false && mc.player.isInsideOfMaterial(Material.LAVA) == false && mc.player.isInWeb == false && mc.player.collidedVertically && mc.player.fallDistance == 0f && KeyUtil.isPressed(mc.gameSettings.keyBindJump) == false && mc.player.collidedHorizontally && mc.player.isOnLadder() == false && this.packetSpam > stepHeight.length - 2) {
-            Vec3d playerPosition = PlayerUtil.getVec();
+        if (step == 2.0d) {
+            mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.42, mc.player.posZ, mc.player.onGround));
+            mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.78, mc.player.posZ, mc.player.onGround));
+            mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.63, mc.player.posZ, mc.player.onGround));
+            mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.51, mc.player.posZ, mc.player.onGround));
+            mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.9, mc.player.posZ, mc.player.onGround));
+            mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 1.21, mc.player.posZ, mc.player.onGround));
+            mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 1.45, mc.player.posZ, mc.player.onGround));
+            mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 1.43, mc.player.posZ, mc.player.onGround));
+            mc.player.setPosition(mc.player.posX, mc.player.posY + 2.0, mc.player.posZ);
+        }
 
-            for (float positions : stepHeight) {
-                PacketUtil.send(new CPacketPlayer.Position(playerPosition.x, playerPosition.y + positions, playerPosition.z, true));
-            }
+        if (step == 1.5) {
+            mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.41999998688698, mc.player.posZ, mc.player.onGround));
+            mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.7531999805212, mc.player.posZ, mc.player.onGround));
+            mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 1.00133597911214, mc.player.posZ, mc.player.onGround));
+            mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 1.16610926093821, mc.player.posZ, mc.player.onGround));
+            mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 1.24918707874468, mc.player.posZ, mc.player.onGround));
+            mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 1.1707870772188, mc.player.posZ, mc.player.onGround));
+            mc.player.setPosition(mc.player.posX, mc.player.posY + 1.0, mc.player.posZ);
+        }
 
-            Vec3d flag = new Vec3d(playerPosition.x, playerPosition.y + stepHeight[stepHeight.length - 1], playerPosition.z);
-
-            if (settingSmooth.getValue()) {
-                Vec3d interpolation = TurokMath.lerp(playerPosition, flag, Rocan.getClientEventManager().getCurrentRender3DPartialTicks());
-
-                PlayerUtil.setPosition(interpolation.x, interpolation.y, interpolation.z);
-            } else {
-                PlayerUtil.setPosition(flag.x, flag.y, flag.z);
-            }
-
-            this.packetSpam = 0;
-
-            if (settingDisable.getValue()) {
-                settingBindNormal.setState(false);
-            }
+        if (step == 1.0) {
+            mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.41999998688698, mc.player.posZ, mc.player.onGround));
+            mc.player.connection.sendPacket(new CPacketPlayer.Position(mc.player.posX, mc.player.posY + 0.7531999805212, mc.player.posZ, mc.player.onGround));
+            mc.player.setPosition(mc.player.posX, mc.player.posY + 1.0, mc.player.posZ);
         }
     }
 
     public void doReverse() {
+        if (settingHole.getValue()) {
+            BlockPos pos = PlayerUtil.getBlockPos();
+
+            if (Rocan.getHoleManager().getHoles().contains(pos.add(0, -1, 0)) && !Rocan.getHoleManager().getHoles().contains(pos)) {
+                this.doFastFall();
+            }
+        } else {
+            this.doFastFall();
+        }
     }
 
-    public float[] getStepHeight() {
-        float[] height = new float[] {0};
+    public void doFastFall() {
+        if (settingSmooth.getValue()) {
+            mc.player.posY--;
+        } else {
+            mc.player.posY = -1;
+        }
+    }
 
-        switch (settingHeight.getValue().intValue()) {
-            case 1: {
-                height = BlockUtil.ONE_BLOCK_HEIGHT;
+    public boolean doVerifyPlayerFlags() {
+        return (!mc.player.collidedHorizontally && (mc.player.onGround == false || mc.player.isOnLadder() || mc.player.isInWater() || mc.player.isInLava() || mc.player.movementInput.jump || mc.player.noClip) && mc.player.moveForward == 0 && mc.player.moveStrafing == 0);
+    }
 
-                break;
-            }
+    public double getStepHeight() {
+        double h = -1d;
 
-            case 2: {
-                height = BlockUtil.TWO_BLOCKS_HEIGHT;
+        final AxisAlignedBB bb = mc.player.getEntityBoundingBox().offset(0, 0.05, 0).grow(0.05);
 
-                break;
-            }
+        if (mc.world.getCollisionBoxes(mc.player, bb.offset(0, 2, 0)).isEmpty()) {
+            return 100;
+        }
 
-            case 3: {
-                height = BlockUtil.THREE_BLOCKS_HEIGHT;
-
-                break;
-            }
-
-            case 4: {
-                height = BlockUtil.FOUR_BLOCKS_HEIGHT;
-
-                break;
+        for (final AxisAlignedBB aabbs : mc.world.getCollisionBoxes(mc.player, bb)) {
+            if (aabbs.maxY > h) {
+                h = aabbs.maxY;
             }
         }
 
-        return height;
+        return h - mc.player.posY;
     }
 }

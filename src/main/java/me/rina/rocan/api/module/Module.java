@@ -236,7 +236,7 @@ public class Module implements ISLClass {
     public void onRender3D() {}
 
     /**
-     * The current context of setting enums.
+     * Handler settings in GUI at module.
      */
     public void onSetting() {}
 
@@ -303,7 +303,7 @@ public class Module implements ISLClass {
 
             mainJson.add("settings", jsonSettingList);
 
-            String stringJson = gsonBuilder.toJson(jsonParser.parseString(mainJson.toString()));
+            String stringJson = gsonBuilder.toJson(jsonParser.parse(mainJson.toString()));
             OutputStreamWriter fileOutputStream = new OutputStreamWriter(new FileOutputStream(pathFile), "UTF-8");
 
             fileOutputStream.write(stringJson);

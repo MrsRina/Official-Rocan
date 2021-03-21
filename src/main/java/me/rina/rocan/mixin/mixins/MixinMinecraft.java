@@ -4,7 +4,6 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.rocan.mixin.interfaces.IMinecraft;
 import net.minecraft.client.Minecraft;
-import net.minecraft.crash.CrashReport;
 import org.lwjgl.opengl.Display;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
@@ -35,5 +34,10 @@ public abstract class MixinMinecraft implements IMinecraft {
     @Inject(method = "runTick", at = @At("HEAD"))
     private void onTick(CallbackInfo callbackInfo) {
         Rocan.getPomeloEventManager().dispatchEvent(new ClientTickEvent());
+    }
+
+    @Inject(method = "shutdown", at = @At("HEAD"))
+    private void onShutDown(CallbackInfo ci) {
+        Rocan.shutdownClient();
     }
 }

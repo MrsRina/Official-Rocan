@@ -274,10 +274,9 @@ public class ModuleSurround extends Module {
         PlayerRotationUtil.makeRotate(hit, (PlayerRotationUtil.RotationMode) settingRotateMode.getValue());
 
         if (mc.player.getHeldItemMainhand().getItem() == obsidian) {
-            mc.playerController.processRightClickBlock(mc.player, mc.world, pos, facing, hit, EnumHand.MAIN_HAND);
-
             // Send swing anim to server.
             mc.player.swingArm(EnumHand.MAIN_HAND);
+            mc.playerController.processRightClickBlock(mc.player, mc.world, pos, facing, hit, EnumHand.MAIN_HAND);
         }
 
         return Flag.PLACED;

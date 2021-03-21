@@ -129,6 +129,30 @@ public class TurokShaderGL {
         TurokGL.popMatrix();
     }
 
+    public static void drawLine(float x, float y, float x1, float y1, float w, int[] c) {
+        Color color = new Color(TurokMath.clamp(c[0], 0, 255), TurokMath.clamp(c[1], 0, 255), TurokMath.clamp(c[2], 0, 255), TurokMath.clamp(c[3], 0, 255));
+
+        float r = (float) (color.getRGB() >> 16 & 255) / 255.0f;
+        float g = (float) (color.getRGB() >> 8 & 255) / 255.0f;
+        float b = (float) (color.getRGB() & 255) / 255.0f;
+        float a = (float) (color.getRGB() >> 24 & 255) / 255.0f;
+
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+
+        GlStateManager.glLineWidth(w);
+
+        BufferBuilder bufferBuilder = start();
+
+        bufferBuilder.begin(GL11.GL_LINE, DefaultVertexFormats.POSITION_COLOR);
+        bufferBuilder.pos(x, y, 0).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x1, y1, 0).color(r, g, b, a).endVertex();
+
+        end();
+
+        GlStateManager.disableBlend();
+    }
+
     public static void drawSolidRect(TurokRect rect, int[] color) {
         drawSolidRect(rect.getX(), rect.getY(), rect.getWidth(), rect.getHeight(), color);
     }

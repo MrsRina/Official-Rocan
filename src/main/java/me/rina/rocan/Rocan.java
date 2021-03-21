@@ -42,7 +42,7 @@ public class Rocan {
     public static Rocan INSTANCE;
 
     public static final String NAME        = "Rocan";
-    public static final String VERSION     = "1.3.2beta";
+    public static final String VERSION     = "1.0beta";
     public static final String PATH_CONFIG = "Rocan/";
     public static final String CHAT        = ChatFormatting.BLUE + "Rocan " + ChatFormatting.WHITE;
 
@@ -130,6 +130,7 @@ public class Rocan {
         this.commandManager.registry(new CommandCoords());
         this.commandManager.registry(new CommandSocial());
         this.commandManager.registry(new CommandVanish());
+        this.commandManager.registry(new CommandSettings());
 
         // We organize module list to alphabetical order.
         Collections.sort(this.moduleManager.getModuleList(), Comparator.comparing(Module::getName));
@@ -155,7 +156,7 @@ public class Rocan {
     /**
      * Method static to end client, save or disable something.
      */
-    public static void onEndClient() {
+    public static void shutdownClient() {
         me.rina.rocan.client.module.client.ModuleClickGUI moduleClickGUI = (me.rina.rocan.client.module.client.ModuleClickGUI) ModuleManager.get(me.rina.rocan.client.module.client.ModuleClickGUI.class);
         ModuleSpammer moduleSpammer = (ModuleSpammer) ModuleManager.get(ModuleSpammer.class);
         ModuleFreecam moduleFreecam = (ModuleFreecam) ModuleManager.get(ModuleFreecam.class);
@@ -197,7 +198,7 @@ public class Rocan {
         Runtime.getRuntime().addShutdownHook(new Thread("Rocan Shutdown Hook") {
             @Override
             public void run() {
-                Rocan.onEndClient();
+                Rocan.shutdownClient();
             }
         });
     }

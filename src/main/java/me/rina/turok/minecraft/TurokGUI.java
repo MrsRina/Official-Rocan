@@ -27,12 +27,12 @@ public class TurokGUI extends GuiScreen {
     protected float partialTicks;
 
     public TurokGUI() {
-        // Starts the mouse and display helpers hardware.
+        // Init helpers.
         this.mouse = new TurokMouse();
         this.display = new TurokDisplay(Minecraft.getMinecraft());
 
-        /**
-         * Init shader utils from TurokShaderGL.
+        /*
+         * Init shader utils.
          */
         TurokShaderGL.init(this.display, this.mouse);
 

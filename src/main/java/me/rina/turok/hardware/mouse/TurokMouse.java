@@ -16,6 +16,8 @@ public class TurokMouse {
     private int x;
     private int y;
 
+    public TurokMouse() {}
+
     public void setPos(int x, int y) {
         this.x = x;
         this.y = y;

@@ -112,7 +112,7 @@ public class TurokMath {
     }
 
     public static int min(int value, int minimum) {
-        return value <= minimum ? minimum : value;
+        return Math.max(value, minimum);
     }
 
     public static float min(float value, float minimum) {
@@ -124,7 +124,7 @@ public class TurokMath {
     }
 
     public static int max(int value, int maximum) {
-        return value >= maximum ? maximum : value;
+        return Math.min(value, maximum);
     }
 
     public static double max(double value, double maximum) {

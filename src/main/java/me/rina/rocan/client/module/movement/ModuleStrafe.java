@@ -91,7 +91,7 @@ public class ModuleStrafe extends Module {
             return;
         }
 
-        if (mc.currentScreen != null && settingBypass.getState()) {
+        if (mc.currentScreen == null && settingBypass.getState()) {
             if (mc.player.onGround) {
                 mc.player.jump();
             }

@@ -124,7 +124,7 @@ public class PresetManager implements ISLClass {
 
             mainJson.add("presets", mainJsonArray);
 
-            String stringJson = gsonBuilder.toJson(jsonParser.parseString(mainJson.toString()));
+            String stringJson = gsonBuilder.toJson(jsonParser.parse(mainJson.toString()));
             OutputStreamWriter fileOutputStream = new OutputStreamWriter(new FileOutputStream(pathFile), "UTF-8");
 
             fileOutputStream.write(stringJson);
@@ -146,7 +146,7 @@ public class PresetManager implements ISLClass {
 
             InputStream file = Files.newInputStream(Paths.get(pathFile));
             JsonParser jsonParser = new JsonParser();
-            JsonObject mainJson = jsonParser.parseReader(new InputStreamReader(file)).getAsJsonObject();
+            JsonObject mainJson = jsonParser.parse(new InputStreamReader(file)).getAsJsonObject();
 
             if (mainJson.get("presets") == null) {
                 file.close();
