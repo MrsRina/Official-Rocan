@@ -1,5 +1,6 @@
 package me.rina.rocan.client.gui.module.visual;
 
+import javafx.scene.input.Clipboard;
 import me.rina.rocan.api.gui.IGUI;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
@@ -15,8 +16,11 @@ import net.minecraft.util.ChatAllowedCharacters;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 
-import javax.swing.*;
 import java.awt.*;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.IOException;
 
 /**
  * @author SrRina
@@ -72,6 +76,8 @@ public class EntryWidget extends Widget implements IGUI {
 
         this.text = "";
         this.save = "";
+
+        this.master = master;
     }
 
     public void setMaster(TurokGUI master) {
@@ -138,8 +144,52 @@ public class EntryWidget extends Widget implements IGUI {
         return isSelected;
     }
 
-    public void setSplitByMouse(int x, int y) {
+    /**
+     * Update split for set current show but the ticks disabled, after it you will need reset the split.
+     */
+    public void updateSplit() {
+        this.split = "|";
+        this.tick.reset();
+    }
 
+    /**
+     * Reset split for fix the split seek.
+     */
+    public void resetSplit() {
+        this.split = "";
+        this.tick.reset();
+    }
+
+    public int getSplitByMouse(int x, int y) {
+        int split = this.text.isEmpty() ? 0 : this.text.length();
+
+        if (this.text.isEmpty() || this.flagMouse == Flag.MOUSE_NOT_OVER) {
+            return split;
+        }
+
+        // I love this names... ok ok, I wont more use this names.
+        float diffOffset = this.rect.getX() + this.offsetX;
+        float w = 0;
+
+        int count = 0;
+
+        for (String characters : this.text.split("")) {
+            float charWidth = TurokFontManager.getStringWidth(this.fontRenderer, characters);
+            float offset = diffOffset + w;
+
+            // We get offset with char width and return the count for index;
+            if (x >= offset && x <= offset + charWidth) {
+                split = TurokMath.clamp(count, 0, this.text.length());
+
+                break;
+            }
+
+            w += TurokFontManager.getStringWidth(this.fontRenderer, characters);
+            count++;
+        }
+
+        // Double clamp verification.
+        return TurokMath.clamp(split, 0, this.text.length());
     }
 
     public void doRenderSplit(float x, float y) {
@@ -183,135 +233,142 @@ public class EntryWidget extends Widget implements IGUI {
         int mov = this.splitIndex;
 
         if (this.isFocused) {
-            switch (key) {
-                // Cancel typing.
-                case Keyboard.KEY_ESCAPE: {
-                    this.setFocused(false);
-                    this.text = this.save;
-
-                    break;
-                }
+            // Cancel typing.
+            if (key == Keyboard.KEY_ESCAPE) {
+                this.setFocused(false);
+                this.text = this.save;
 
                 // Set the new string.
-                case Keyboard.KEY_RETURN: {
-                    this.setFocused(false);
-
-                    break;
+            } else if (key == Keyboard.KEY_RETURN) {
+                this.setFocused(false);
+            } else if (key == Keyboard.KEY_RIGHT) {
+                if (cache.isEmpty() || mov == cache.length() || mov < 0) {
+                    return;
                 }
 
-                case Keyboard.KEY_RIGHT: {
-                    if (cache.isEmpty()) {
-                        return;
-                    }
+                this.lastKeyTyped = key;
 
-                    this.lastKeyTyped = key;
-                    this.split = "|";
-                    this.tick.reset();
+                this.updateSplit();
 
-                    mov++;
-
-                    this.splitIndex = TurokMath.clamp(mov, 0, cache.length());
-
-                    break;
+                mov++;
+            } else if (key == Keyboard.KEY_LEFT) {
+                if (cache.isEmpty() || mov <= 0) {
+                    return;
                 }
 
-                case Keyboard.KEY_LEFT: {
-                    if (cache.isEmpty()) {
-                        return;
-                    }
+                this.lastKeyTyped = key;
+                this.updateSplit();
 
-                    this.lastKeyTyped = key;
-                    this.split = "|";
-                    this.tick.reset();
-
-                    mov--;
-
-                    this.splitIndex = TurokMath.clamp(mov, 0, cache.length());
-
-                    break;
+                mov--;
+            } else if (key == Keyboard.KEY_END) {
+                if (cache.isEmpty()) {
+                    return;
                 }
 
-                case Keyboard.KEY_DELETE: {
-                    if (cache.isEmpty() && !(mov < cache.length())) {
-                        return;
-                    }
-
-                    int split = mov < 0 ? 0 : mov;
-
-                    String first = this.text.substring(split);
-                    String second = this.text.replaceAll(first, "");
-
-                    cache = second + StringUtils.removeFirst(first, ".?");
-
-                    this.lastKeyTyped = key;
-                    this.split = "|";
-                    this.tick.reset();
-
-                    if (!cache.equals(this.text)) {
-                        this.text = cache;
-                    }
-
-                    break;
+                mov = cache.length();
+            } else if (key == Keyboard.KEY_HOME) {
+                if (cache.isEmpty()) {
+                    return;
                 }
 
-                case Keyboard.KEY_BACK: {
-                    if (cache.isEmpty()) {
-                        return;
-                    }
-
-                    if (mov < cache.length()) {
-                        int split = mov <= 0 ? 0 : mov;
-
-                        String first = this.text.substring(split);
-                        String second = StringUtils.chop(this.text.replaceAll(first, ""));
-
-                        cache = second + first;
-                    } else {
-                        cache = StringUtils.chop(this.text);
-                    }
-
-                    this.lastKeyTyped = key;
-                    this.split = "|";
-                    this.tick.reset();
-
-                    mov--;
-
-                    this.splitIndex = TurokMath.clamp(mov, 0, cache.length());
-
-                    if (!cache.equals(this.text)) {
-                        this.text = cache;
-                    }
-
-                    break;
+                mov = 0;
+            } else if (key == Keyboard.KEY_DELETE) {
+                if (cache.isEmpty() || mov == cache.length() || mov < 0) {
+                    return;
                 }
 
-                default: {
-                    if (ChatAllowedCharacters.isAllowedCharacter(character)) {
+                String first = cache.substring(mov);
+                String second = "";
+
+                for (int i = 0; i < mov; i++) {
+                    second += Character.toString(cache.charAt(i));
+                }
+
+                cache = second + first.substring(1);
+
+                this.lastKeyTyped = key;
+                this.updateSplit();
+            } else if (key == Keyboard.KEY_BACK) {
+                if (cache.isEmpty() || mov <= 0 || mov > cache.length()) {
+                    return;
+                }
+
+                if (mov < cache.length()) {
+                    String first = cache.substring(mov);
+                    String second = "";
+
+                    for (int i = 0; i < mov; i++) {
+                        second += Character.toString(cache.charAt(i));
+                    }
+
+                    cache = StringUtils.chop(second) + first;
+                } else {
+                    cache = StringUtils.chop(cache);
+                }
+
+                this.lastKeyTyped = key;
+                this.updateSplit();
+
+                mov--;
+            } else if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_V)) {
+                java.awt.datatransfer.Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+                Transferable content = clipboard.getContents(null);
+
+                if (content != null && content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+                    try {
+                        String copied = content.getTransferData(DataFlavor.stringFlavor).toString();
+
                         if (mov < cache.length()) {
-                            int split = mov <= 0 ? 0 : mov;
+                            String first = cache.substring(mov);
+                            String second = "";
 
-                            String letter = cache.substring(split);
+                            for (int i = 0; i < mov; i++) {
+                                second += Character.toString(cache.charAt(i));
+                            }
 
-                            cache = cache.replaceAll(letter, "") + character + letter;
+                            cache = second + copied + first;
                         } else {
-                            cache = cache + character;
+                            cache = cache + copied;
                         }
 
                         this.lastKeyTyped = key;
-                        this.split = "|";
-                        this.tick.reset();
+                        this.updateSplit();
 
-                        mov++;
+                        mov += copied.length();
+                    } catch (UnsupportedFlavorException | IOException exc) {
+                        ChatUtil.print("Exception: " + exc);
+
+                        exc.printStackTrace();
                     }
-
-                    this.splitIndex = TurokMath.clamp(mov, 0, cache.length());
-
-                    if (!cache.equals(this.text)) {
-                        this.text = cache;
-                    }
-
-                    break;
                 }
+            } else {
+                if (ChatAllowedCharacters.isAllowedCharacter(character)) {
+                    String c = key == Keyboard.KEY_SPACE ? " " : Character.toString(character);
+
+                    if (mov < cache.length()) {
+                        String first = cache.substring(mov);
+                        String second = "";
+
+                        for (int i = 0; i < mov; i++) {
+                            second += Character.toString(cache.charAt(i));
+                        }
+
+                        cache = second + c + first;
+                    } else {
+                        cache = cache + c;
+                    }
+
+                    this.lastKeyTyped = key;
+                    this.updateSplit();
+
+                    mov++;
+                }
+            }
+
+            this.splitIndex = TurokMath.clamp(mov, 0, cache.length());
+
+            if (!this.text.equals(cache)) {
+                this.text = cache;
             }
         }
     }
@@ -322,6 +379,10 @@ public class EntryWidget extends Widget implements IGUI {
 
     @Override
     public void onMouseReleased(int button) {
+        if (this.isMouseClickedLeft) {
+            this.resetSplit();
+            this.isMouseClickedLeft = false;
+        }
     }
 
     @Override
@@ -330,8 +391,11 @@ public class EntryWidget extends Widget implements IGUI {
 
     @Override
     public void onMouseClicked(int button) {
-        if (this.flagMouse == Flag.MOUSE_OVER) {
-            this.splitIndex = this.text.length();
+        if (this.flagMouse == Flag.MOUSE_OVER && button == 0) {
+            this.updateSplit();
+
+            this.isMouseClickedLeft = true;
+            this.splitIndex = this.master != null ? this.getSplitByMouse(this.master.getMouse().getX(), this.master.getMouse().getY()) : this.text.length();
         }
     }
 
@@ -364,12 +428,12 @@ public class EntryWidget extends Widget implements IGUI {
             TurokShaderGL.drawSolidRect(this.rect, this.colorBackground);
 
             if (this.lastKeyTyped != -1 && Keyboard.isKeyDown(this.lastKeyTyped) == false) {
-                this.split = "";
+                this.resetSplit();
                 this.lastKeyTyped = -1;
             }
         } else {
+            this.resetSplit();
             this.save = this.text;
-            this.split = "";
         }
 
         if (this.text.isEmpty()) {

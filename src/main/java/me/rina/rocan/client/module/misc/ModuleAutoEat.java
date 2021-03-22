@@ -70,6 +70,10 @@ public class ModuleAutoEat extends Module {
             return;
         }
 
+        if (mc.player.isCreative()) {
+            return;
+        }
+
         if (this.isToEat) {
             boolean flagO = this.newSlot == 40; // Offhand.
             boolean flagM = this.newSlot != 40; // Main hand.

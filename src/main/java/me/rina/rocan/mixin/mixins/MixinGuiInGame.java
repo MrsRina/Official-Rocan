@@ -4,6 +4,7 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.event.impl.EventStage;
 import me.rina.rocan.client.event.render.RenderPortalOverlayEvent;
 import me.rina.rocan.client.event.render.RenderPotionEffects;
+import me.rina.rocan.client.module.render.ModuleNoRender;
 import net.minecraft.client.gui.GuiIngame;
 import net.minecraft.client.gui.ScaledResolution;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,44 +20,21 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinGuiInGame {
     @Inject(method = "renderPotionEffects", at = @At("HEAD"), cancellable = true)
     public void onRenderPotionEffects(ScaledResolution resolution, CallbackInfo ci) {
-        RenderPotionEffects event = new RenderPotionEffects(EventStage.PRE);
-
-        Rocan.getPomeloEventManager().dispatchEvent(event);
-
-        if (event.isCanceled()) {
+        if (ModuleNoRender.settingPotionIcons.getValue()) {
             ci.cancel();
         }
     }
 
-    @Inject(method = "renderPotionEffects", at = @At("RETURN"), cancellable = true)
-    public void onRenderPotionEffectsPost(ScaledResolution resolution, CallbackInfo ci) {
-        RenderPotionEffects event = new RenderPotionEffects(EventStage.POST);
-
-        Rocan.getPomeloEventManager().dispatchEvent(event);
-
-        if (event.isCanceled()) {
+    @Inject(method = "renderPumpkinOverlay", at = @At("HEAD"), cancellable = true)
+    public void onRenderPumpkin(ScaledResolution scaledRes, CallbackInfo ci) {
+        if (ModuleNoRender.settingPumpkin.getValue()) {
             ci.cancel();
         }
     }
 
     @Inject(method = "renderPortal", at = @At("HEAD"), cancellable = true)
     public void onRenderPortal(float timeInPortal, ScaledResolution scaledRes, CallbackInfo ci) {
-        RenderPortalOverlayEvent event = new RenderPortalOverlayEvent(EventStage.PRE);
-
-        Rocan.getPomeloEventManager().dispatchEvent(event);
-
-        if (event.isCanceled()) {
-            ci.cancel();
-        }
-    }
-
-    @Inject(method = "renderPortal", at = @At("RETURN"), cancellable = true)
-    public void onRenderPortalPost(float timeInPortal, ScaledResolution scaledRes, CallbackInfo ci) {
-        RenderPortalOverlayEvent event = new RenderPortalOverlayEvent(EventStage.POST);
-
-        Rocan.getPomeloEventManager().dispatchEvent(event);
-
-        if (event.isCanceled()) {
+        if (ModuleNoRender.settingPortal.getValue()) {
             ci.cancel();
         }
     }

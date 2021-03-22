@@ -29,8 +29,10 @@ public class ModuleNoRender extends Module {
     public static ValueBoolean settingCrossHair = new ValueBoolean("Cross Hair", "CrossHair", "No render split cross hair.", false);
     public static ValueBoolean settingPotionIcons = new ValueBoolean("Potion Icons", "PotionIcons", "No render potion icons.", true);
     public static ValueBoolean settingPortal = new ValueBoolean("Portal", "Portal", "No render portal... ?", false);
+    public static ValueBoolean settingPumpkin = new ValueBoolean("Pumpkin", "Pumpkin", "Disables pumpkin render.", true);
 
     /* Others. */
+    public static ValueBoolean settingHurtEffectCamera = new ValueBoolean("Hurt Effect Camera", "HurtEffectCamera", "Disables hurt effect in camera.",true);
     public static ValueBoolean settingFire = new ValueBoolean("Fire", "Fire", "No render fire.", true);
     public static ValueBoolean settingFog = new ValueBoolean("Fog", "Fog", "No render fog.", false);
     public static ValueBoolean settingRain = new ValueBoolean("Rain", "Rain", "No render rain.", true);
@@ -43,27 +45,6 @@ public class ModuleNoRender extends Module {
     @Override
     public void onSetting() {
         settingWorldTime.setEnabled(settingCustomWorldTime.getValue());
-    }
-
-    @Listener
-    public void onListenRenderPotionEffects(RenderPotionEffects event) {
-        if (settingPotionIcons.getValue()) {
-            event.setCanceled(true);
-        }
-    }
-
-    @Listener
-    public void onListenRenderPortalOverlay(RenderPortalOverlayEvent event) {
-        if (settingPortal.getValue()) {
-            event.setCanceled(true);
-        }
-    }
-
-    @Listener
-    public void onListenGameOverLayEvent(RenderGameOverlayEvent event) {
-        if (this.doAccept(event.getType())) {
-            event.setCanceled(true);
-        }
     }
 
     @Listener
@@ -96,19 +77,5 @@ public class ModuleNoRender extends Module {
         if (settingCustomWorldTime.getValue()) {
             mc.world.setWorldTime(settingWorldTime.getValue().intValue());
         }
-    }
-
-    public boolean doAccept(ElementType type) {
-        boolean isAccepted = false;
-
-        if ( /* I made it to be pretty easy read. */
-            (type == ElementType.BOSSINFO && settingBossInfo.getValue()) ||
-            (type == ElementType.CROSSHAIRS && settingCrossHair.getValue()) ||
-            (type == ElementType.PORTAL && settingPortal.getValue())
-        ) {
-            isAccepted = true;
-        }
-
-        return isAccepted;
     }
 }

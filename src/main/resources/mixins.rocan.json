@@ -12,6 +12,8 @@
 		"MixinEntityPlayer",
 		"MixinEntityPlayerSP",
 		"MixinRenderLivingBase",
-		"MixinGuiInGame"
+		"MixinGuiInGame",
+		"MixinEntityRenderer",
+		"MixinBossOverlay"
 	]
 }

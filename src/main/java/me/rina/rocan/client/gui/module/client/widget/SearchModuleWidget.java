@@ -150,6 +150,8 @@ public class SearchModuleWidget extends Widget {
     @Override
     public void onCustomMouseReleased(int button) {
         if (this.entry.flagMouse == Flag.MOUSE_OVER) {
+            this.entry.onMouseReleased(button);
+
             if (this.isMouseClickedLeft) {
                 this.isMouseClickedLeft = false;
             }
@@ -166,7 +168,6 @@ public class SearchModuleWidget extends Widget {
     @Override
     public void onMouseClicked(int button) {
         if (this.entry.flagMouse == Flag.MOUSE_NOT_OVER && this.entry.isFocused()) {
-            this.entry.onMouseClicked(button);
             this.entry.setFocused(false);
 
             if (this.master.isCanceledCloseGUI()) {
@@ -179,6 +180,7 @@ public class SearchModuleWidget extends Widget {
     public void onCustomMouseClicked(int button) {
         if (this.entry.flagMouse == Flag.MOUSE_OVER) {
             this.isMouseClickedLeft = button == 0;
+            this.entry.onMouseClicked(button);
 
             if (this.entry.isFocused() == false) {
                 this.entry.setFocused(true);
