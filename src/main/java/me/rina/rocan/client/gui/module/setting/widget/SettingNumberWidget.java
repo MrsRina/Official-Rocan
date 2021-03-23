@@ -220,7 +220,7 @@ public class SettingNumberWidget extends Widget {
 
         double mouse = Math.min(this.rectSlider.getWidth(), Math.max(0, this.master.getMouse().getX() - this.rect.getX()));
 
-        if (this.isMouseClickedLeft) {
+        if (this.isMouseClickedLeft && this.master.isOpened()) {
             if (mouse != 0) {
                 if (this.setting.getValue() instanceof Integer) {
                     int roundedValue = (int) TurokMath.round(((mouse / this.rectSlider.getWidth()) * (maximum - minimum) + minimum));

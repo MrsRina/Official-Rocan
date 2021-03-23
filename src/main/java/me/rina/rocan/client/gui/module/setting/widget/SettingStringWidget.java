@@ -4,33 +4,17 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.setting.value.ValueString;
-import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.rocan.client.gui.module.setting.container.SettingContainer;
+import me.rina.rocan.client.gui.module.visual.EntryWidget;
 import me.rina.turok.render.font.management.TurokFontManager;
-import me.rina.turok.render.opengl.TurokGL;
-import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.render.opengl.TurokShaderGL;
-import me.rina.turok.util.TurokGeneric;
 import me.rina.turok.util.TurokMath;
-import me.rina.turok.util.TurokRect;
-import me.rina.turok.util.TurokTick;
-import net.minecraft.util.ChatAllowedCharacters;
-import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
-
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
-import java.nio.IntBuffer;
 
 /**
  * @author SrRina
@@ -52,31 +36,15 @@ public class SettingStringWidget extends Widget {
     private float offsetWidth;
     private float offsetHeight;
 
-    private float offsetPositionTextX;
-
-    private float stringPositionX;
-    private float stringPositionY;
-
     private int alphaEffectPressed;
-    private int alphaEffectHighlightEntryBox;
     private int alphaEffectHighlightRect;
 
     private boolean isMouseClickedLeft;
-    private boolean isTyping;
-    private boolean isAllSelected;
-    private boolean isFocused;
-
-    private char lastTypedCharacter;
-    private String split;
-
-    private TurokGeneric<String> cacheType = new TurokGeneric<String>("");
-    private TurokRect rectEntryBox = new TurokRect("EntryBox", 0, 0);
-    private TurokTick tickAnimationSplit = new TurokTick();
-
     private ValueString setting;
 
+    private EntryWidget entry;
+
     public Flag flagMouse = Flag.MOUSE_NOT_OVER;
-    public Flag flagMouseEntry = Flag.MOUSE_NOT_OVER;
 
     public SettingStringWidget(ModuleClickGUI master, MotherFrame frame, ModuleCategoryWidget widgetCategory, ModuleContainer moduleContainer, ModuleWidget widgetModule, SettingContainer settingContainer, ValueString setting) {
         super(setting.getName());
@@ -91,35 +59,12 @@ public class SettingStringWidget extends Widget {
         this.settingContainer = settingContainer;
 
         this.setting = setting;
+        this.entry = new EntryWidget(this.master, "Entry Field", Rocan.getWrapper().fontNormalWidget);
+
+        this.entry.setText(this.setting.getValue());
 
         this.rect.setWidth(this.settingContainer.getRect().getWidth());
         this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapper().fontNormalWidget, this.rect.getTag()) + 5);
-    }
-
-    public String removeLastChar(String string) {
-        String str = StringUtils.chop(string);
-
-        return str;
-    }
-
-    public void cancel() {
-        this.isAllSelected = false;
-        this.isFocused = false;
-    }
-
-    public void cancelSet() {
-        this.setting.setValue(this.cacheType.getValue());
-
-        this.isAllSelected = false;
-        this.isFocused = false;
-    }
-
-    public void setRectEntryBox(TurokRect rectEntryBox) {
-        this.rectEntryBox = rectEntryBox;
-    }
-
-    public TurokRect getRectEntryBox() {
-        return rectEntryBox;
     }
 
     public void setSetting(ValueString setting) {
@@ -164,113 +109,29 @@ public class SettingStringWidget extends Widget {
 
     @Override
     public void onClose() {
-        this.isFocused = false;
+
     }
 
     @Override
     public void onOpen() {
-        this.isFocused = false;
+
     }
 
     @Override
     public void onKeyboard(char character, int key) {
-        if (this.isFocused) {
-            if (key == Keyboard.KEY_ESCAPE) {
-                this.cancel();
-            }
-        }
+        this.entry.onKeyboard(character, key);
     }
 
     @Override
     public void onCustomKeyboard(char character, int key) {
-        if (this.isFocused) {
-            if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_V)) {
-                Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
-                Transferable content = clipboard.getContents(null);
-
-                if (content != null && content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-                    try {
-                        if (this.isAllSelected) {
-                            this.cacheType.setValue("");
-
-                            this.isAllSelected = false;
-                        }
-
-                        this.cacheType.setValue(this.cacheType.getValue() + content.getTransferData(DataFlavor.stringFlavor));
-                    } catch (UnsupportedFlavorException | IOException exc) {
-                        ChatUtil.print("Exception: " + exc);
-
-                        exc.printStackTrace();
-                    }
-
-                    boolean isScrollLimit = TurokFontManager.getStringWidth(Rocan.getWrapper().fontSmallWidget, this.cacheType.getValue()) + 1f >= this.rectEntryBox.getWidth();
-
-                    if (isScrollLimit) {
-                        this.offsetPositionTextX = this.rectEntryBox.getWidth() - TurokFontManager.getStringWidth(Rocan.getWrapper().fontSmallWidget, this.cacheType.getValue()) - 7;
-                    }
+        switch (key) {
+            // Cancel typing.
+            case Keyboard.KEY_ESCAPE: {
+                if (this.master.isCanceledCloseGUI()) {
+                    this.master.setCanceledCloseGUI(false);
                 }
-            } else if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && Keyboard.isKeyDown(Keyboard.KEY_A)) {
-                if (this.cacheType.getValue().isEmpty() == false) {
-                    this.isAllSelected = true;
-                }
-            } else {
-                switch (key) {
-                    // Cancel typing.
-                    case Keyboard.KEY_ESCAPE: {
-                        this.cancel();
 
-                        break;
-                    }
-
-                    // Set the new string.
-                    case Keyboard.KEY_RETURN: {
-                        this.cancelSet();
-
-                        break;
-                    }
-
-                    // Delete last char in string.
-                    case Keyboard.KEY_BACK: {
-                        this.cacheType.setValue(this.isAllSelected ? "" : this.removeLastChar(this.cacheType.getValue()));
-
-                        if (this.isAllSelected) {
-                            this.isAllSelected = false;
-                        }
-
-                        break;
-                    }
-
-                    case Keyboard.KEY_DELETE: {
-                        if (this.isAllSelected) {
-                            this.cacheType.setValue("");
-                            this.isAllSelected = false;
-                        }
-
-                        break;
-                    }
-
-                    default: {
-                        // Some characters are not allowed at Minecraft.
-                        if (ChatAllowedCharacters.isAllowedCharacter(character)) {
-                            if (this.isAllSelected) {
-                                this.cacheType.setValue("");
-                                this.isAllSelected = false;
-                            }
-
-                            this.lastTypedCharacter = character;
-
-                            this.cacheType.setValue(this.cacheType.getValue() + this.lastTypedCharacter);
-
-                            boolean isScrollLimit = TurokFontManager.getStringWidth(Rocan.getWrapper().fontSmallWidget, this.cacheType.getValue()) + 1f >= this.rectEntryBox.getWidth();
-
-                            if (isScrollLimit) {
-                                this.offsetPositionTextX = this.rectEntryBox.getWidth() - TurokFontManager.getStringWidth(Rocan.getWrapper().fontSmallWidget, this.cacheType.getValue()) - 7;
-                            }
-                        }
-
-                        break;
-                    }
-                }
+                break;
             }
         }
     }
@@ -281,19 +142,19 @@ public class SettingStringWidget extends Widget {
 
     @Override
     public void onCustomMouseReleased(int button) {
-        if (this.flagMouseEntry == Flag.MOUSE_OVER) {
-            if (this.isMouseClickedLeft) {
-                this.isMouseClickedLeft = false;
-            }
-        } else {
-            this.isMouseClickedLeft = false;
-        }
+        this.entry.onMouseReleased(button);
     }
 
     @Override
     public void onMouseClicked(int button) {
-        if (this.flagMouseEntry == Flag.MOUSE_NOT_OVER && this.isFocused) {
-            this.cancelSet();
+        this.entry.onMouseClicked(button);
+
+        if (button == 0 && this.entry.flagMouse == Flag.MOUSE_OVER && !this.entry.isFocused()) {
+            this.entry.setFocused(true);
+        }
+
+        if (this.entry.flagMouse == Flag.MOUSE_NOT_OVER && this.entry.isFocused()) {
+            this.entry.setFocused(false);
 
             if (this.master.isCanceledCloseGUI()) {
                 this.master.setCanceledCloseGUI(false);
@@ -303,22 +164,7 @@ public class SettingStringWidget extends Widget {
 
     @Override
     public void onCustomMouseClicked(int button) {
-        if (this.flagMouseEntry == Flag.MOUSE_OVER) {
-            this.isAllSelected = false;
 
-            if (button == 0) {
-                this.isFocused = true;
-                this.isMouseClickedLeft = true;
-            }
-        } else {
-            if (this.isFocused) {
-                this.cancelSet();
-            }
-
-            if (this.master.isCanceledCloseGUI()) {
-                this.master.setCanceledCloseGUI(false);
-            }
-        }
     }
 
     @Override
@@ -329,108 +175,52 @@ public class SettingStringWidget extends Widget {
         this.rect.setX(this.settingContainer.getScrollRect().getX() + this.offsetX);
         this.rect.setY(this.settingContainer.getScrollRect().getY() + this.offsetY);
 
-        float offsetEntryBox = 2f;
+        this.entry.getRect().copy(this.rect);
 
-        this.rectEntryBox.setX(this.rect.getX() + offsetEntryBox);
-        this.rectEntryBox.setY(this.rect.getY() + offsetEntryBox);
-
-        this.rectEntryBox.setWidth(this.rect.getWidth() - (offsetEntryBox * 2));
-        this.rectEntryBox.setHeight(this.rect.getHeight() - (offsetEntryBox * 2));
-
-        this.alphaEffectHighlightEntryBox = this.flagMouseEntry == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffectHighlightEntryBox, Rocan.getWrapper().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightEntryBox, 0, this.master.getPartialTicks());
         this.alphaEffectHighlightRect = this.flagMouse == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapper().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
 
-        float offsetSpace = 1.0f;
-
         if (this.settingContainer.flagMouseRealRect == Flag.MOUSE_OVER) {
-            this.flagMouseEntry = this.rectEntryBox.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
             this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
+
+            // Update entry context.
+            this.entry.doMouseOver(this.master.getMouse());
         } else {
-            this.flagMouseEntry = Flag.MOUSE_NOT_OVER;
             this.flagMouse = Flag.MOUSE_NOT_OVER;
+            this.entry.flagMouse = Flag.MOUSE_NOT_OVER;
         }
 
-        // The typing solid effect.
-        TurokShaderGL.drawSolidRect(this.rectEntryBox, new int[] {255, 255, 255, this.alphaEffectPressed});
+        if (this.entry.isFocused()) {
+            if (this.entry.flagMouse == Flag.MOUSE_OVER) {
+                this.entry.doMouseScroll(this.master.getMouse());
+                this.settingContainer.setScrolling(false);
+            }
 
-        this.stringPositionX = TurokMath.lerp(this.stringPositionX, this.rectEntryBox.getX() + offsetSpace + this.offsetPositionTextX, this.master.getPartialTicks());
-        this.stringPositionY = this.rectEntryBox.getY() + (this.rectEntryBox.getHeight() / 2 - (TurokFontManager.getStringHeight(Rocan.getWrapper().fontSmallWidget, "AaBbCc") / 2));
-
-        TurokShaderGL.pushScissorAttrib();
-        TurokShaderGL.drawScissor(this.rectEntryBox.getX() + 0.5f, this.settingContainer.getRect().getY() + (this.settingContainer.getDescriptionLabel().getRect().getHeight() + 1), this.rectEntryBox.getWidth() - (0.5f), this.settingContainer.getRect().getHeight() - (this.settingContainer.getDescriptionLabel().getRect().getHeight() + 1));
-
-        // The selected solid effect.
-        TurokShaderGL.drawSolidRect(this.rectEntryBox.getX(), this.rectEntryBox.getY(), offsetSpace + TurokFontManager.getStringWidth(Rocan.getWrapper().fontSmallWidget, this.cacheType.getValue()), this.rectEntryBox.getHeight(), new int[] {0, 0, 255, this.isAllSelected ? this.alphaEffectPressed : 0});
-
-        if (this.isFocused) {
             this.master.setCanceledCloseGUI(true);
-
-            /*
-             * The split animation, this make the entry field get a cool animation.
-             */
-            if (this.tickAnimationSplit.isPassedMS(500)) {
-                this.split = "_";
-            } else {
-                this.split = "";
-            }
-
-            if (this.tickAnimationSplit.isPassedMS(1000)) {
-                this.tickAnimationSplit.reset();
-            }
-
-            TurokFontManager.render(Rocan.getWrapper().fontSmallWidget, this.cacheType.getValue() + (this.isAllSelected ? "" : this.split), this.stringPositionX, this.stringPositionY, true, new Color(255, 255, 255));
-        } else {
-            this.cacheType.setValue(this.setting.getValue());
-            this.isAllSelected = false;
-
-            String currentFormat = this.setting.getValue().isEmpty() ? this.setting.getFormat() : this.setting.getValue();
-
-            if (this.flagMouseEntry == Flag.MOUSE_OVER) {
-                TurokFontManager.render(Rocan.getWrapper().fontSmallWidget, this.setting.getValue(), this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255));
-            } else {
-                TurokFontManager.render(Rocan.getWrapper().fontSmallWidget, this.rect.getTag() + " " + currentFormat, this.rectEntryBox.getX() + offsetSpace, this.stringPositionY, true, new Color(255, 255, 255, 100));
-            }
         }
 
-        TurokShaderGL.popScissorAttrib();
+        this.entry.setScissored(true);
+        this.entry.setRendering(this.widgetModule.isSelected());
+
+        this.entry.rectScissor = new float[] {
+                this.entry.getRect().getX(), (this.settingContainer.getRect().getY() + (this.settingContainer.getDescriptionLabel().getRect().getHeight() + 1)), (int) this.entry.getRect().getWidth(), this.settingContainer.getRect().getHeight() - (this.settingContainer.getDescriptionLabel().getRect().getHeight() + 1)
+        };
+
+        this.entry.onRender();
 
         // The outline rect effect.
-        TurokShaderGL.drawOutlineRect(this.rect, new int[] {Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightRect});
-
-        // The check box outline highlight.
-        TurokShaderGL.drawOutlineRect(this.rectEntryBox, new int[] {Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightEntryBox});
-
-        this.isTyping = false;
-
-        float stringWidth = TurokFontManager.getStringWidth(Rocan.getWrapper().fontSmallWidget, this.cacheType.getValue());
-
-        float maximumPositionText = 0;
-        float minimumPositionText = this.rectEntryBox.getWidth() - stringWidth - 7;
-
-        boolean isScrollLimit = stringWidth + offsetSpace >= this.rectEntryBox.getWidth();
-
-        if (this.isFocused && this.flagMouseEntry == Flag.MOUSE_OVER && this.master.getMouse().hasWheel() && isScrollLimit) {
-            this.offsetPositionTextX += this.master.getMouse().getScroll();
-        }
-
-        if (this.offsetPositionTextX <= minimumPositionText) {
-            this.offsetPositionTextX = minimumPositionText;
-        }
-
-        if (this.offsetPositionTextX >= maximumPositionText) {
-            this.offsetPositionTextX = maximumPositionText;
-        }
+        this.entry.colorBackgroundOutline = new int[] {Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlightRect};
 
         if (this.flagMouse == Flag.MOUSE_OVER) {
             this.settingContainer.getDescriptionLabel().setText(this.setting.getDescription());
-
             this.settingContainer.flagDescription = Flag.MOUSE_OVER;
         }
+
+        this.setting.setValue(this.entry.getText());
     }
 
     @Override
     public void onCustomRender() {
         // We place here cause we need sync the focus animation clicks of entry box
-        this.alphaEffectPressed = this.isFocused ? (int) TurokMath.lerp(this.alphaEffectPressed, Rocan.getWrapper().colorWidgetPressed[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectPressed, 0, this.master.getPartialTicks());
+        this.alphaEffectPressed = this.entry.isFocused() ? (int) TurokMath.lerp(this.alphaEffectPressed, Rocan.getWrapper().colorWidgetPressed[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectPressed, 0, this.master.getPartialTicks());
     }
 }

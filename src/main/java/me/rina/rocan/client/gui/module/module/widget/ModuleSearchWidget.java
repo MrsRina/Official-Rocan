@@ -1,46 +1,31 @@
-package me.rina.rocan.client.gui.module.client.widget;
+package me.rina.rocan.client.gui.module.module.widget;
 
 import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
-import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
-import me.rina.rocan.client.gui.module.client.container.ClientContainer;
-import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
-import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
+import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.rocan.client.gui.module.visual.EntryWidget;
 import me.rina.turok.render.font.management.TurokFontManager;
-import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.render.opengl.TurokShaderGL;
-import me.rina.turok.util.TurokGeneric;
 import me.rina.turok.util.TurokMath;
-import me.rina.turok.util.TurokRect;
-import me.rina.turok.util.TurokTick;
-import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.util.ChatAllowedCharacters;
-import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.IOException;
 
 /**
  * @author SrRina
- * @since 25/01/2021 at 19:36
+ * @since 22/03/2021 at 21:38
  **/
-public class SearchModuleWidget extends Widget {
+public class ModuleSearchWidget extends Widget {
     private ModuleClickGUI master;
     private MotherFrame frame;
 
     private ModuleCategoryWidget widgetCategory;
     private ModuleWidget widgetModule;
 
-    private ClientContainer clientContainer;
+    private ModuleContainer moduleContainer;
     private EntryWidget entry;
 
     private float offsetX;
@@ -55,7 +40,7 @@ public class SearchModuleWidget extends Widget {
 
     public Flag flagMouse = Flag.MOUSE_NOT_OVER;
 
-    public SearchModuleWidget(ModuleClickGUI master, MotherFrame frame, ClientContainer clientContainer) {
+    public ModuleSearchWidget(ModuleClickGUI master, MotherFrame frame, ModuleContainer moduleContainer) {
         super("");
 
         this.master = master;
@@ -63,9 +48,10 @@ public class SearchModuleWidget extends Widget {
 
         this.entry = new EntryWidget(this.master,"Entry Field", Rocan.getWrapper().fontNormalWidget);
 
-        this.clientContainer = clientContainer;
+        this.moduleContainer = moduleContainer;
+        this.widgetCategory = moduleContainer.getWidget();
 
-        this.rect.setWidth(this.clientContainer.getRect().getWidth());
+        this.rect.setWidth(this.moduleContainer.getRect().getWidth());
         this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapper().fontNormalWidget, this.rect.getTag()) + 5);
     }
 
@@ -83,6 +69,14 @@ public class SearchModuleWidget extends Widget {
 
     public ModuleWidget getWidgetModule() {
         return widgetModule;
+    }
+
+    public void setEntry(EntryWidget entry) {
+        this.entry = entry;
+    }
+
+    public EntryWidget getEntry() {
+        return entry;
     }
 
     public void setOffsetX(float offsetX) {
@@ -129,15 +123,18 @@ public class SearchModuleWidget extends Widget {
 
     @Override
     public void onKeyboard(char character, int key) {
+        this.entry.onKeyboard(character, key);
     }
 
     @Override
     public void onCustomKeyboard(char character, int key) {
-        this.entry.onKeyboard(character, key);
+        this.entry.onCustomKeyboard(character, key);
 
         switch (key) {
             // Cancel typing.
             case Keyboard.KEY_ESCAPE: {
+                this.entry.setText("");
+
                 if (this.master.isCanceledCloseGUI()) {
                     this.master.setCanceledCloseGUI(false);
                 }
@@ -190,11 +187,7 @@ public class SearchModuleWidget extends Widget {
 
     @Override
     public void onRender() {
-        this.rect.setWidth(this.clientContainer.getRect().getWidth());
         this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapper().fontNormalWidget, this.rect.getTag()) + 5);
-
-        this.rect.setX(this.clientContainer.getScrollRect().getX() + this.offsetX);
-        this.rect.setY(this.clientContainer.getScrollRect().getY() + this.offsetY);
 
         this.entry.getRect().setX(this.rect.getX() + 1f);
         this.entry.getRect().setY(this.rect.getY() + 1f);
@@ -205,19 +198,25 @@ public class SearchModuleWidget extends Widget {
         this.alphaEffectHighlightRect = this.flagMouse == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapper().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
 
         this.entry.setScissored(true);
-        this.entry.setRendering(true);
+        this.entry.setRendering(this.widgetCategory.isSelected());
 
         this.entry.rectScissor = new float[] {
                 this.entry.getRect().getX(), this.entry.getRect().getY(), this.entry.getRect().getWidth(), this.entry.getRect().getHeight()
         };
 
-        if (this.clientContainer.flagMouse == Flag.MOUSE_OVER) {
+        if (this.moduleContainer.flagMouse == Flag.MOUSE_OVER) {
             this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
+
+            // Update entry context.
             this.entry.doMouseOver(this.master.getMouse());
+            this.entry.doMouseScroll(this.master.getMouse());
         } else {
             this.flagMouse = Flag.MOUSE_NOT_OVER;
             this.entry.flagMouse = Flag.MOUSE_NOT_OVER;
         }
+
+        // The outline rect effect.
+        TurokShaderGL.drawOutlineRect(this.rect, Rocan.getWrapper().colorWidgetHighlight);
 
         if (this.entry.isFocused()) {
             this.master.setCanceledCloseGUI(true);
@@ -230,6 +229,10 @@ public class SearchModuleWidget extends Widget {
         }
 
         this.entry.onRender();
+
+        if (this.entry.getText().isEmpty()) {
+            TurokFontManager.render(Rocan.getWrapper().fontNormalWidget, "Search...", this.entry.getRect().getX() + 2f, this.entry.getRect().getY() + 4f, true, new Color(255, 255, 255,100));
+        }
     }
 
     @Override

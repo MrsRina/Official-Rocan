@@ -55,6 +55,7 @@ public class SettingContainer extends Container {
     private TurokRect realRect = new TurokRect("Real rect", 0, 0);
 
     private boolean isStarted;
+    private boolean isScrolling;
 
     public Flag flagMouse = Flag.MOUSE_NOT_OVER;
     public Flag flagMouseRealRect = Flag.MOUSE_NOT_OVER;
@@ -265,6 +266,14 @@ public class SettingContainer extends Container {
 
     public float getOffsetHeight() {
         return offsetHeight;
+    }
+
+    public void setScrolling(boolean scrolling) {
+        isScrolling = scrolling;
+    }
+
+    public boolean isScrolling() {
+        return isScrolling;
     }
 
     @Override
@@ -606,9 +615,11 @@ public class SettingContainer extends Container {
 
             boolean isScrollLimit = this.scrollRect.getY() + this.scrollRect.getHeight() >= this.rect.getY() + this.rect.getHeight() - realScrollHeight - 3;
 
-            if (this.flagMouseRealRect == Flag.MOUSE_OVER && this.master.getMouse().hasWheel() && isScrollLimit) {
+            if (this.flagMouseRealRect == Flag.MOUSE_OVER && this.master.getMouse().hasWheel() && isScrollLimit && this.isScrolling) {
                 this.offsetY -= this.master.getMouse().getScroll();
             }
+
+            this.isScrolling = true;
 
             if (this.offsetY <= minimumScroll) {
                 this.offsetY = minimumScroll;

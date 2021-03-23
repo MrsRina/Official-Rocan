@@ -72,6 +72,14 @@ public class TurokRect {
 		BottomLeft, BottomCenter, BottomRight;
 	}
 
+	public void copy(TurokRect rect) {
+		this.x = rect.getX();
+		this.y = rect.getY();
+
+		this.width = rect.getWidth();
+		this.height = rect.getHeight();
+	}
+
 	public void setTag(String tag) {
 		this.tag = tag;
 	}

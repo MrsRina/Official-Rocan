@@ -10,6 +10,7 @@ import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.rocan.client.module.movement.ModuleNoSlowDown;
+import me.rina.rocan.client.module.render.ModuleNoRender;
 import me.rina.turok.render.opengl.TurokGL;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.*;
@@ -79,8 +80,6 @@ public class EventManager {
         if (Rocan.MC.player == null) {
             return;
         }
-
-        Rocan.getPomeloEventManager().dispatchEvent(event);
 
         this.setCurrentRender2DPartialTicks(event.getPartialTicks());
 

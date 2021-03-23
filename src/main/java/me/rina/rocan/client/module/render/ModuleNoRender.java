@@ -14,6 +14,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.network.play.server.SPacketTimeUpdate;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 import static net.minecraftforge.client.event.RenderGameOverlayEvent.*;
@@ -77,5 +79,26 @@ public class ModuleNoRender extends Module {
         if (settingCustomWorldTime.getValue()) {
             mc.world.setWorldTime(settingWorldTime.getValue().intValue());
         }
+    }
+
+    @SubscribeEvent
+    public void onOverlay(RenderGameOverlayEvent event) {
+        if (!this.isEnabled()) {
+            return;
+        }
+
+        if (event.getType() == ElementType.CROSSHAIRS && settingCrossHair.getValue()) {
+            event.setCanceled(true);
+        }
+    }
+
+    @Override
+    public void onEnable() {
+        MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    @Override
+    public void onDisable() {
+        MinecraftForge.EVENT_BUS.unregister(this);
     }
 }

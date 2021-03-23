@@ -7,10 +7,13 @@ import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.module.management.ModuleManager;
+import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
+import me.rina.rocan.client.gui.module.module.widget.ModuleSearchWidget;
 import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
+import me.rina.turok.render.font.management.TurokFontManager;
 import me.rina.turok.render.opengl.TurokRenderGL;
 import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokMath;
@@ -29,6 +32,8 @@ public class ModuleContainer extends Container {
 
     private ModuleCategoryWidget widget;
     private ModuleCategory category;
+
+    private ModuleSearchWidget searchWidget;
 
     private float offsetX;
     private float offsetY;
@@ -51,6 +56,9 @@ public class ModuleContainer extends Container {
 
         this.widget = widget;
         this.category = category;
+
+        this.searchWidget = new ModuleSearchWidget(this.master, this.frame, this);
+        this.searchWidget.setOffsetX(1);
 
         this.updateSpecifyScale();
         this.init();
@@ -185,6 +193,22 @@ public class ModuleContainer extends Container {
         }
     }
 
+    public void setWidget(ModuleCategoryWidget widget) {
+        this.widget = widget;
+    }
+
+    public ModuleCategoryWidget getWidget() {
+        return widget;
+    }
+
+    public void setSearchWidget(ModuleSearchWidget searchWidget) {
+        this.searchWidget = searchWidget;
+    }
+
+    public ModuleSearchWidget getSearchWidget() {
+        return searchWidget;
+    }
+
     public float getWidthScale() {
         return this.frame.getRect().getWidth() / 2.3f;
     }
@@ -259,6 +283,8 @@ public class ModuleContainer extends Container {
 
     @Override
     public void onKeyboard(char character, int key) {
+        this.searchWidget.onKeyboard(character, key);
+
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onKeyboard(character, key);
         }
@@ -266,6 +292,8 @@ public class ModuleContainer extends Container {
 
     @Override
     public void onCustomKeyboard(char character, int key) {
+        this.searchWidget.onCustomKeyboard(character, key);
+
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onCustomKeyboard(character, key);
         }
@@ -280,6 +308,9 @@ public class ModuleContainer extends Container {
 
     @Override
     public void onCustomMouseReleased(int button) {
+        this.searchWidget.onMouseReleased(button);
+        this.searchWidget.onCustomMouseReleased(button);
+
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onCustomMouseReleased(button);
         }
@@ -294,6 +325,15 @@ public class ModuleContainer extends Container {
 
     @Override
     public void onCustomMouseClicked(int button) {
+        this.searchWidget.onMouseClicked(button);
+        this.searchWidget.onCustomMouseClicked(button);
+
+        if (this.flagMouse == Flag.MOUSE_NOT_OVER && !this.searchWidget.getEntry().getText().isEmpty()) {
+            this.refreshSearchWidget("");
+            this.searchWidget.getEntry().setFocused(false);
+            this.searchWidget.getEntry().setText("");
+        }
+
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onCustomMouseClicked(button);
         }
@@ -301,7 +341,7 @@ public class ModuleContainer extends Container {
 
     @Override
     public void onRender() {
-        this.flagMouse = Flag.MOUSE_NOT_OVER;
+        this.searchWidget.onCustomRender();
 
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onRender();
@@ -312,20 +352,28 @@ public class ModuleContainer extends Container {
     public void onCustomRender() {
         this.updateSpecifyScale();
 
-        float minimumScroll = this.rect.getHeight() - this.scrollRect.getHeight() - 2f;
+        float minimumScroll = (this.rect.getHeight() - this.searchWidget.getRect().getHeight()) - this.scrollRect.getHeight() - 2f;
         float maximumScroll = 3f;
 
         this.scrollRect.setX(this.rect.getX());
 
+        float offset = 1;
+
+        this.searchWidget.getRect().setX(this.rect.getX() + (offset * 2));
+        this.searchWidget.getRect().setY(this.rect.getY() + 1f);
+
+        this.searchWidget.getRect().setWidth(this.rect.getWidth() - (offset * 2) * 2);
+        this.searchWidget.getRect().setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapper().fontNormalWidget, this.rect.getTag()) + 5);
+
         if (this.master.getMouse().hasWheel()) {
-            this.scrollRect.setY(TurokMath.lerp(this.scrollRect.getY(), this.rect.getY() + this.offsetY, this.master.getPartialTicks()));
+            this.scrollRect.setY(TurokMath.lerp(this.scrollRect.getY(), this.rect.getY() + this.searchWidget.getRect().getHeight() + this.offsetY, this.master.getPartialTicks()));
         } else {
             this.scrollRect.setY(this.rect.getY() + this.offsetY);
         }
 
         this.scrollRect.setWidth(this.rect.getWidth());
 
-        boolean isScrollLimit = this.scrollRect.getY() + this.scrollRect.getHeight() >= this.rect.getY() + this.rect.getHeight() - 3;
+        boolean isScrollLimit = this.scrollRect.getY() + this.scrollRect.getHeight() >= this.rect.getY() + (this.rect.getHeight() - this.searchWidget.getRect().getHeight()) - 3;
 
         if (this.flagMouse == Flag.MOUSE_OVER && this.master.getMouse().hasWheel() && isScrollLimit) {
             this.offsetY -= this.master.getMouse().getScroll();
@@ -341,18 +389,22 @@ public class ModuleContainer extends Container {
 
         this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
 
+        this.refreshSearchWidget(this.searchWidget.getEntry().getText());
+
         // Background of container.
         TurokShaderGL.drawSolidRect(this.rect, new int[] {Rocan.getWrapper().colorContainerBackground[0], Rocan.getWrapper().colorContainerBackground[1], Rocan.getWrapper().colorContainerBackground[2], Rocan.getWrapper().colorContainerBackground[3]});
 
-        float offsetFixOutline = 1;
-
         TurokShaderGL.pushScissorMatrix();
-        TurokShaderGL.drawScissor(this.rect.getX() - offsetFixOutline, this.rect.getY(), this.rect.getWidth() + (offsetFixOutline * 2), this.rect.getHeight());
+        TurokShaderGL.drawScissor(this.rect.getX() - offset, this.rect.getY() + this.searchWidget.getRect().getHeight() + 1f, this.rect.getWidth() + (offset * 2), this.rect.getHeight() - (this.searchWidget.getRect().getHeight()));
 
         for (Widget widgets : this.loadedWidgetList) {
             widgets.onCustomRender();
         }
 
         TurokShaderGL.popScissorMatrix();
+
+        if (this.widget.isSelected()) {
+            this.searchWidget.onRender();
+        }
     }
 }

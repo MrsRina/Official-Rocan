@@ -1,6 +1,7 @@
 package me.rina.rocan.client.gui.module.visual;
 
 import javafx.scene.input.Clipboard;
+import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.IGUI;
 import me.rina.rocan.api.gui.flag.Flag;
 import me.rina.rocan.api.gui.widget.Widget;
@@ -29,6 +30,12 @@ import java.io.IOException;
 public class EntryWidget extends Widget implements IGUI {
     private TurokGUI master;
 
+    private Type type = Type.TEXT;
+
+    public enum Type {
+        TEXT, DOUBLE;
+    }
+
     private boolean isFocused;
     private boolean isScissored;
     private boolean isRendering;
@@ -50,9 +57,13 @@ public class EntryWidget extends Widget implements IGUI {
     private float offsetX;
     private float offsetY;
 
+    /* Scroll amount. */
+    private float scroll;
+
     private TurokTick tick = new TurokTick();
 
     public int[] colorBackground = {190, 190, 190, 0};
+    public int[] colorBackgroundOutline = {190, 190, 190, 0};
     public int[] colorSelectedBackground = {0, 0, 190, 255};
     public int[] colorString = {255, 255, 255, 255};
     public int[] colorSelectedString = {255, 255, 255, 255};
@@ -144,6 +155,14 @@ public class EntryWidget extends Widget implements IGUI {
         return isSelected;
     }
 
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
     /**
      * Update split for set current show but the ticks disabled, after it you will need reset the split.
      */
@@ -167,8 +186,8 @@ public class EntryWidget extends Widget implements IGUI {
             return split;
         }
 
-        // I love this names... ok ok, I wont more use this names.
-        float diffOffset = this.rect.getX() + this.offsetX;
+        // I love this names (i, l, k)... ok ok, I wont use anymore this names.
+        float diffOffset = this.rect.getX() + 2f + this.scroll;
         float w = 0;
 
         int count = 0;
@@ -193,6 +212,10 @@ public class EntryWidget extends Widget implements IGUI {
     }
 
     public void doRenderSplit(float x, float y) {
+        if (!this.isRendering) {
+            return;
+        }
+
         /*
          * The split animation, this make the entry field get a cool animation.
          */
@@ -208,27 +231,72 @@ public class EntryWidget extends Widget implements IGUI {
     }
 
     public void doMouseOver(TurokMouse mouse) {
+        if (!this.isRendering) {
+            return;
+        }
+
         this.flagMouse = this.rect.collideWithMouse(mouse) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
+    }
+
+    public void doMouseScroll(TurokMouse mouse) {
+        if (!this.isRendering) {
+            return;
+        }
+
+        float stringWidth = TurokFontManager.getStringWidth(this.fontRenderer, this.text);
+
+        float maximumPositionText = 0;
+        float minimumPositionText = this.rect.getWidth() - stringWidth - 4.5f;
+
+        boolean isScrollLimit = stringWidth + 2f >= this.rect.getWidth();
+
+        if (this.isFocused && this.flagMouse == Flag.MOUSE_OVER && this.master.getMouse().hasWheel() && isScrollLimit) {
+            this.scroll -= this.master.getMouse().getScroll();
+        }
+
+        if (this.scroll <= minimumPositionText) {
+            this.scroll = minimumPositionText;
+        }
+
+        if (this.scroll >= maximumPositionText) {
+            this.scroll = maximumPositionText;
+        }
     }
 
     @Override
     public void onClose() {
+        if (!this.isRendering) {
+            return;
+        }
     }
 
     @Override
     public void onCustomClose() {
+        if (!this.isRendering) {
+            return;
+        }
     }
 
     @Override
     public void onOpen() {
+        if (!this.isRendering) {
+            return;
+        }
     }
 
     @Override
     public void onCustomOpen() {
+        if (!this.isRendering) {
+            return;
+        }
     }
 
     @Override
     public void onKeyboard(char character, int key) {
+        if (!this.isRendering) {
+            return;
+        }
+
         String cache = this.text;
         int mov = this.splitIndex;
 
@@ -265,11 +333,15 @@ public class EntryWidget extends Widget implements IGUI {
                     return;
                 }
 
+                this.scroll = this.rect.getWidth() - TurokFontManager.getStringWidth(this.fontRenderer, cache) - 4.5f;
+
                 mov = cache.length();
             } else if (key == Keyboard.KEY_HOME) {
                 if (cache.isEmpty()) {
                     return;
                 }
+
+                this.scroll = 0;
 
                 mov = 0;
             } else if (key == Keyboard.KEY_DELETE) {
@@ -375,10 +447,17 @@ public class EntryWidget extends Widget implements IGUI {
 
     @Override
     public void onCustomKeyboard(char character, int key) {
+        if (!this.isRendering) {
+            return;
+        }
     }
 
     @Override
     public void onMouseReleased(int button) {
+        if (!this.isRendering) {
+            return;
+        }
+
         if (this.isMouseClickedLeft) {
             this.resetSplit();
             this.isMouseClickedLeft = false;
@@ -387,10 +466,17 @@ public class EntryWidget extends Widget implements IGUI {
 
     @Override
     public void onCustomMouseReleased(int button) {
+        if (!this.isRendering) {
+            return;
+        }
     }
 
     @Override
     public void onMouseClicked(int button) {
+        if (!this.isRendering) {
+            return;
+        }
+
         if (this.flagMouse == Flag.MOUSE_OVER && button == 0) {
             this.updateSplit();
 
@@ -401,6 +487,9 @@ public class EntryWidget extends Widget implements IGUI {
 
     @Override
     public void onCustomMouseClicked(int button) {
+        if (!this.isRendering) {
+            return;
+        }
     }
 
     @Override
@@ -414,10 +503,10 @@ public class EntryWidget extends Widget implements IGUI {
             TurokShaderGL.drawScissor(this.rectScissor[0], this.rectScissor[1], this.rectScissor[2], this.rectScissor[3]);
         }
 
-        this.offsetY = ((this.rect.getHeight() / 2) - (TurokFontManager.getStringHeight(this.fontRenderer, this.text + "a") / 2)) - 1.5f;
-        this.offsetX = 2.0f;
+        this.offsetY = (this.rect.getHeight() - TurokFontManager.getStringHeight(this.fontRenderer, this.text)) / 2;
+        this.scroll = TurokMath.lerp(this.scroll,this.scroll + this.offsetX, this.master.getPartialTicks());
 
-        float x = this.rect.getX() + this.offsetX;
+        float x = this.rect.getX() + 2f + this.scroll;
         float y = this.rect.getY() + this.offsetY;
 
         int w = 0;
@@ -426,6 +515,7 @@ public class EntryWidget extends Widget implements IGUI {
 
         if (this.isFocused) {
             TurokShaderGL.drawSolidRect(this.rect, this.colorBackground);
+            TurokShaderGL.drawOutlineRect(this.rect, this.colorBackgroundOutline);
 
             if (this.lastKeyTyped != -1 && Keyboard.isKeyDown(this.lastKeyTyped) == false) {
                 this.resetSplit();
@@ -460,7 +550,7 @@ public class EntryWidget extends Widget implements IGUI {
                             this.doRenderSplit(x - 0.5f, y);
                         } else {
                             if (i == this.splitIndex) {
-                                this.doRenderSplit(x + w + (charWidth - 0.5f), y);
+                                this.doRenderSplit(x + w + (charWidth - 2f), y);
                             }
                         }
                     }

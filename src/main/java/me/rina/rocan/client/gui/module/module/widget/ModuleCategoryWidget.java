@@ -158,7 +158,6 @@ public class ModuleCategoryWidget extends Widget {
                 this.container.refreshWidget();
 
                 this.isSelected = true;
-
                 this.isMouseClickedLeft = true;
             }
         }

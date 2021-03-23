@@ -175,7 +175,7 @@ public class ModuleStep extends Module {
     }
 
     public boolean doVerifyPlayerFlags() {
-        return (!mc.player.collidedHorizontally && (mc.player.onGround == false || mc.player.isOnLadder() || mc.player.isInWater() || mc.player.isInLava() || mc.player.movementInput.jump || mc.player.noClip) && mc.player.moveForward == 0 && mc.player.moveStrafing == 0);
+        return ((mc.player.onGround == false || mc.player.isOnLadder() || mc.player.isInWater() || mc.player.isInLava() || mc.player.movementInput.jump || mc.player.noClip) && mc.player.moveForward == 0 && mc.player.moveStrafing == 0);
     }
 
     public double getStepHeight() {

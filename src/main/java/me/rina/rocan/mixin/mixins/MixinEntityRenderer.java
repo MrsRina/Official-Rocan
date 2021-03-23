@@ -18,14 +18,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinEntityRenderer {
     @Inject(method = "hurtCameraEffect", at = @At("HEAD"), cancellable = true)
     public void onHurtCameraEffect(float partialTicks, CallbackInfo ci) {
-        if (ModuleNoRender.settingHurtEffectCamera.getValue()) {
+        boolean flag = ModuleManager.get(ModuleNoRender.class).isEnabled() && ModuleNoRender.settingHurtEffectCamera.getValue();
+
+        if (flag) {
             ci.cancel();
         }
     }
 
     @Inject(method = "setupFog", at = @At("RETURN"), cancellable = true)
     public void onSetupFrog(int startCoords, float partialTicks, CallbackInfo ci) {
-        if (ModuleNoRender.settingFog.getValue()) {
+        boolean flag = ModuleManager.get(ModuleNoRender.class).isEnabled() && ModuleNoRender.settingFog.getValue();
+
+        if (flag) {
             GlStateManager.disableFog();
         }
     }

@@ -248,7 +248,7 @@ public class ModuleWidget extends Widget {
         // The animation.
         this.offsetY = TurokMath.lerp(this.offsetY, this.animationY, this.master.getPartialTicks());
 
-        if (this.container.flagMouse == Flag.MOUSE_OVER) {
+        if (this.container.flagMouse == Flag.MOUSE_OVER && this.container.getSearchWidget().flagMouse == Flag.MOUSE_NOT_OVER) {
             this.flagMouse = this.rect.collideWithMouse(this.master.getMouse()) ? Flag.MOUSE_OVER : Flag.MOUSE_NOT_OVER;
         } else {
             this.flagMouse = Flag.MOUSE_NOT_OVER;
@@ -258,6 +258,8 @@ public class ModuleWidget extends Widget {
         this.rect.setHeight(5 + TurokFontManager.getStringHeight(Rocan.getWrapper().fontNormalWidget, this.rect.getTag()) + 5);
 
         this.alphaEffectHighlight = (int) (this.flagMouse == Flag.MOUSE_OVER ? TurokMath.lerp(this.alphaEffectHighlight, Rocan.getWrapper().colorWidgetHighlight[3], this.master.getPartialTicks()) : TurokMath.lerp(this.alphaEffectHighlight, 0, this.master.getPartialTicks()));
+
+        this.settingContainer.onCustomRender();
 
         // Outline mouse effect.
         TurokShaderGL.drawOutlineRect(this.rect, new int[] {Rocan.getWrapper().colorWidgetHighlight[0], Rocan.getWrapper().colorWidgetHighlight[1], Rocan.getWrapper().colorWidgetHighlight[2], this.alphaEffectHighlight});
@@ -321,7 +323,5 @@ public class ModuleWidget extends Widget {
             this.settingContainer.getRect().setWidth(TurokMath.lerp(this.settingContainer.getRect().getWidth(), 0, this.master.getPartialTicks()));
             this.settingContainer.getRect().setHeight(TurokMath.lerp(this.settingContainer.getRect().getHeight(), 0, this.master.getPartialTicks()));
         }
-
-        this.settingContainer.onCustomRender();
     }
 }

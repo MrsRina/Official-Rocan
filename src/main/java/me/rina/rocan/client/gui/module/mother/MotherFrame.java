@@ -300,7 +300,7 @@ public class MotherFrame extends Frame {
          *       x = min + off * size; (x = 532);
          * *
          *
-         * The return is of x is 532, so, the minimum width is 532;
+         * The return is x = 532, so, the minimum width is 532;
          *
          */
         int minimumWidth = 75;
@@ -312,7 +312,7 @@ public class MotherFrame extends Frame {
         TurokShaderGL.drawSolidRect(this.rect, new int[] {Rocan.getWrapper().colorFrameBackground[0], Rocan.getWrapper().colorFrameBackground[1], Rocan.getWrapper().colorFrameBackground[2], Rocan.getWrapper().colorFrameBackground[3]});
 
         /*
-         * We need render the normal render and custom, cause yes.
+         * We need render the normal and custom, because yes.
          */
         this.clientContainer.onRender();
         this.clientContainer.onCustomRender();
@@ -333,7 +333,7 @@ public class MotherFrame extends Frame {
             float x = this.master.getMouse().getX() - this.dragX;
             float y = this.master.getMouse().getY() - this.dragY;
 
-            // We set the drag position to rect smooooth.
+            // We set the drag position very smooooth.
             this.rect.setX(TurokMath.lerp(this.rect.getX(), x, this.master.getPartialTicks()));
             this.rect.setY(TurokMath.lerp(this.rect.getY(), y, this.master.getPartialTicks()));
         }

@@ -2,6 +2,7 @@ package me.rina.rocan;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rina.rocan.api.command.management.CommandManager;
+import me.rina.rocan.api.component.management.ComponentManager;
 import me.rina.rocan.api.event.management.EventManager;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.management.ModuleManager;
@@ -63,6 +64,7 @@ public class Rocan {
     private CommandManager commandManager;
     private SocialManager socialManager;
     private PresetManager presetManager;
+    private ComponentManager componentManager;
 
     /* Not API managers. */
     private SpammerManager spammerManager;
@@ -179,6 +181,7 @@ public class Rocan {
         this.commandManager = new CommandManager();
         this.socialManager = new SocialManager();
         this.presetManager = new PresetManager();
+        this.componentManager = new ComponentManager();
         this.spammerManager = new SpammerManager();
         this.playerServerManager = new PlayerServerManager();
         this.entityWorldManager = new EntityWorldManager();
@@ -223,12 +226,20 @@ public class Rocan {
         return INSTANCE.commandManager;
     }
 
-    public static ModuleClickGUI getModuleClickGUI() {
-        return INSTANCE.moduleClickGUI;
-    }
-
     public static SocialManager getSocialManager() {
         return INSTANCE.socialManager;
+    }
+
+    public static PresetManager getPresetManager() {
+        return INSTANCE.presetManager;
+    }
+
+    public static ComponentManager getComponentManager() {
+        return INSTANCE.componentManager;
+    }
+
+    public static ModuleClickGUI getModuleClickGUI() {
+        return INSTANCE.moduleClickGUI;
     }
 
     public static SpammerManager getSpammerManager() {
