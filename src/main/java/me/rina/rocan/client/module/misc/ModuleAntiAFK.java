@@ -13,6 +13,7 @@ import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokTick;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
+import net.minecraft.util.EnumHand;
 
 /**
  * @author SrRina
@@ -31,12 +32,13 @@ public class ModuleAntiAFK extends Module {
             return;
         }
 
-        // @everyone
-        float ms = 2000f;
+        float ms = 3500f;
 
-        // Math skill.
         if (tick.isPassedMS(ms / 2)) {
             this.angle = TurokMath.lerp(this.angle, 0, Rocan.getClientEventManager().getCurrentRender3DPartialTicks());
+        
+            // We send swing to...
+            mc.player.sendSwing(EnumHand.MAIN_HAND);
         } else {
             this.angle = TurokMath.lerp(this.angle, 90.0f, Rocan.getClientEventManager().getCurrentRender3DPartialTicks());
         }
@@ -52,7 +54,7 @@ public class ModuleAntiAFK extends Module {
             KeyUtil.press(mc.gameSettings.keyBindJump, false);
         }
 
-        // Real yaw bitch.
+        // Real pitch.
         if (settingRotate.getValue()) {
             PlayerUtil.setPitch(this.angle);
         }
