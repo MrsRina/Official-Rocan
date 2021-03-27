@@ -13,9 +13,9 @@ public class PlayerMoveEvent extends Event {
     private MoverType type;
 
     /* Positions. */
-    private double x;
-    private double y;
-    private double z;
+    public double x;
+    public double y;
+    public double z;
 
     public PlayerMoveEvent(MoverType type, double x, double y, double z) {
         super(EventStage.PRE);

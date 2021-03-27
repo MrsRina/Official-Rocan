@@ -345,15 +345,15 @@ public class Module implements ISLClass {
                     if (settings instanceof ValueNumber) {
                         ValueNumber settingValueNumber = (ValueNumber) settings;
 
-                        if (jsonSettingList.get(settings.getTag()).getAsNumber() instanceof Float) {
+                        if (settingValueNumber.getValue() instanceof Float) {
                             settingValueNumber.setValue(jsonSettingList.get(settings.getTag()).getAsFloat());
                         }
 
-                        if (jsonSettingList.get(settings.getTag()).getAsNumber() instanceof Double) {
+                        if (settingValueNumber.getValue() instanceof Double) {
                             settingValueNumber.setValue(jsonSettingList.get(settings.getTag()).getAsDouble());
                         }
 
-                        if (jsonSettingList.get(settings.getTag()).getAsNumber() instanceof Integer) {
+                        if (settingValueNumber.getValue() instanceof Integer) {
                             settingValueNumber.setValue(jsonSettingList.get(settings.getTag()).getAsInt());
                         }
                     }

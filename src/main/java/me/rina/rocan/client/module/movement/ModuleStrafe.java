@@ -13,6 +13,8 @@ import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.rocan.client.event.entity.PlayerMoveEvent;
 import me.rina.turok.util.TurokTick;
 import net.minecraft.init.MobEffects;
+import net.minecraft.util.math.MathHelper;
+import org.lwjgl.input.Keyboard;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 
 /**
@@ -90,12 +92,6 @@ public class ModuleStrafe extends Module {
         if (NullUtil.isPlayerWorld()) {
             return;
         }
-
-        if (mc.currentScreen == null && settingBypass.getState()) {
-            if (mc.player.onGround) {
-                mc.player.jump();
-            }
-        }
     }
 
     @Listener
@@ -159,7 +155,7 @@ public class ModuleStrafe extends Module {
                     }
 
                     if (this.jumps == 1 && settingBHOPTick.getValue().intValue() != -1 && mc.player.onGround == false && flagHOP) {
-                        mc.player.motionY -= this.getMotionJumpY();
+                        event.setY(mc.player.motionY--);
 
                         this.tickHOP.reset();
                     }
@@ -244,7 +240,7 @@ public class ModuleStrafe extends Module {
 
                     if (playerForward > 0.0d) {
                         playerForward = 1.0f;
-                    } else if (playerForward < 0){
+                    } else if (playerForward < 0) {
                         playerForward = -1.0f;
                     }
                 }
@@ -270,6 +266,12 @@ public class ModuleStrafe extends Module {
                 }
             }
 
+            if (settingBypass.getState() && mc.player.onGround) {
+                speed = 0.6174077f;
+
+                mc.player.jump();
+            }
+
             switch ((StrafingType) settingStrafingType.getValue()) {
                 case MINIMAL: {
                     event.setX((playerForward * speed) * Math.cos(Math.toRadians((playerRotationYaw + 90.0f))) + (playerStrafe * speed) * Math.sin(Math.toRadians((playerRotationYaw + 90.0f))));
@@ -292,7 +294,7 @@ public class ModuleStrafe extends Module {
     }
 
     public float getMotionJumpY() {
-        float y = 0.40123128f;
+        float y = 0.42f;
 
         if (mc.player.isPotionActive(MobEffects.JUMP_BOOST)) {
             final int amplify = mc.player.getActivePotionEffect(MobEffects.JUMP_BOOST).getAmplifier();

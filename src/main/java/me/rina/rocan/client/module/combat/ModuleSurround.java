@@ -20,6 +20,7 @@ import me.rina.turok.util.TurokTick;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
@@ -262,8 +263,12 @@ public class ModuleSurround extends Module {
             return Flag.STUCK;
         }
 
-        EnumFacing facing = BlockUtil.getFacing(offset, mc.player);
-        Vec3d hit = PositionUtil.hit(offset, facing);
+        EnumFacing facing = BlockUtil.getFacing(pos, mc.player);
+        Vec3d hit = PositionUtil.hit(pos, facing);
+
+        float facingX = (float) (pos.x - hit.x);
+        float facingY = (float) (pos.y - hit.y);
+        float facingZ = (float) (pos.z - hit.z);
 
         /*
          * Last update in hot bar, for not hack slot kick.
@@ -276,7 +281,7 @@ public class ModuleSurround extends Module {
         if (mc.player.getHeldItemMainhand().getItem() == obsidian) {
             // Send swing anim to server.
             mc.player.swingArm(EnumHand.MAIN_HAND);
-            mc.playerController.processRightClickBlock(mc.player, mc.world, pos, facing, hit, EnumHand.MAIN_HAND);
+            mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, facing, EnumHand.MAIN_HAND, facingX, facingY, facingZ));
         }
 
         return Flag.PLACED;

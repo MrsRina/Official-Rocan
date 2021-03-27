@@ -189,9 +189,7 @@ public class SettingNumberWidget extends Widget {
             this.flagMouse = Flag.MOUSE_NOT_OVER;
         }
 
-        String currentSettingValue = this.setting.getValue().toString();
-
-        float fullHeight = TurokFontManager.getStringHeight(Rocan.getWrapper().fontSmallWidget, this.rect.getTag() + ": " + currentSettingValue) + 1 + this.rectSlider.getHeight();
+        String currentSettingValue = this.setting.getSmooth() == ValueNumber.Smooth.INTEGER ? ((int) (this.setting.getValue().floatValue())) + "" : this.setting.getValue().toString();
 
         // We need set the slider rect on the end of main rect.
         this.rectSlider.setX(this.rect.getX() + offsetWidthSliderRect);
@@ -202,9 +200,6 @@ public class SettingNumberWidget extends Widget {
         this.alphaEffectHighlightRect = this.flagMouse == Flag.MOUSE_OVER ? (int) TurokMath.lerp(this.alphaEffectHighlightRect, Rocan.getWrapper().colorWidgetHighlight[3], this.master.getPartialTicks()) : (int) TurokMath.lerp(this.alphaEffectHighlightRect, 0, this.master.getPartialTicks());
 
         TurokFontManager.render(Rocan.getWrapper().fontSmallWidget, this.rect.getTag() + ": " + currentSettingValue, this.rect.getX() + 2, this.rectSlider.getY() - (TurokFontManager.getStringHeight(Rocan.getWrapper().fontSmallWidget, this.rect.getTag()) + 4), true, new Color(255, 255, 255));
-
-        float checkBoxPressedOffsetX = 0.5f;
-        float checkBoxPressedOffsetY = 1f;
 
         // The solid pressed slider.
         TurokShaderGL.drawSolidRect(this.rectSlider.getX(), this.rectSlider.getY(), this.offsetWidth, this.rectSlider.getHeight(), new int[] {Rocan.getWrapper().colorWidgetPressed[0], Rocan.getWrapper().colorWidgetPressed[1], Rocan.getWrapper().colorWidgetPressed[2], Rocan.getWrapper().colorWidgetPressed[3]});
@@ -225,15 +220,15 @@ public class SettingNumberWidget extends Widget {
                 if (this.setting.getValue() instanceof Integer) {
                     int roundedValue = (int) TurokMath.round(((mouse / this.rectSlider.getWidth()) * (maximum - minimum) + minimum));
 
-                    this.setting.setValue((Integer) roundedValue);
+                    this.setting.setValue(roundedValue);
                 } else if (this.setting.getValue() instanceof Double) {
                     double roundedValue = TurokMath.round(((mouse / this.rectSlider.getWidth()) * (maximum - minimum) + minimum));
 
-                    this.setting.setValue((Double) roundedValue);
+                    this.setting.setValue(roundedValue);
                 } else if (this.setting.getValue() instanceof Float) {
                     float roundedValue = (float) TurokMath.round(((mouse / this.rectSlider.getWidth()) * (maximum - minimum) + minimum));
 
-                    this.setting.setValue((Float) roundedValue);
+                    this.setting.setValue(roundedValue);
                 }
             } else {
                 this.setting.setValue(this.setting.getMinimum());

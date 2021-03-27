@@ -124,8 +124,6 @@ public class ModuleClickGUI extends TurokGUI {
         // Update onRender of mother frame.
         this.motherFrame.onRender();
 
-        float calculatedScaledX = (this.display.getScaledWidth() / 2) - (this.motherFrame.getRect().getWidth() / this.motherFrame.getScale());
-
         // Make the current animation and smooth close.
         if (this.isOpened) {
             if (this.isPositionBack) {

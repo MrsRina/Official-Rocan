@@ -12,6 +12,7 @@ import me.rina.rocan.client.event.render.RenderPortalOverlayEvent;
 import me.rina.rocan.client.event.render.RenderPotionEffects;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.MobEffects;
 import net.minecraft.network.play.server.SPacketTimeUpdate;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -60,6 +61,10 @@ public class ModuleNoRender extends Module {
     public void onListenClientTickEvent(ClientTickEvent event) {
         if (NullUtil.isPlayerWorld()) {
             return;
+        }
+
+        if (mc.player.isPotionActive(MobEffects.NAUSEA)) {
+            mc.player.removePotionEffect(MobEffects.NAUSEA);
         }
 
         if (settingFloorDroppedItem.getValue()) {

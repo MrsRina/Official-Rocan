@@ -11,6 +11,7 @@ import me.rina.rocan.api.social.management.SocialManager;
 import me.rina.rocan.api.tracker.management.TrackerManager;
 import me.rina.rocan.client.command.*;
 import me.rina.rocan.client.Wrapper;
+import me.rina.rocan.client.gui.component.ComponentClickGUI;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.manager.chat.SpammerManager;
 import me.rina.rocan.client.manager.entity.EntityWorldManager;
@@ -18,6 +19,7 @@ import me.rina.rocan.client.manager.network.PlayerServerManager;
 import me.rina.rocan.client.manager.world.HoleManager;
 import me.rina.rocan.client.module.client.ModuleAntiCheat;
 import me.rina.rocan.client.module.client.ModuleDeveloper;
+import me.rina.rocan.client.module.client.ModuleHUD;
 import me.rina.rocan.client.module.client.ModuleTPSSync;
 import me.rina.rocan.client.module.combat.*;
 import me.rina.rocan.client.module.exploit.*;
@@ -72,8 +74,9 @@ public class Rocan {
     private EntityWorldManager entityWorldManager;
     private HoleManager holeManager;
 
-    /* Gui screen stuff. */
+    /* GUI screen stuff. */
     private ModuleClickGUI moduleClickGUI;
+    private ComponentClickGUI componentClickGUI;
     private Wrapper wrapper;
 
     /**
@@ -82,6 +85,7 @@ public class Rocan {
     public void onRegistry() {
         // Category Client.
         this.moduleManager.registry(new me.rina.rocan.client.module.client.ModuleClickGUI());
+        this.moduleManager.registry(new ModuleHUD());
         this.moduleManager.registry(new ModuleDeveloper());
         this.moduleManager.registry(new ModuleTPSSync());
         this.moduleManager.registry(new ModuleAntiCheat());
@@ -145,6 +149,10 @@ public class Rocan {
         // We start here the GUI, because, all settings and modules are loaded.
         this.moduleClickGUI = new ModuleClickGUI();
         this.moduleClickGUI.init();
+
+        // Start the HUD editor component.
+        this.componentClickGUI = new ComponentClickGUI();
+        this.componentClickGUI.init();
 
         // Load all managers file.
         Rocan.getModuleManager().onLoad();
@@ -240,6 +248,10 @@ public class Rocan {
 
     public static ModuleClickGUI getModuleClickGUI() {
         return INSTANCE.moduleClickGUI;
+    }
+
+    public static ComponentClickGUI getComponentClickGUI() {
+        return INSTANCE.componentClickGUI;
     }
 
     public static SpammerManager getSpammerManager() {

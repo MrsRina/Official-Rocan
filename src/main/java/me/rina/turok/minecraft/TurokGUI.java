@@ -17,6 +17,7 @@ import java.lang.annotation.RetentionPolicy;
  * @author SrRina
  * @since 07/01/2021 at 12:41
  **/
+@TurokGUI.GUI(name = "HDU editor")
 public class TurokGUI extends GuiScreen {
     private final String name = get().name();
     private final String author = get().author();

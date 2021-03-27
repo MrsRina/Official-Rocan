@@ -19,10 +19,10 @@ public class Component implements ISLClass {
     private String description = getRegistry().description();
 
     private ComponentType type = getRegistry().type();
-
-    protected TurokRect rect;
-
     private ArrayList<Setting> settingList;
+
+    private boolean isEnabled;
+    protected TurokRect rect;
 
     private ValueBoolean settingCustomFont = new ValueBoolean("Custom Font", "CustomFont", "Smooth font to render.", false);
     private ValueBoolean settingShadowFont = new ValueBoolean("Shadow Font", "ShadowFont", "Shadow font to render.", true);
@@ -60,6 +60,14 @@ public class Component implements ISLClass {
 
     public String getDescription() {
         return description;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
+    }
+
+    public boolean isEnabled() {
+        return isEnabled;
     }
 
     public void setType(ComponentType type) {

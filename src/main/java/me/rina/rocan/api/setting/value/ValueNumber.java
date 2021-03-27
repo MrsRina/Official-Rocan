@@ -12,7 +12,33 @@ public class ValueNumber extends Setting {
     private Number minimum;
     private Number maximum;
 
-    public ValueNumber(String name, String tag, String description, Number value, Number minimum, Number maximum) {
+    private Smooth smooth = Smooth.PRIMITIVE;
+
+    public enum Smooth {
+        PRIMITIVE, INTEGER;
+    }
+
+    public ValueNumber(String name, String tag, String description, int value, int minimum, int maximum) {
+        super(name, tag, description);
+
+        this.value = (float) value;
+
+        this.minimum = (float) minimum;
+        this.maximum = (float) maximum;
+
+        this.smooth = Smooth.INTEGER;
+    }
+
+    public ValueNumber(String name, String tag, String description, double value, double minimum, double maximum) {
+        super(name, tag, description);
+
+        this.value = value;
+
+        this.minimum = minimum;
+        this.maximum = maximum;
+    }
+
+    public ValueNumber(String name, String tag, String description, float value, float minimum, float maximum) {
         super(name, tag, description);
 
         this.value = value;
@@ -43,5 +69,13 @@ public class ValueNumber extends Setting {
 
     public Number getMaximum() {
         return maximum;
+    }
+
+    public void setSmooth(Smooth smooth) {
+        this.smooth = smooth;
+    }
+
+    public Smooth getSmooth() {
+        return smooth;
     }
 }
