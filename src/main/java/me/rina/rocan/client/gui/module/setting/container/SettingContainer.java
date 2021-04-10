@@ -12,13 +12,11 @@ import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.rocan.client.gui.module.setting.widget.*;
-import me.rina.rocan.client.gui.module.visual.LabelWidget;
-import me.rina.turok.render.opengl.TurokRenderGL;
+import me.rina.rocan.client.gui.visual.LabelWidget;
 import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokMath;
 import me.rina.turok.util.TurokRect;
 
-import java.awt.*;
 import java.util.ArrayList;
 
 /**

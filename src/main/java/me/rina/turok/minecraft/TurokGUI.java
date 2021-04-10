@@ -97,6 +97,7 @@ public class TurokGUI extends GuiScreen {
     public void closeGUI() {
         this.onClose();
 
+        mc.setIngameFocus();
         mc.displayGuiScreen(null);
     }
 

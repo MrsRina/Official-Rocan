@@ -17,6 +17,7 @@ import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.turok.util.TurokTick;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.network.play.client.CPacketAnimation;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 @Registry(name = "Hole Filler", tag = "HoleFiller", description = "Automatically places blocks in hole.", category = ModuleCategory.COMBAT)
 public class ModuleHoleFiller extends Module {
     /* General settings. */
+    public static ValueBoolean settingSwingAnimation = new ValueBoolean("Swing Animation", "SwingAnimation", "Hand animation!", true);
     public static ValueNumber settingRange = new ValueNumber("Range", "Range", "The maximum range for place blocks and collect.", 6f, 1f, 6f);
     public static ValueNumber settingTimeOut = new ValueNumber("Time Out", "TimeOut", "Time out delay for disable filler.", 1000, 1, 3000);
     public static ValueNumber settingDelay = new ValueNumber("Delay", "Delay", "The MS delay for places blocks on queue system.", 50, 0, 1000);
@@ -195,8 +197,13 @@ public class ModuleHoleFiller extends Module {
         PlayerRotationUtil.makeRotate(hit, (PlayerRotationUtil.RotationMode) settingRotateMode.getValue());
 
         if (mc.player.getHeldItemMainhand().getItem() == obsidian) {
-            // Send swing anim to server.
-            mc.player.swingArm(EnumHand.MAIN_HAND);
+            // Send swing.
+            if (this.settingSwingAnimation.getValue()) {
+                mc.player.swingArm(EnumHand.MAIN_HAND);
+            } else {
+                mc.player.connection.sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
+            }
+
             mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, facing, EnumHand.MAIN_HAND, facingX, facingY, facingZ));
 
             this.universalCountHolePlaced++;

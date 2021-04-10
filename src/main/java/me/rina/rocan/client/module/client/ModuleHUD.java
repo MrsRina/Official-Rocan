@@ -13,7 +13,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  * @author SrRina
  * @since 27/03/2021 at 00:13
  **/
-@Registry(name = "HUD", tag = "HUD", description = "Draws overlay component of client HUD.", category = ModuleCategory.CLIENT)
+@Registry(name = "HUD Editor", tag = "HUD", description = "Draws overlay component of client HUD.", category = ModuleCategory.CLIENT)
 public class ModuleHUD extends Module {
     /* Misc. */
     public static ValueBoolean settingRender = new ValueBoolean("Render", "Render", "Render HUDs components.", true);

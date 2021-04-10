@@ -38,7 +38,7 @@ public class ModuleAntiAFK extends Module {
             this.angle = TurokMath.lerp(this.angle, 0, Rocan.getClientEventManager().getCurrentRender3DPartialTicks());
         
             // We send swing to...
-            mc.player.sendSwing(EnumHand.MAIN_HAND);
+            mc.player.swingArm(EnumHand.MAIN_HAND);
         } else {
             this.angle = TurokMath.lerp(this.angle, 90.0f, Rocan.getClientEventManager().getCurrentRender3DPartialTicks());
         }

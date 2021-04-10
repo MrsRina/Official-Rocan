@@ -4,15 +4,19 @@ import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rina.rocan.Rocan;
 import me.rina.rocan.api.command.Command;
 import me.rina.rocan.api.command.management.CommandManager;
+import me.rina.rocan.api.component.Component;
 import me.rina.rocan.api.module.Module;
 import me.rina.rocan.api.module.management.ModuleManager;
 import me.rina.rocan.api.util.chat.ChatUtil;
 import me.rina.rocan.api.util.client.NullUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
+import me.rina.rocan.client.module.client.ModuleHUD;
 import me.rina.rocan.client.module.movement.ModuleNoSlowDown;
 import me.rina.rocan.client.module.render.ModuleNoRender;
 import me.rina.turok.render.opengl.TurokGL;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.passive.AbstractHorse;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -83,23 +87,62 @@ public class EventManager {
 
         this.setCurrentRender2DPartialTicks(event.getPartialTicks());
 
+        RenderGameOverlayEvent.ElementType target = RenderGameOverlayEvent.ElementType.ALL;
+
+        if (!Rocan.getMinecraft().player.isCreative() && Rocan.getMinecraft().player.getRidingEntity() instanceof AbstractHorse) {
+            target = RenderGameOverlayEvent.ElementType.HEALTHMOUNT;
+        }
+
+        if (event.getType() != target) {
+            return;
+        }
+
         for (Module modules : Rocan.getModuleManager().getModuleList()) {
-            modules.onRender2D();
+            if (modules.isEnabled()) {
+                modules.onRender2D();
 
-            TurokGL.pushMatrix();
+                GL11.glPushMatrix();
 
-            TurokGL.enable(GL11.GL_TEXTURE_2D);
-            TurokGL.enable(GL11.GL_BLEND);
+                GL11.glEnable(GL11.GL_TEXTURE_2D);
+                GL11.glEnable(GL11.GL_BLEND);
 
-            GlStateManager.enableBlend();
+                GlStateManager.enableBlend();
 
-            TurokGL.popMatrix();
+                GL11.glPopMatrix();
 
-            GlStateManager.enableCull();
-            GlStateManager.depthMask(true);
-            GlStateManager.enableTexture2D();
-            GlStateManager.enableBlend();
-            GlStateManager.enableDepth();
+                GlStateManager.enableCull();
+                GlStateManager.depthMask(true);
+                GlStateManager.enableTexture2D();
+                GlStateManager.enableBlend();
+                GlStateManager.enableDepth();
+            }
+        }
+
+        for (Component components : Rocan.getComponentManager().getComponentList()) {
+            boolean flag = !ModuleManager.get(ModuleHUD.class).isEnabled();
+
+            if (flag) {
+                if (components.isEnabled()) {
+                    components.onRenderHUD(this.currentRender2DPartialTicks);
+
+                    GL11.glPushMatrix();
+
+                    GL11.glEnable(GL11.GL_TEXTURE_2D);
+                    GL11.glEnable(GL11.GL_BLEND);
+
+                    GlStateManager.enableBlend();
+
+                    GL11.glPopMatrix();
+
+                    GlStateManager.enableCull();
+                    GlStateManager.depthMask(true);
+                    GlStateManager.enableTexture2D();
+                    GlStateManager.enableBlend();
+                    GlStateManager.enableDepth();
+                }
+
+                components.applyCollision(Rocan.getMinecraft());
+            }
         }
     }
 
@@ -135,8 +178,12 @@ public class EventManager {
                 modules.onRender3D();
             }
 
+            // The most smooth ticks for setting stuff.
             modules.onSetting();
         }
+
+        // We apply the dock push function here to best smooth!
+        Rocan.getComponentManager().applyDock();
     }
 
     @SubscribeEvent()

@@ -22,8 +22,8 @@ public class PositionUtil {
         return new Vec3d(pos.x, pos.y, pos.z);
     }
 
-    public static boolean collideBlockPos(BlockPos pos, BlockPos another) {
-        return pos.getX() == pos.getX() && pos.getY() == another.getY() && pos.getZ() == another.getZ();
+    public static boolean collideBlockPos(BlockPos a, BlockPos b) {
+        return a.getX() == a.getX() && a.getY() == b.getY() && a.getZ() == b.getZ();
     }
 
     public static Vec3d hit(BlockPos pos, EnumFacing facing) {

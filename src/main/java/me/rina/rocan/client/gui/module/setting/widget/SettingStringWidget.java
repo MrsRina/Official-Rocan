@@ -10,9 +10,8 @@ import me.rina.rocan.client.gui.module.module.widget.ModuleCategoryWidget;
 import me.rina.rocan.client.gui.module.module.widget.ModuleWidget;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
 import me.rina.rocan.client.gui.module.setting.container.SettingContainer;
-import me.rina.rocan.client.gui.module.visual.EntryWidget;
+import me.rina.rocan.client.gui.visual.EntryWidget;
 import me.rina.turok.render.font.management.TurokFontManager;
-import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokMath;
 import org.lwjgl.input.Keyboard;
 

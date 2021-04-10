@@ -148,12 +148,8 @@ public class ModuleClickGUI extends TurokGUI {
             this.motherFrame.getRect().setX((int) TurokMath.lerp(this.motherFrame.getRect().getX(), TurokMath.negative(frameWidthScaled) - 50, partialTicks));
 
             if (this.motherFrame.getRect().getX() <= TurokMath.negative(frameWidthScaled)) {
-                this.mouse.setCursorPos(this.display.getScaledWidth() / 2, this.display.getScaledHeight() / 2);
-
                 // Make the own TurokGUI close the GUI.
                 this.closeGUI();
-
-                this.mouse.setCursorPos(this.display.getScaledWidth() / 2, this.display.getScaledHeight() / 2);
             }
         }
     }

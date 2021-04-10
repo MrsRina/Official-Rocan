@@ -9,10 +9,14 @@ import me.rina.rocan.api.setting.value.ValueEnum;
 import me.rina.rocan.api.setting.value.ValueNumber;
 import me.rina.rocan.api.util.client.KeyUtil;
 import me.rina.rocan.api.util.client.NullUtil;
+import me.rina.rocan.api.util.entity.PlayerUtil;
+import me.rina.rocan.api.util.math.PositionUtil;
 import me.rina.rocan.client.event.client.ClientTickEvent;
 import me.rina.rocan.client.event.entity.PlayerMoveEvent;
 import me.rina.turok.util.TurokTick;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.MobEffects;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import org.lwjgl.input.Keyboard;
 import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
@@ -26,6 +30,7 @@ public class ModuleStrafe extends Module {
     /* Normal settings. */
     public static ValueBoolean settingStrafeOnGround = new ValueBoolean("On Ground", "OnGround", "On ground controls.", true);
     public static ValueBoolean settingStrafeSmoothJump = new ValueBoolean("Smooth Jump", "SmoothJump", "Smooth jumping.", true);
+    public static ValueNumber settingJumpY = new ValueNumber("Jump Y", "JumpY", "The Y divided by 1000.", 401, 0, 420);
 
     public static ValueEnum settingJumpMode = new ValueEnum("Jump Mode", "JumpMode", "Mode jump.", JumpMode.AUTO);
     public static ValueBind settingBypass = new ValueBind("Bypass", "Bypass", "Make you jump.", -1);
@@ -91,6 +96,10 @@ public class ModuleStrafe extends Module {
     public void onListenClientTick(ClientTickEvent event) {
         if (NullUtil.isPlayerWorld()) {
             return;
+        }
+
+        if (settingBypass.getState() && mc.player.onGround && ((settingJumpMode.getValue() == JumpMode.AUTO && (mc.player.movementInput.moveStrafe != 0d || mc.player.movementInput.moveForward != 0d)) || (settingJumpMode.getValue() == JumpMode.MANUAL && mc.gameSettings.keyBindJump.isKeyDown()))) {
+            mc.player.jump();
         }
     }
 
@@ -228,7 +237,7 @@ public class ModuleStrafe extends Module {
 
             this.jumps = 0;
         } else {
-            if (playerForward != 0.0d & playerStrafe != 0.0d) {
+            if (playerForward != 0.0d && playerStrafe != 0.0d) {
                 if (playerForward != 0.0d) {
                     if (playerStrafe > 0.0d) {
                         playerRotationYaw += (playerForward > 0.0d ? -45 : 45);
@@ -266,12 +275,6 @@ public class ModuleStrafe extends Module {
                 }
             }
 
-            if (settingBypass.getState() && mc.player.onGround) {
-                speed = 0.6174077f;
-
-                mc.player.jump();
-            }
-
             switch ((StrafingType) settingStrafingType.getValue()) {
                 case MINIMAL: {
                     event.setX((playerForward * speed) * Math.cos(Math.toRadians((playerRotationYaw + 90.0f))) + (playerStrafe * speed) * Math.sin(Math.toRadians((playerRotationYaw + 90.0f))));
@@ -294,7 +297,31 @@ public class ModuleStrafe extends Module {
     }
 
     public float getMotionJumpY() {
-        float y = 0.42f;
+        float y = settingJumpY.getValue().intValue() / 1000f;
+
+        boolean isCancelled = false;
+
+        for (BlockPos add : new BlockPos[] {
+                new BlockPos(1, -1, 0),
+                new BlockPos(-1, -1, 0),
+                new BlockPos(1, -1, 1),
+                new BlockPos(-1, -1, 1),
+                new BlockPos(-1, -1, -1),
+                new BlockPos(0, -1, 1),
+                new BlockPos(0, -1, -1)
+        }) {
+            BlockPos offset = PlayerUtil.getBlockPos().add(add);
+
+            if (mc.world.getBlockState(offset).getBlock() == Blocks.AIR) {
+                isCancelled = true;
+
+                break;
+            }
+        }
+
+        if (mc.player.collidedHorizontally && y < 0.4 || isCancelled) {
+            y = 0.40123128f;
+        }
 
         if (mc.player.isPotionActive(MobEffects.JUMP_BOOST)) {
             final int amplify = mc.player.getActivePotionEffect(MobEffects.JUMP_BOOST).getAmplifier();

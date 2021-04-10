@@ -1,6 +1,8 @@
 package me.rina.turok.util;
 
 import me.rina.turok.hardware.mouse.TurokMouse;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 
 /**
  * @author SrRina
@@ -21,7 +23,7 @@ public class TurokRect {
 	/**
 	 * The current docking.
 	 */
-	protected Dock docking = Dock.TopLeft;
+	protected Dock docking = Dock.TOP_LEFT;
 
 	public TurokRect(float x, float y, float width, float height) {
 		this.x = x;
@@ -67,9 +69,26 @@ public class TurokRect {
 	 * Dock where the rect can hit, to get you use getDockHit();
 	 */
 	public enum Dock {
-		TopLeft,    TopCenter,    TopRight,
-		CenterLeft, Center, CenterRight,
-		BottomLeft, BottomCenter, BottomRight;
+		TOP_LEFT, TOP_CENTER, TOP_RIGHT,
+		CENTER_LEFT, CENTER, CENTER_RIGHT,
+		BOTTOM_LEFT, BOTTOM_CENTER, BOTTOM_RIGHT;
+	}
+
+	private DockDimension dimension = DockDimension.D2;
+
+	/**
+	 * Dimension of docking, D2 (TOP-BOTTOM), D3 (TOP-CENTER-BOTTOM);
+	 */
+	public enum DockDimension {
+		D3, D2;
+	}
+
+	public void setDimension(DockDimension dimension) {
+		this.dimension = dimension;
+	}
+
+	public DockDimension getDimension() {
+		return dimension;
 	}
 
 	public void copy(TurokRect rect) {
@@ -78,6 +97,14 @@ public class TurokRect {
 
 		this.width = rect.getWidth();
 		this.height = rect.getHeight();
+	}
+
+	public void set(float x, float y, float w, float h) {
+		this.x = x;
+		this.y = y;
+
+		this.width = w;
+		this.height = h;
 	}
 
 	public void setTag(String tag) {
@@ -157,66 +184,68 @@ public class TurokRect {
 	 */
 	public Dock getDockHit(TurokDisplay display, int diff) {
 		if (this.x <= diff) {
-			if (this.docking == Dock.TopCenter || this.docking == Dock.TopRight) {
-				this.docking = Dock.TopLeft;
-			} else if (this.docking == Dock.Center || this.docking == Dock.CenterRight) {
-				this.docking = Dock.CenterLeft;
-			} else if (this.docking == Dock.BottomCenter || this.docking == Dock.BottomRight) {
-				this.docking = Dock.BottomLeft;
+			if (this.docking == Dock.TOP_CENTER || this.docking == Dock.TOP_RIGHT) {
+				this.docking = Dock.TOP_LEFT;
+			} else if (this.docking == Dock.CENTER || this.docking == Dock.CENTER_RIGHT) {
+				this.docking = Dock.CENTER_LEFT;
+			} else if (this.docking == Dock.BOTTOM_CENTER || this.docking == Dock.BOTTOM_RIGHT) {
+				this.docking = Dock.BOTTOM_LEFT;
+			}
+		} else if (this.y <= diff) {
+			if (this.docking == Dock.CENTER_LEFT || this.docking == Dock.BOTTOM_LEFT) {
+				this.docking = Dock.TOP_LEFT;
+			} else if (this.docking == Dock.CENTER || this.docking == Dock.BOTTOM_CENTER) {
+				this.docking = Dock.TOP_CENTER;
+			} else if (this.docking == Dock.CENTER_RIGHT || this.docking == Dock.BOTTOM_RIGHT) {
+				this.docking = Dock.TOP_RIGHT;
 			}
 		}
 
-		if (this.y <= diff) {
-			if (this.docking == Dock.CenterLeft || this.docking == Dock.BottomLeft) {
-				this.docking = Dock.TopLeft;
-			} else if (this.docking == Dock.Center || this.docking == Dock.BottomCenter) {
-				this.docking = Dock.TopCenter;
-			} else if (this.docking == Dock.CenterRight || this.docking == Dock.BottomRight) {
-				this.docking = Dock.TopRight;
+		if (this.dimension == DockDimension.D3) {
+			if (this.x >= ((display.getScaledWidth() / 2f) - ((this.width + diff) / 2)) && this.x <= ((display.getScaledWidth() / 2f) + ((this.width + diff) / 2))) {
+				if (this.docking == Dock.TOP_LEFT || this.docking == Dock.TOP_RIGHT) {
+					this.docking = Dock.TOP_CENTER;
+				} else if (this.docking == Dock.CENTER_LEFT || this.docking == Dock.CENTER_RIGHT) {
+					this.docking = Dock.CENTER;
+				} else if (this.docking == Dock.BOTTOM_LEFT || this.docking == Dock.BOTTOM_RIGHT) {
+					this.docking = Dock.BOTTOM_CENTER;
+				}
+			} else if (this.y >= ((display.getScaledHeight() / 2f) - ((this.height + diff) / 2)) && this.y <= ((display.getScaledHeight() / 2f) + ((this.height + diff) / 2))) {
+				if (this.docking == Dock.TOP_LEFT || this.docking == Dock.BOTTOM_LEFT) {
+					this.docking = Dock.CENTER_LEFT;
+				} else if (this.docking == Dock.TOP_CENTER || this.docking == Dock.BOTTOM_CENTER) {
+					this.docking = Dock.CENTER;
+				} else if (this.docking == Dock.TOP_RIGHT || this.docking == Dock.BOTTOM_RIGHT) {
+					this.docking = Dock.CENTER_RIGHT;
+				}
 			}
 		}
 
-		if (this.x >= ((display.getScaledWidth() / 2) - ((this.width + diff) / 2))) {
-			if (this.docking == Dock.TopLeft || this.docking == Dock.TopRight) {
-				this.docking = Dock.TopCenter;
-			} else if (this.docking == Dock.CenterLeft || this.docking == Dock.CenterRight) {
-				this.docking = Dock.Center;
-			} else if (this.docking == Dock.BottomLeft || this.docking == Dock.BottomRight) {
-				this.docking = Dock.BottomCenter;
+		if (this.x + this.width >= display.getScaledWidth() - diff) {
+			if (this.docking == Dock.TOP_LEFT || this.docking == Dock.TOP_CENTER) {
+				this.docking = Dock.TOP_RIGHT;
+			} else if (this.docking == Dock.CENTER_LEFT || this.docking == Dock.CENTER) {
+				this.docking = Dock.CENTER_RIGHT;
+			} else if (this.docking == Dock.BOTTOM_LEFT || this.docking == Dock.BOTTOM_CENTER) {
+				this.docking = Dock.BOTTOM_RIGHT;
 			}
 		}
 
-		if (this.y >= ((display.getScaledHeight() / 2) - ((this.height + diff) / 2))) {
-			if (this.docking == Dock.TopLeft || this.docking == Dock.BottomLeft) {
-				this.docking = Dock.CenterLeft;
-			} else if (this.docking == Dock.TopCenter || this.docking == Dock.BottomCenter) {
-				this.docking = Dock.Center;
-			} else if (this.docking == Dock.TopRight || this.docking == Dock.BottomRight) {
-				this.docking = Dock.CenterRight;
-			}
-		}
-
-		if (this.x + this.width >= (display.getScaledWidth() - (this.width + diff))) {
-			if (this.docking == Dock.TopLeft || this.docking == Dock.TopCenter) {
-				this.docking = Dock.TopRight;
-			} else if (this.docking == Dock.CenterLeft || this.docking == Dock.Center) {
-				this.docking = Dock.CenterRight;
-			} else if (this.docking == Dock.BottomLeft || this.docking == Dock.BottomCenter) {
-				this.docking = Dock.BottomRight;
-			}
-		}
-
-		if (this.y + this.height >= (display.getScaledWidth() - (this.height + diff))) {
-			if (this.docking == Dock.TopLeft || this.docking == Dock.CenterLeft) {
-				this.docking = Dock.BottomLeft;
-			} else if (this.docking == Dock.TopCenter || this.docking == Dock.Center) {
-				this.docking = Dock.BottomCenter;
-			} else if (this.docking == Dock.TopRight || this.docking == Dock.CenterRight) {
-				this.docking = Dock.BottomRight;
+		if (this.y + this.height >= display.getScaledHeight() - diff) {
+			if (this.docking == Dock.TOP_LEFT || this.docking == Dock.CENTER_LEFT) {
+				this.docking = Dock.BOTTOM_LEFT;
+			} else if (this.docking == Dock.TOP_CENTER || this.docking == Dock.CENTER) {
+				this.docking = Dock.BOTTOM_CENTER;
+			} else if (this.docking == Dock.TOP_RIGHT || this.docking == Dock.CENTER_RIGHT) {
+				this.docking = Dock.BOTTOM_RIGHT;
 			}
 		}
 
 		return this.docking;
+	}
+
+	public Dock getDocking() {
+		return docking;
 	}
 
 	public static boolean collideRectWith(TurokRect rect, TurokMouse mouse) {

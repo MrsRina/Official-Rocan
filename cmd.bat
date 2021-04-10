@@ -1,1 +1,3 @@
-gradlew setupDevWorkspace
+gradlew setupDecompWorkspace --stop && gradlew clean build
+
+pause

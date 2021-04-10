@@ -41,6 +41,10 @@ public class TurokMath {
     }
 
     public static float lerp(float a, float b, float ticks) {
+        if (ticks == 1 || ticks == 5) {
+            return b;
+        }
+
         return (a + (b - a) * ticks);
     }
 

@@ -3,6 +3,7 @@ package me.rina.turok.util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.util.math.MathHelper;
 
 /**
  * @author SrRina
@@ -28,11 +29,11 @@ public class TurokDisplay {
     }
 
     public int getScaledWidth() {
-        return (int) ((double) this.mc.displayWidth / this.scaleFactor);
+        return MathHelper.ceil((double) this.mc.displayWidth / (double) this.scaleFactor);
     }
 
     public int getScaledHeight() {
-        return (int) ((double) this.mc.displayHeight / this.scaleFactor);
+        return MathHelper.ceil((double) this.mc.displayHeight / (double) this.scaleFactor);
     }
 
     public int getScaleFactor() {

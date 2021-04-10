@@ -1,4 +1,4 @@
-package me.rina.rocan.client.gui.module.visual;
+package me.rina.rocan.client.gui.visual;
 
 import javafx.scene.input.Clipboard;
 import me.rina.rocan.Rocan;
@@ -38,7 +38,7 @@ public class EntryWidget extends Widget implements IGUI {
 
     private boolean isFocused;
     private boolean isScissored;
-    private boolean isRendering;
+    private boolean isRendering = true;
     private boolean isSelected;
 
     private String text;
@@ -62,8 +62,8 @@ public class EntryWidget extends Widget implements IGUI {
 
     private TurokTick tick = new TurokTick();
 
-    public int[] colorBackground = {190, 190, 190, 0};
-    public int[] colorBackgroundOutline = {190, 190, 190, 0};
+    public int[] colorBackground = {0, 0, 0, 0};
+    public int[] colorBackgroundOutline = {255, 255, 255, 100};
     public int[] colorSelectedBackground = {0, 0, 190, 255};
     public int[] colorString = {255, 255, 255, 255};
     public int[] colorSelectedString = {255, 255, 255, 255};
@@ -89,6 +89,14 @@ public class EntryWidget extends Widget implements IGUI {
         this.save = "";
 
         this.master = master;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public Type getType() {
+        return type;
     }
 
     public void setMaster(TurokGUI master) {
@@ -155,12 +163,16 @@ public class EntryWidget extends Widget implements IGUI {
         return isSelected;
     }
 
-    public void setType(Type type) {
-        this.type = type;
+    public boolean isMouseClickedLeft() {
+        return isMouseClickedLeft;
     }
 
-    public Type getType() {
-        return type;
+    public boolean isMouseClickedMiddle() {
+        return isMouseClickedMiddle;
+    }
+
+    public void setMouseClickedRight(boolean mouseClickedRight) {
+        isMouseClickedRight = mouseClickedRight;
     }
 
     /**
@@ -305,8 +317,6 @@ public class EntryWidget extends Widget implements IGUI {
             if (key == Keyboard.KEY_ESCAPE) {
                 this.setFocused(false);
                 this.text = this.save;
-
-                // Set the new string.
             } else if (key == Keyboard.KEY_RETURN) {
                 this.setFocused(false);
             } else if (key == Keyboard.KEY_RIGHT) {
@@ -448,7 +458,6 @@ public class EntryWidget extends Widget implements IGUI {
     @Override
     public void onCustomKeyboard(char character, int key) {
         if (!this.isRendering) {
-            return;
         }
     }
 
@@ -494,7 +503,7 @@ public class EntryWidget extends Widget implements IGUI {
 
     @Override
     public void onRender() {
-        if (this.isRendering == false) {
+        if (!this.isRendering) {
             return;
         }
 
@@ -515,7 +524,10 @@ public class EntryWidget extends Widget implements IGUI {
 
         if (this.isFocused) {
             TurokShaderGL.drawSolidRect(this.rect, this.colorBackground);
-            TurokShaderGL.drawOutlineRect(this.rect, this.colorBackgroundOutline);
+
+            if (this.colorBackgroundOutline[3] > 0) {
+                TurokShaderGL.drawOutlineRect(this.rect, this.colorBackgroundOutline);
+            }
 
             if (this.lastKeyTyped != -1 && Keyboard.isKeyDown(this.lastKeyTyped) == false) {
                 this.resetSplit();

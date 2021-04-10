@@ -20,6 +20,7 @@ import me.rina.turok.util.TurokTick;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.network.play.client.CPacketAnimation;
 import net.minecraft.network.play.client.CPacketPlayerTryUseItemOnBlock;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -36,6 +37,7 @@ import java.util.ArrayList;
 @Registry(name = "Surround", tag = "Surround", description = "Automatically places block around of you.", category = ModuleCategory.COMBAT)
 public class ModuleSurround extends Module {
     /* Misc utils. */
+    public static ValueBoolean settingSwingAnimation = new ValueBoolean("Swing Animation", "SwingAnimation", "Hand animation!", true);
     public static ValueBoolean settingOnGround = new ValueBoolean("On Ground", "OnGround", "Stay on ground only for places blocks.", true);
     public static ValueBoolean settingAutoCenter = new ValueBoolean("Auto-Center", "AutoCenter", "Set center position of player for start place blocks.", true);
 
@@ -279,8 +281,13 @@ public class ModuleSurround extends Module {
         PlayerRotationUtil.makeRotate(hit, (PlayerRotationUtil.RotationMode) settingRotateMode.getValue());
 
         if (mc.player.getHeldItemMainhand().getItem() == obsidian) {
-            // Send swing anim to server.
-            mc.player.swingArm(EnumHand.MAIN_HAND);
+            // Send swing to server.
+            if (this.settingSwingAnimation.getValue()) {
+                mc.player.swingArm(EnumHand.MAIN_HAND);
+            } else {
+                mc.player.connection.sendPacket(new CPacketAnimation(EnumHand.MAIN_HAND));
+            }
+
             mc.player.connection.sendPacket(new CPacketPlayerTryUseItemOnBlock(pos, facing, EnumHand.MAIN_HAND, facingX, facingY, facingZ));
         }
 

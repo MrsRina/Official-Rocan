@@ -4,9 +4,8 @@ import com.google.gson.*;
 import me.rina.rocan.Rocan;
 import me.rina.rocan.api.ISLClass;
 import me.rina.rocan.api.preset.Preset;
-import me.rina.rocan.api.social.Social;
-import me.rina.rocan.api.social.type.SocialType;
-import me.rina.turok.util.TurokClass;
+import me.rina.rocan.api.preset.impl.PresetState;
+import me.rina.turok.util.TurokGeneric;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -21,12 +20,26 @@ public class PresetManager implements ISLClass {
     public static PresetManager INSTANCE;
 
     private ArrayList<Preset> presetList;
-    private Preset currentPreset;
+
+    /**
+     * The policy protection for path in Rocan, every file handled and managed at Rocan
+     * will pass and verified by policy path.
+     */
+    private TurokGeneric<String> policyProtection;
 
     public PresetManager() {
         INSTANCE = this;
 
         this.presetList = new ArrayList<>();
+        this.policyProtection = new TurokGeneric<>("default");
+    }
+
+    public void setPolicyProtection(TurokGeneric<String> preset) {
+        this.policyProtection = preset;
+    }
+
+    public TurokGeneric<String> getPolicyProtection() {
+        return policyProtection;
     }
 
     public void registry(Preset preset) {
@@ -47,12 +60,40 @@ public class PresetManager implements ISLClass {
         return presetList;
     }
 
-    public void setCurrentPreset(Preset currentPreset) {
-        this.currentPreset = currentPreset;
+    public void setCurrent(Preset preset) {
+        for (Preset presets : this.presetList) {
+            preset.setCurrent(false);
+        }
+
+        for (Preset presets : this.presetList) {
+            if (preset.getName().equalsIgnoreCase(preset.getName())) {
+                preset.setCurrent(true);
+
+                break;
+            }
+        }
     }
 
-    public Preset getCurrentPreset() {
-        return currentPreset;
+    public static Preset current() {
+        Preset preset = null;
+
+        int countTarget = 0;
+        int countTotally = 0;
+
+        for (Preset presets : INSTANCE.presetList) {
+            if (presets.isCurrent() && presets.getState() == PresetState.OPERABLE) {
+                preset = presets;
+
+                countTarget++;
+            }
+
+            countTotally++;
+        }
+
+        System.out.println("Rocan verified " + countTotally + " presets but found " + countTarget + " conflicts.");
+        System.out.println("Rocan processed " + (preset == null ? "default" : preset.getName()) + " preset.");
+
+        return preset;
     }
 
     public static Preset get(Class<?> clazz) {
@@ -75,16 +116,51 @@ public class PresetManager implements ISLClass {
         return null;
     }
 
-    public static void finish() {
+    public static void shutdown() {
+        System.out.println("Rocan is saving.");
+        refresh();
+
         Rocan.getModuleManager().onSave();
         Rocan.getSocialManager().onSave();
 
         INSTANCE.onSave();
+
+        System.out.println("Rocan saved 2 managers.");
     }
 
     public static void reload() {
+        System.out.println("Rocan preprocess reload.");
+
+        INSTANCE.onLoad();
+
+        refresh();
+
         Rocan.getModuleManager().onLoad();
         Rocan.getSocialManager().onLoad();
+
+        System.out.println("Rocan processed 2 managers.");
+    }
+
+    public static void refresh() {
+        Preset preset = current();
+
+        if (preset == null) {
+            preset = get("Default");
+
+            if (preset == null) {
+                preset = new Preset("Default", "Default", "Unknown");
+            }
+
+            INSTANCE.setCurrent(preset);
+        }
+
+        String path = Rocan.PATH_CONFIG + "presets/" + preset.getPath();
+
+        INSTANCE.policyProtection.setValue(Files.exists(Paths.get(path)) ? preset.getPath() : "default");
+    }
+
+    public static String getPolicyProtectionValue() {
+        return Rocan.PATH_CONFIG + "presets/" + INSTANCE.getPolicyProtection().getValue();
     }
 
     @Override
@@ -110,14 +186,13 @@ public class PresetManager implements ISLClass {
             JsonObject mainJson = new JsonObject();
             JsonArray mainJsonArray = new JsonArray();
 
-            mainJson.add("current", new JsonPrimitive(this.currentPreset.getName()));
-
             for (Preset presets : this.presetList) {
                 JsonObject presetJson = new JsonObject();
 
                 presetJson.add("name", new JsonPrimitive(presets.getName()));
                 presetJson.add("data", new JsonPrimitive(presets.getData()));
                 presetJson.add("path", new JsonPrimitive(presets.getData()));
+                presetJson.add("current", new JsonPrimitive(presets.isCurrent()));
 
                 mainJsonArray.add(presetJson);
             }
@@ -156,31 +231,21 @@ public class PresetManager implements ISLClass {
 
             JsonArray mainJsonArray = mainJson.get("presets").getAsJsonArray();
 
-            String currentPresetName = "";
-
-            if (mainJson.get("current") != null) {
-                currentPresetName = mainJson.get("current").getAsString();
-            }
-
             for (JsonElement element : mainJsonArray) {
                 JsonObject presetJson = element.getAsJsonObject();
 
-                if (presetJson.get("name") == null) {
+                if (presetJson.get("name") == null || presetJson.get("path") == null) {
                     continue;
                 }
 
-                Preset preset = new Preset(presetJson.get("name").getAsString(), "");
+                Preset preset = new Preset(presetJson.get("name").getAsString(), presetJson.get("path").getAsString(), "");
+
+                if (presetJson.get("current") != null) {
+                    preset.setCurrent(presetJson.get("current").getAsBoolean());
+                }
 
                 if (presetJson.get("data") != null) {
                     preset.setData(presetJson.get("data").getAsString());
-                }
-
-                if (presetJson.get("path") != null) {
-                    preset.setPath(presetJson.get("path").getAsString());
-                }
-
-                if (preset.getName().equalsIgnoreCase(currentPresetName)) {
-                    this.currentPreset = preset;
                 }
 
                 this.registry(preset);

@@ -6,6 +6,7 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.ISLClass;
 import me.rina.rocan.api.module.impl.ModuleCategory;
 import me.rina.rocan.api.module.registry.Registry;
+import me.rina.rocan.api.preset.management.PresetManager;
 import me.rina.rocan.api.setting.Setting;
 import me.rina.rocan.api.setting.value.*;
 import me.rina.rocan.api.util.chat.ChatUtil;
@@ -243,7 +244,7 @@ public class Module implements ISLClass {
     @Override
     public void onSave() {
         try {
-            String pathFolder = Rocan.PATH_CONFIG + "/module/" + this.category.name().toLowerCase() + "/";
+            String pathFolder = PresetManager.getPolicyProtectionValue() + "/module/" + this.category.name().toLowerCase() + "/";
             String pathFile = pathFolder + this.tag + ".json";
 
             Gson gsonBuilder = new GsonBuilder().setPrettyPrinting().create();
@@ -316,7 +317,7 @@ public class Module implements ISLClass {
     @Override
     public void onLoad() {
         try {
-            String pathFolder = Rocan.PATH_CONFIG + "/module/" + this.category.name().toLowerCase() + "/";
+            String pathFolder = PresetManager.getPolicyProtectionValue() + "/module/" + this.category.name().toLowerCase() + "/";
             String pathFile = pathFolder + this.tag + ".json";
 
             if (Files.exists(Paths.get(pathFile)) == false) {

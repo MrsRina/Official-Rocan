@@ -165,20 +165,24 @@ public class TurokShaderGL {
         float b = (float) (color.getRGB() & 255) / 255.0f;
         float a = (float) (color.getRGB() >> 24 & 255) / 255.0f;
 
+        GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
 
         BufferBuilder bufferBuilder = start();
 
-        bufferBuilder.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+        bufferBuilder.begin(GL11.GL_POLYGON, DefaultVertexFormats.POSITION_COLOR);
         bufferBuilder.pos(x, y, 0).color(r, g, b, a).endVertex();
         bufferBuilder.pos(x, y + h, 0).color(r, g, b, a).endVertex();
         bufferBuilder.pos(x + w, y + h, 0).color(r, g, b, a).endVertex();
         bufferBuilder.pos(x + w,  y, 0).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x, y, 0).color(r, g, b, a).endVertex();
+        bufferBuilder.pos(x, y, 0).color(r, g, b, a).endVertex();
 
         end();
 
-        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
     }
 
     public static void drawOutlineRect(TurokRect rect, int[] color) {
@@ -193,9 +197,12 @@ public class TurokShaderGL {
         float b = (float) (color.getRGB() & 255) / 255.0f;
         float a = (float) (color.getRGB() >> 24 & 255) / 255.0f;
 
+        GlStateManager.pushMatrix();
+        GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         GlStateManager.glLineWidth(0.5f);
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
 
         BufferBuilder bufferBuilder = start();
 
@@ -210,6 +217,7 @@ public class TurokShaderGL {
         end();
 
         GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
     }
 
     public static void pushScissor() {

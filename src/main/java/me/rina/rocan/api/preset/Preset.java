@@ -4,6 +4,7 @@ import me.rina.rocan.Rocan;
 import me.rina.rocan.api.ISLClass;
 import me.rina.rocan.api.preset.impl.PresetState;
 import me.rina.rocan.api.util.file.FileUtil;
+import me.rina.turok.util.TurokGeneric;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,19 +14,21 @@ import java.nio.file.Paths;
  * @author SrRina
  * @since 22/01/2021 at 21:01
  **/
-public class Preset implements ISLClass {
+public class Preset {
     private String name;
     private String data;
     private String path;
 
     private PresetState state;
+    private TurokGeneric<Boolean> current;
 
-    public Preset(String name, String data) {
+    public Preset(String name, String path, String data) {
         this.name = name;
         this.data = data;
-        this.path = Rocan.PATH_CONFIG + "/preset/" + name + ".zip";
+        this.path = path.toLowerCase();
 
-        this.state = PresetState.INOPERABLE;
+        this.state = PresetState.OPERABLE;
+        this.current = new TurokGeneric<>(false);
     }
 
     public void setName(String name) {
@@ -60,37 +63,19 @@ public class Preset implements ISLClass {
         return state;
     }
 
-    @Override
-    public void onSave() {
-        try {
-            Rocan.getModuleManager().onSave();
-            Rocan.getSocialManager().onSave();
-
-            String pathFolder = this.path.replaceAll(this.name + ".zip", "");
-            String pathModule = Rocan.PATH_CONFIG + "/module/";
-
-            if (Files.exists(Paths.get(pathFolder)) == false) {
-                Files.createDirectories(Paths.get(pathFolder));
-            }
-
-            FileUtil.compactZipFolder(pathModule, this.path);
-        } catch (IOException exc) {
-            exc.printStackTrace();
-        }
+    public void setCurrent(TurokGeneric<Boolean> current) {
+        this.current = current;
     }
 
-    @Override
-    public void onLoad() {
-        try {
-            String pathModule = Rocan.PATH_CONFIG + "/module/";
+    public TurokGeneric<Boolean> getCurrent() {
+        return current;
+    }
 
-            if (Files.exists(Paths.get(this.path)) == false) {
-                return;
-            }
+    public void setCurrent(boolean is) {
+        this.current.setValue(is);
+    }
 
-            FileUtil.extractZipFolder(this.path, pathModule);
-        } catch (Exception exc) {
-            exc.printStackTrace();
-        }
+    public boolean isCurrent() {
+        return current.getValue();
     }
 }

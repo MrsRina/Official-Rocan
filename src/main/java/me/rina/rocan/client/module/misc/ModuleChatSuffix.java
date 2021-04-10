@@ -19,7 +19,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public class ModuleChatSuffix extends Module {
     public static ValueEnum settingIgnorePrefixes = new ValueEnum("Ignore Prefixes", "IgnorePrefixes", "Ignore specified characters.", FlagBoolUtil.TRUE);
 
-    public static ValueString settingIgnoredPrefixes = new ValueString("Ignored Prefixes", "IgnoredPrefixes", "Characters to ignore.", "/ ! ; & $ ( \\ : . @ * # )");
+    public static ValueString settingIgnoredPrefixes = new ValueString("Ignored Prefixes", "IgnoredPrefixes", "Characters to ignore.", "/!;&$(\\:.@*#)");
     public static ValueString settingSuffix = new ValueString("Suffix", "Suffix", "The lower case suffix.", "rocan");
 
     @Override
@@ -29,7 +29,7 @@ public class ModuleChatSuffix extends Module {
 
     @Listener
     public void onListen(PacketEvent.Send event) {
-        if ((event.getPacket() instanceof CPacketChatMessage) == false) {
+        if (!(event.getPacket() instanceof CPacketChatMessage)) {
             return;
         }
 
@@ -40,7 +40,7 @@ public class ModuleChatSuffix extends Module {
         boolean isContinuable = true;
 
         if (settingIgnoredPrefixes.isEnabled()) {
-            for (String prefixes : settingIgnoredPrefixes.getValue().split(" ")) {
+            for (String prefixes : settingIgnoredPrefixes.getValue().split("")) {
                 if (message.startsWith(prefixes)) {
                     isContinuable = false;
 
@@ -49,15 +49,11 @@ public class ModuleChatSuffix extends Module {
             }
         }
 
-        // Send if starts with prefix (when enabled setting and find).
-        if (isContinuable == false) {
-            packet.message = message;
-
-            return;
+        // DO NOT send if starts with prefix (when enabled setting and find).
+        if (isContinuable) {
+            message += " " + ChatSuffixUtil.hephaestus(settingSuffix.getValue());
         }
 
-        // Here we.
-        message += " " + ChatSuffixUtil.hephaestus(settingSuffix.getValue());
         packet.message = message;
     }
 }

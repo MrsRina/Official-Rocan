@@ -80,6 +80,8 @@ public class ModuleKillAura extends Module {
 
                 if (entityLivingBase.isDead || entityLivingBase.getHealth() < 0) {
                     this.target = null;
+
+                    return;
                 }
             }
 

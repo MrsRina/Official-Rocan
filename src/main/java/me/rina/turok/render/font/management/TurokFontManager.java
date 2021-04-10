@@ -34,9 +34,7 @@ public class TurokFontManager {
 			}
 		}
 
-		TurokGL.disable(GL11.GL_BLEND);
 		TurokGL.disable(GL11.GL_TEXTURE_2D);
-
 		TurokGL.popMatrix();
 	}
 

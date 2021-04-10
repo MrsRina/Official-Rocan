@@ -11,7 +11,7 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
  * @author SrRina
  * @since 24/02/2021 at 16:01
  **/
-@Registry(name = "No Slow Down", tag = "NoSlowDown", description = "No slow down while use item.", category = ModuleCategory.MOVEMENT)
+@Registry(name = "No Slow Down", tag = "NoSlowDown", description = "No slow down while uses item.", category = ModuleCategory.MOVEMENT)
 public class ModuleNoSlowDown extends Module {
     @Listener
     public void onUpdate(InputUpdateEvent event) {

@@ -2,6 +2,7 @@ package me.rina.rocan;
 
 import com.mojang.realmsclient.gui.ChatFormatting;
 import me.rina.rocan.api.command.management.CommandManager;
+import me.rina.rocan.api.component.Component;
 import me.rina.rocan.api.component.management.ComponentManager;
 import me.rina.rocan.api.event.management.EventManager;
 import me.rina.rocan.api.module.Module;
@@ -11,6 +12,7 @@ import me.rina.rocan.api.social.management.SocialManager;
 import me.rina.rocan.api.tracker.management.TrackerManager;
 import me.rina.rocan.client.command.*;
 import me.rina.rocan.client.Wrapper;
+import me.rina.rocan.client.component.*;
 import me.rina.rocan.client.gui.component.ComponentClickGUI;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.manager.chat.SpammerManager;
@@ -121,6 +123,7 @@ public class Rocan {
         this.moduleManager.registry(new ModuleBetterMine());
         this.moduleManager.registry(new ModuleCancelPackets());
         this.moduleManager.registry(new ModuleAutoHat());
+        this.moduleManager.registry(new ModuleBurrow());
 
         // Movement
         this.moduleManager.registry(new ModuleAutoWalk());
@@ -138,8 +141,19 @@ public class Rocan {
         this.commandManager.registry(new CommandVanish());
         this.commandManager.registry(new CommandSettings());
 
-        // We organize module list to alphabetical order.
-        Collections.sort(this.moduleManager.getModuleList(), Comparator.comparing(Module::getName));
+        // Components.
+        this.componentManager.registry(new ComponentArmor());
+        this.componentManager.registry(new ComponentCoordinates());
+        this.componentManager.registry(new ComponentInventory());
+        this.componentManager.registry(new ComponentWatermark());
+        this.componentManager.registry(new ComponentWelcome());
+
+        // We organize module list and component list to alphabetical order.
+        this.moduleManager.getModuleList().sort(Comparator.comparing(Module::getName));
+        this.componentManager.getComponentList().sort(Comparator.comparing(Component::getName));
+
+        // Log.
+        System.out.println("Rocan was successfully initialized.");
     }
 
     /**
@@ -154,13 +168,8 @@ public class Rocan {
         this.componentClickGUI = new ComponentClickGUI();
         this.componentClickGUI.init();
 
-        // Load all managers file.
-        Rocan.getModuleManager().onLoad();
-        Rocan.getSocialManager().onLoad();
-
-        // Refresh and reload managers.
-        ModuleManager.reload();
-        ModuleManager.refresh();
+        // Do load preset.
+        PresetManager.reload();
     }
 
     /**
@@ -170,15 +179,16 @@ public class Rocan {
         me.rina.rocan.client.module.client.ModuleClickGUI moduleClickGUI = (me.rina.rocan.client.module.client.ModuleClickGUI) ModuleManager.get(me.rina.rocan.client.module.client.ModuleClickGUI.class);
         ModuleSpammer moduleSpammer = (ModuleSpammer) ModuleManager.get(ModuleSpammer.class);
         ModuleFreecam moduleFreecam = (ModuleFreecam) ModuleManager.get(ModuleFreecam.class);
+        ModuleHUD moduleHUD = (ModuleHUD) ModuleManager.get(ModuleHUD.class);
 
         // Close some modules.
         moduleClickGUI.setDisabled();
         moduleSpammer.setDisabled();
         moduleFreecam.setDisabled();
+        moduleHUD.setDisabled();
 
-        // Finish the preset saving all.
-        Rocan.getModuleManager().onSave();
-        Rocan.getSocialManager().onSave();
+        // Save preset.
+        PresetManager.shutdown();
     }
 
     @Mod.EventHandler

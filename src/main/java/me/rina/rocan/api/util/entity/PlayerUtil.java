@@ -16,7 +16,7 @@ public class PlayerUtil {
     }
 
     public static BlockPos getBlockPos() {
-        return new BlockPos(Rocan.MC.player.posX, Rocan.MC.player.posY, Rocan.MC.player.posZ);
+        return new BlockPos(Math.floor(Rocan.MC.player.posX), Math.floor(Rocan.MC.player.posY), Math.floor(Rocan.MC.player.posZ));
     }
 
     public static Vec3d getVec() {

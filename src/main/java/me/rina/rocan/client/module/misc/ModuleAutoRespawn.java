@@ -23,9 +23,10 @@ import team.stiff.pomelo.impl.annotated.handler.annotation.Listener;
 public class ModuleAutoRespawn extends Module {
     public static ValueNumber settingDelay = new ValueNumber("Delay", "Delay", "The seconds delay for respawn.", 0, 0, 10);
     public static ValueBoolean settingDeathPosition = new ValueBoolean("Death Position", "DeathPosition", "Send the last position client side message after you die.", true);
+    public static ValueBoolean settingSync = new ValueBoolean("Sync", "Sync", "Respawn only if death GUI screen is shown.", true);
 
     private boolean hasSentMessage;
-    private TurokTick tick = new TurokTick();
+    private final TurokTick tick = new TurokTick();
 
     @Listener
     public void onListen(ClientTickEvent event) {
@@ -33,17 +34,19 @@ public class ModuleAutoRespawn extends Module {
             return;
         }
 
-        if (mc.currentScreen instanceof GuiGameOver) {
+        boolean flag = settingSync.getValue() ? (mc.player.getHealth() < 0) : (mc.currentScreen instanceof GuiGameOver);
+
+        if (flag) {
             this.doRequest();
         } else {
             this.hasSentMessage = true;
 
-            tick.reset();
+            this.tick.reset();
         }
     }
 
     public void doRequest() {
-        if (tick.isPassedMS(settingDelay.getValue().floatValue() * 1000)) {
+        if (this.tick.isPassedMS(settingDelay.getValue().floatValue() * 1000)) {
             if (settingDeathPosition.getValue()) {
                 double[] pos = PlayerUtil.getPos();
 
@@ -66,7 +69,7 @@ public class ModuleAutoRespawn extends Module {
 
     // Based.
     public String getColorBasedDimension() {
-        String string = null;
+        String string = "";
 
         if (PlayerUtil.getCurrentDimension() == PlayerUtil.Dimension.WORLD) {
             string = ("" + ChatFormatting.GREEN);

@@ -1,4 +1,4 @@
-package me.rina.rocan.client.gui.module.visual;
+package me.rina.rocan.client.gui.visual;
 
 import me.rina.rocan.Rocan;
 import me.rina.rocan.api.gui.flag.Flag;

@@ -69,6 +69,11 @@ public class ModuleStep extends Module {
             return;
         }
 
+        // TODO nigga rverse step and norma step
+        if (settingBindReverse.getState()) {
+            this.doReverse();
+        }
+
         if (settingBindNormal.getState()) {
             if (this.normalStepAlert != -1) {
                 this.print(ChatFormatting.GREEN + "Normal step");
@@ -85,10 +90,6 @@ public class ModuleStep extends Module {
             if (mc.player.stepHeight != 0) {
                 mc.player.stepHeight = 0;
             }
-        }
-
-        if (settingBindReverse.getState()) {
-            this.doReverse();
         }
     }
 
@@ -175,7 +176,7 @@ public class ModuleStep extends Module {
     }
 
     public boolean doVerifyPlayerFlags() {
-        return ((mc.player.onGround == false || mc.player.isOnLadder() || mc.player.isInWater() || mc.player.isInLava() || mc.player.movementInput.jump || mc.player.noClip) && mc.player.moveForward == 0 && mc.player.moveStrafing == 0);
+        return true;
     }
 
     public double getStepHeight() {

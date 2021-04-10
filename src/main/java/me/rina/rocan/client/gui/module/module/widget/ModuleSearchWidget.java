@@ -6,7 +6,7 @@ import me.rina.rocan.api.gui.widget.Widget;
 import me.rina.rocan.client.gui.module.ModuleClickGUI;
 import me.rina.rocan.client.gui.module.module.container.ModuleContainer;
 import me.rina.rocan.client.gui.module.mother.MotherFrame;
-import me.rina.rocan.client.gui.module.visual.EntryWidget;
+import me.rina.rocan.client.gui.visual.EntryWidget;
 import me.rina.turok.render.font.management.TurokFontManager;
 import me.rina.turok.render.opengl.TurokShaderGL;
 import me.rina.turok.util.TurokMath;
