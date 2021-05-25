@@ -196,7 +196,6 @@ public class SettingEnumWidget extends Widget {
 
         if (this.flagMouse == Flag.MOUSE_OVER) {
             this.settingContainer.getDescriptionLabel().setText(this.setting.getDescription());
-
             this.settingContainer.flagDescription = Flag.MOUSE_OVER;
         }
 
